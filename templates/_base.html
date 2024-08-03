@@ -1,31 +1,64 @@
-{% load compress %}
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django + HTMX + TailwindCSS</title>
+<html>
+{% include 'head.html' %}
 
-    {% compress css %}
-      <link rel="stylesheet" href="{% static 'src/output.css' %}">
-    {% endcompress %}
-
-  </head>
-  <body class="bg-blue-100">
-    {% block content %}
-    {% endblock content %}
-
-    {% compress js %}
-      <script type="text/javascript" src="{% static 'src/htmx.js' %}"></script>
-    {% endcompress %}
+<body class="bg-zinc-50">
+    <title>
+        {% block title %}
+        {{page_title}}
+        {% endblock %} | PESANEEN
+    </title>
 
     <script>
-      document.body.addEventListener('htmx:configRequest', (event) => {
-        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-      })
+        document.addEventListener('showToast', function(evt){
+            document.getElementById('toast').classList.remove('hidden')
+            document.getElementById('toast-content').innerHTML = evt.detail.content
+            console.log(evt.detail.content)
+
+            const myTimeout = setTimeout(function() {
+                document.getElementById('toast').classList.remove('hidden')
+            }, 5000);
+        })
     </script>
-  </body>
+    
+    {% if not no_topbar and request.user.is_authenticated %}
+        {% block topbar %}
+            {% include 'topbar.html' %}
+        {% endblock topbar %}
+    {% endif %}
+        
+    
+    {% if not no_sidebar and request.user.is_authenticated %}
+        {% block sidebar %}
+            {% include 'sidebar.html' %}
+        {% endblock sidebar %}
+    {% endif %}
+        
+    {% if not request.user.is_authenticated %}
+        <div class="mt-[60px]">
+    {% else %}
+        <div class="px-5 pt-3 lg:ml-[180px] mt-[60px]">
+    {% endif %}
+            {% include 'components/alert_modal.html' %}
+            {% block content %}
+            
+            {% endblock %}
+        </div>
+    
+    {% block footer %}
+        
+    {% endblock footer %}
+        
+
+    {% include "base_script.html" %}
+    {% block script %}
+    
+    {% endblock script %}
+
+    {% if PROD %}
+    {% else %}
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+    {% endif %}
+        
+</body>
 </html>

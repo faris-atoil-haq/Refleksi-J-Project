@@ -1,0 +1,21 @@
+{% comment %} HTMX CONFIG {% endcomment %}
+<script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    })
+</script>
+
+<script>
+    {% comment %} CLIPBOARD {% endcomment %}
+    document.querySelectorAll('.clipboard').forEach(clipboard =>{
+        clipboard.addEventListener('click', function(){
+            clipboard.querySelector('.clipboard-icon').classList.toggle('hidden')
+            clipboard.querySelector('.clipboard-icon-success').classList.toggle('hidden')
+
+            const myTimeout = setTimeout(function() {
+                clipboard.querySelector('.clipboard-icon').classList.toggle('hidden')
+                clipboard.querySelector('.clipboard-icon-success').classList.toggle('hidden')
+            }, 2000);
+        })
+    })
+</script>
