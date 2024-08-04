@@ -11,32 +11,38 @@ Check out the [post](https://testdriven.io/blog/django-htmx-tailwind/).
 1. Create and activate a virtual environment:
 
     ```sh
-    $ python3 -m venv venv && source venv/bin/activate
+    python3 -m venv venv && source venv/bin/activate
     ```
 
 1. Install the dependencies:
 
     ```sh
-    (venv)$ pip install -r requirements.txt
+    pip install -r requirements.txt
     ```
 
 1. Configure Tailwind CSS:
 
     ```sh
-    (venv)$ tailwindcss
+    tailwindcss
     ```
 
-5. Scan the emplates and generate CSS file:
+5. Watch for the style changes from the templates and generate CSS file:
 
     ```sh
-    (venv)$ tailwindcss -i ./static/src/main.css -o ./static/src/output.css --minify
+    tailwindcss -i ./static/src/main.css -o ./static/src/output.css --watch
     ```
 
 6. Apply the migrations and run the Django development server:
 
     ```sh
-    (venv)$ python manage.py migrate
-    (venv)$ python manage.py runserver
+    python manage.py migrate
+    python manage.py runserver
     ```
 
-6. Test at [http://localhost:8000/](http://localhost:8000/)
+7. Test at [http://localhost:8000/](http://localhost:8000/)
+
+8. For production, you can use the minified version of CSS file:
+
+    ```sh
+    tailwindcss -i ./static/src/main.css -o ./static/src/output.css --minify
+    ```
