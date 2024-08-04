@@ -1,0 +1,69 @@
+import uuid
+
+from django.db import models
+from django.utils import timezone
+
+
+class Article(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.title}'
+
+class Subject(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.name}'
+
+class SubjectReflection(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.subject}'
+    
+class ReflectionQuestion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject_reflection = models.ForeignKey(SubjectReflection, blank=True, null=True, on_delete=models.CASCADE)
+    question = models.TextField(blank=True, null=True)
+    articles = models.ManyToManyField(Article, related_name="reflection_questions")
+    order = models.IntegerField(null=True, blank=True)
+    show = models.BooleanField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.subject_reflection}'
+    
+class TeacherAgenda(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.SET_NULL)
+    # user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="agenda")
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.subject}'
+
+class Journal(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.CASCADE)
+    question = models.ForeignKey(ReflectionQuestion, blank=True, null=True, on_delete=models.SET_NULL)
+    content = models.TextField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.agenda}'
