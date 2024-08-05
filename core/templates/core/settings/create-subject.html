@@ -1,0 +1,11 @@
+{% extends 'core/_base.html' %}
+
+{% block content %}
+    <div class="mb-8">
+        <form method="POST" action="{% url 'create_subject' %}" class="">
+            {% csrf_token %}
+            <input type="text" class="input-sm" name="name" placeholder="Nama mata pelajaran">
+            <button type="submit" class="btn btn-primary">Tambahkan</button>
+        </form>
+    </div>
+{% endblock %}  
