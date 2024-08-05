@@ -8,6 +8,6 @@ node_modules
 refleksi-venv
 static/CACHE
 static/CACHE/*
+static/src/output.css
 staticfiles/
 venv
-static/src/output.css
