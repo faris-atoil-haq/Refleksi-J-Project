@@ -1,48 +1,35 @@
+<!-- templates/base.html -->
+
+{% load compress %}
+{% load static %}
+
 <!DOCTYPE html>
-<html>
-{% include 'head.html' %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refleksi-J</title>
 
-<body class="bg-zinc-50">
-    <title>
-        {% block title %}
-        {{page_title}}
-        {% endblock %} | PESANEEN
-    </title>
+    {% compress css %}
+      <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    {% endcompress %}
 
-    <script>
-        document.addEventListener('showToast', function(evt){
-            document.getElementById('toast').classList.remove('hidden')
-            document.getElementById('toast-content').innerHTML = evt.detail.content
-            console.log(evt.detail.content)
-
-            const myTimeout = setTimeout(function() {
-                document.getElementById('toast').classList.remove('hidden')
-            }, 5000);
-        })
-    </script>
-    
-    {% include 'topbar.html' %}
-    
-    {% include 'sidebar.html' %}
-        
+  </head>
+  <body class="bg-blue-100">
     {% block content %}
-    
-    {% endblock %}
-    
-    {% block footer %}
-        
-    {% endblock footer %}
-        
+    {% endblock content %}
 
-    {% include "base-script.html" %}
-    {% block script %}
-    
-    {% endblock script %}
+    <!-- new -->
+    {% compress js %}
+      <script type="text/javascript" src="{% static 'src/htmx.js' %}"></script>
+    {% endcompress %}
 
-    {% if PROD %}
-    {% else %}
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
-    {% endif %}
-        
-</body>
+    <!-- new -->
+    <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      })
+    </script>
+  </body>
 </html>
