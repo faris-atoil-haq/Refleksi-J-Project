@@ -1,23 +1,51 @@
-<!-- templates/base.html -->
-
+<!DOCTYPE html>
 {% load compress %}
 {% load static %}
 
-<!DOCTYPE html>
 <html>
 {% include 'head.html' %}
 
-<body class="bg-zinc-50">
+<body class="bg-zinc-50 bg-gray-900">
     <title>
         {% block title %}
         {{page_title}}
-        {% endblock %} | PESANEEN
+        {% endblock %} | MyReflecTJ
     </title>
 
     <script>
-      document.body.addEventListener('htmx:configRequest', (event) => {
-        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-      })
+        document.addEventListener('showToast', function(evt){
+            document.getElementById('toast').classList.remove('hidden')
+            document.getElementById('toast-content').innerHTML = evt.detail.content
+            console.log(evt.detail.content)
+
+            const myTimeout = setTimeout(function() {
+                document.getElementById('toast').classList.remove('hidden')
+            }, 5000);
+        })
     </script>
-  </body>
+    
+    {% include 'topbar.html' %}
+    
+    {% include 'sidebar.html' %}
+        
+    {% block content %}
+    
+    {% endblock %}
+    
+    {% block footer %}
+        
+    {% endblock footer %}
+        
+
+    {% include "base-script.html" %}
+    {% block script %}
+    
+    {% endblock script %}
+
+    {% if PROD %}
+    {% else %}
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+    {% endif %}
+        
+</body>
 </html>
