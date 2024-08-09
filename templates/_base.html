@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+{% load compress %}
+{% load static %}
+
 <html>
 {% include 'head.html' %}
 
-<body class="bg-zinc-50">
+<body class="bg-zinc-50 bg-gray-900">
     <title>
         {% block title %}
         {{page_title}}

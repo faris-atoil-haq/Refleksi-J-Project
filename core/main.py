@@ -128,3 +128,16 @@ def subject(request, subject_id=None):
         'page_title': 'Tambah Mata Pelajaran'
     }
     return render(request, 'core/settings/subject/create-subject.html', context)
+
+
+def signin(request):
+    if request.POST:
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if email == 'example@gmail.com' and password == 'example123':
+            context = {
+                'logged_in': True
+            }
+            return render(request, 'core/home.html',context) # sign in        
+    return render(request, 'core/signin.html') # sign in
