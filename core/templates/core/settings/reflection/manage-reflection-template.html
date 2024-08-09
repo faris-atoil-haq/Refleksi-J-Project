@@ -1,0 +1,39 @@
+{% extends 'core/_base.html' %}
+
+{% block content %}
+<div class="p-8 flex flex-wrap">
+    <div class="text-lg">
+        <div>
+        </div>
+        {{subject_reflection.subject.name}}
+    </div>
+    <div class="text-base">
+        {{subject_reflection.subject.get_class_level_display}}
+    </div>
+</div>
+
+<div id="reflection-form">
+    {% for question in reflection_questions %}
+        <div class="flex mb-6">
+            <div class="rounded-s hover:bg-200 hover:cursor-move">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grip-vertical" viewBox="0 0 16 16">
+                    <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                </svg>
+            </div>
+            {% include 'core/settings/reflection/reflection-question-card.html' %}
+        </div>
+    {% endfor %}
+</div>
+
+<div>
+    <button type="button" class="btn btn-primary w-100">
+        <svg class="w-5 h-5 text-white me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+        </svg>
+        <div>
+            Tambah Pertanyaan
+        </div>
+    </button>
+</div>
+
+{% endblock %}  

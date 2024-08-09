@@ -15,6 +15,7 @@ class Article(models.Model):
 
 class Subject(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    class_level = models.CharField(max_length=50, blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
