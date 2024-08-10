@@ -1,3 +1,5 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
@@ -131,13 +133,23 @@ def subject(request, subject_id=None):
 
 
 def signin(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.POST:
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if email == 'example@gmail.com' and password == 'example123':
-            context = {
-                'logged_in': True
-            }
-            return render(request, 'core/home.html',context) # sign in        
-    return render(request, 'core/signin.html') # sign in
+        user = authenticate(request, email=email, password=password)
+        if user:
+            return redirect('home')
+        error_message = "Email tidak ditemukan. Gunakan email yang benar atau daftar terlebih dahulu."
+        email_ = ""
+        if User.objects.filter(email=email):
+            error_message = "Kata sandi salah."
+            email_ = email
+        context = {
+            "email": email,
+            "error_message": error_message,
+        }
+        return render(request, 'core/signin.html', context=context)
+    return render(request, 'core/signin.html')

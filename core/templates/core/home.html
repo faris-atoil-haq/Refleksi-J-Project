@@ -1,75 +1,6 @@
 {% extends 'core/_base.html' %}
-{% load static %}
+
 {% block content %}
-
-<div class="p-3 md:p-6 md:px-9 bg-gray-900">
-    <div class="mb-10">
-        <div class="flex items-center justify-between font-semibold mb-4">
-            <p class="text-xl text-yellow-300">Tingkatkan Kualitas Pembelajaran dengan</br>
-                Revolusi Refleksi Guru!.</p>
-            
-            <p class="text-white">Refleksi-J adalah teman setia guru. Proses yang sederhana </br>menjadikan guru dapat dengan mudah mencatatat (jurnal) refleksi, </br>upgrade modul dan meningkatkan kualitas pengajaran tanpa ribet.</p>
-            
-        </div>
-        <a href="#" class="me-2 inline-flex titems-center px-3 py-2 font-medium font-medium text-center text-blue-700 bg-white rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-white dark:hover:bg-white dark:focus:ring-blue-800">
-            Ayo mulai refleksi
-        </a>
-        <button type="button" class="text-white hover:text-white border border-white focus:ring-4 focus:outline-none focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">Hubungi Kami</button>
-
-    </div>
-
-    
-    <div class="flex gap-9 mb-6 ms-10 text-center">
-        <figure class="justify-center items-center relative max-w-sm transition-all duration-300 cursor-pointer filter grayscale hover:grayscale-0">
-            <a href="#">
-              <img class="rounded-lg" src="{% static 'img/gambar.png' %}" alt="image description">
-            </a>
-            <figcaption class="absolute px-4 text-lg text-white bottom-6">
-                <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Refleksi Mengajar
-                </a>
-            </figcaption>
-        </figure>
-        <figure class="justify-center items-center relative max-w-sm transition-all duration-300 cursor-pointer filter grayscale hover:grayscale-0">
-            <a href="#">
-              <img class="rounded-lg" src="{% static 'img/gambar_2.png' %}" alt="image description">
-            </a>
-            <figcaption class="absolute px-4 text-lg text-white bottom-6">
-                <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Umpan Balik Modul Ajar
-                </a>
-            </figcaption>
-        </figure>
-        <figure class="justify-center items-center relative max-w-sm transition-all duration-300 cursor-pointer filter grayscale hover:grayscale-0">
-            <a href="#">
-              <img class="rounded-lg" src="{% static 'img/gambar_3.png' %}" alt="image description">
-            </a>
-            <figcaption class="absolute px-4 text-lg text-white bottom-6">
-                <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Angket Siswa
-                </a>
-            </figcaption>
-        </figure>
-        <figure class="justify-center items-center relative max-w-sm transition-all duration-300 cursor-pointer filter grayscale hover:grayscale-0">
-            <a href="#">
-              <img class="rounded-lg" src="{% static 'img/gambar_4.png' %}" alt="image description">
-            </a>
-            <figcaption class="absolute px-4 text-lg text-white bottom-6">
-                <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Panduan Cerdas Guru
-                </a>
-            </figcaption>
-        </figure>
-    </div>
-
-</div>
-{% comment %} <div class="flex gap-9 mb-6 ms-10">
-    {% include 'components/main-agenda-skeleton.html' %}
-    {% include 'components/main-agenda-skeleton.html' %}
-    {% include 'components/main-agenda-skeleton.html' %}
-    {% include 'components/main-agenda-skeleton.html' %}
-</div> {% endcomment %}
-{% comment %} 
     <div class="mb-8 md:mb-14">
         <div class="text-xl font-semibold mb-4">
             Refleksi Hari Ini
@@ -93,5 +24,5 @@
             {% include 'components/related-journal-history-skeleton.html' %}
             {% include 'components/related-journal-history-skeleton.html' %}
         </div>
-    </div> {% endcomment %}
+    </div>
 {% endblock %}  

@@ -5,11 +5,20 @@
 <html>
 {% include 'head.html' %}
 
-<body class="bg-zinc-50 bg-gray-900">
+<style>
+    body {
+        background-color: #1F2873;
+    }
+</style>
+<body>
     <title>
         {% block title %}
-        {{page_title}}
-        {% endblock %} | MyReflecTJ
+            {% if page_title %}
+                {{page_title}}
+            {% else %}
+                Aplikasi Refleksi Guru
+            {% endif %}
+        {% endblock %}
     </title>
 
     <script>
@@ -23,14 +32,21 @@
             }, 5000);
         })
     </script>
+    <div class="bg-gradient-to-b from-bgdarkblue to-bglightblue {% if main_public %}min-h-[650px] rounded-b-[100px] {% else %}h-screen min-h-100{% endif %} w-full absolute top-0 left-0 z-0">
+    </div>
     
+    {% if main_public %}
+        <div class="bg-skyblue min-h-[650px] w-full absolute top-[650px] left-0 z-0">
+        </div>
+    {% endif %}
+
     {% include 'topbar.html' %}
     
-    {% include 'sidebar.html' %}
-        
+    <div class="absolute top-[90px] px-3 md:px-24 w-full">
     {% block content %}
     
     {% endblock %}
+    </div>
     
     {% block footer %}
         
