@@ -1,9 +1,11 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from core.models import Subject
+from core.models import Subject, SubjectReflection
 
 
 def home(request):
@@ -19,6 +21,44 @@ def app_settings(request):
         'page_title': page_title,
     }
     return render(request, 'core/settings/settings.html', context)
+
+def reflection_templates(request):
+    try:
+        page = int(request.GET.get('page', 1))
+        if page < 1:
+            page = 1
+    except:
+        page = 1
+    q = request.GET.get('q', '')
+    
+    conditions = Q()
+    if q:
+        conditions = Q(subject__name__icontains=q)
+        conditions |= Q(subject__class_levl__icontains=q)
+    paginator = Paginator(
+        SubjectReflection.objects.filter(conditions).distinct().order_by('-created_at'), 
+        25
+    )
+    if page > paginator.num_pages:
+        page = 1
+    current_page = paginator.page(page)
+    objects = current_page.object_list
+        
+    context = {
+        'page_title': 'Template Refleksi',
+        'page': page,
+        'current_page': current_page,
+        'paginator': paginator,
+        'q': q,
+        'subject_reflections': objects,
+    }
+    return render(request, 'core/settings/reflection/reflection.html', context)
+
+def manage_reflection_template(request, id=None):
+    context = {
+        'page_title': 'Template Refleksi'
+    }
+    return render(request, 'core/settings/reflection/reflection.html', context)
 
 def subject_page(request):
     page_title = 'Mata Pelajaran'
@@ -51,7 +91,7 @@ def subject_page(request):
         'q': q,
         'subjects': subjects,
     }
-    return render(request, 'core/settings/subjects.html', context)
+    return render(request, 'core/settings/subject/subjects.html', context)
 
 def subject(request, subject_id=None):
     """Create or edit a subject"""
@@ -76,7 +116,7 @@ def subject(request, subject_id=None):
             context = {
                 'subject': subject_
             }
-            return render(request, 'core/settings/subject-item.html', context=context)
+            return render(request, 'core/settings/subject/subject-item.html', context=context)
         
         else:
             if not name:
@@ -89,17 +129,27 @@ def subject(request, subject_id=None):
     context = {
         'page_title': 'Tambah Mata Pelajaran'
     }
-    return render(request, 'core/settings/create-subject.html', context)
+    return render(request, 'core/settings/subject/create-subject.html', context)
 
 
 def signin(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.POST:
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if email == 'example@gmail.com' and password == 'example123':
-            context = {
-                'logged_in': True
-            }
-            return render(request, 'core/home.html',context) # sign in        
-    return render(request, 'core/signin.html') # sign in
+        user = authenticate(request, email=email, password=password)
+        if user:
+            return redirect('home')
+        error_message = "Email tidak ditemukan. Gunakan email yang benar atau daftar terlebih dahulu."
+        email_ = ""
+        if User.objects.filter(email=email):
+            error_message = "Kata sandi salah."
+            email_ = email
+        context = {
+            "email": email,
+            "error_message": error_message,
+        }
+        return render(request, 'core/signin.html', context=context)
+    return render(request, 'core/signin.html')

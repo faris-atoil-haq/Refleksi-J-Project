@@ -43,7 +43,7 @@
                     </div>
                 {% endfor %}
 
-                <div class="mt-14">
+                <div class="mt-14 flex justify-between">
                     <div class="text-sm text-gray-700">
                         Menampilkan 
                             {% if paginator.count > 1 %}
@@ -51,7 +51,7 @@
                             {% else %}
                             <span class="font-semibold text-gray-900">{{current_page.start_index}}</span> 
                             {% endif %}
-                            dari <span class="font-semibold text-gray-900">{{paginator.count}}</span> data
+                            dari <span class="font-semibold text-gray-900">{{paginator.count}}</span>
                     </div>
                     <div class="inline-flex mt-2 xs:mt-0">
                         {% if current_page.has_previous %}
