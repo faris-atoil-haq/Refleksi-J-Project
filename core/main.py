@@ -1,4 +1,5 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -8,20 +9,25 @@ from django.shortcuts import redirect, render
 from core.models import Subject, SubjectReflection
 
 
+@login_required
 def home(request):
     page_title = 'Home'
     context = {
         'page_title': page_title,
+        'page': 'home',
     }
     return render(request, 'core/home.html', context)
 
+@login_required
 def app_settings(request):
-    page_title = 'Application Settings'
+    page_title = 'Admin'
     context = {
         'page_title': page_title,
+        'page': 'admin',
     }
     return render(request, 'core/settings/settings.html', context)
 
+@login_required
 def reflection_templates(request):
     try:
         page = int(request.GET.get('page', 1))
@@ -54,12 +60,14 @@ def reflection_templates(request):
     }
     return render(request, 'core/settings/reflection/reflection.html', context)
 
+@login_required
 def manage_reflection_template(request, id=None):
     context = {
         'page_title': 'Template Refleksi'
     }
     return render(request, 'core/settings/reflection/reflection.html', context)
 
+@login_required
 def subject_page(request):
     page_title = 'Mata Pelajaran'
     
@@ -93,6 +101,7 @@ def subject_page(request):
     }
     return render(request, 'core/settings/subject/subjects.html', context)
 
+@login_required
 def subject(request, subject_id=None):
     """Create or edit a subject"""
     
@@ -131,7 +140,6 @@ def subject(request, subject_id=None):
     }
     return render(request, 'core/settings/subject/create-subject.html', context)
 
-
 def signin(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -141,15 +149,20 @@ def signin(request):
 
         user = authenticate(request, email=email, password=password)
         if user:
+            login(request, user)
             return redirect('home')
-        error_message = "Email tidak ditemukan. Gunakan email yang benar atau daftar terlebih dahulu."
-        email_ = ""
-        if User.objects.filter(email=email):
-            error_message = "Kata sandi salah."
-            email_ = email
+        
+        error_message = "Email atau kata sandi salah."
         context = {
             "email": email,
             "error_message": error_message,
         }
-        return render(request, 'core/signin.html', context=context)
-    return render(request, 'core/signin.html')
+        return render(request, 'core/login.html', context=context)
+    return render(request, 'core/login.html')
+
+def signout(request):
+    if not request.user.is_authenticated:
+        return redirect('public')
+    
+    logout(request)
+    return redirect('public')

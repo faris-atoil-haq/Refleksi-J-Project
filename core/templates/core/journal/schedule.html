@@ -1,0 +1,65 @@
+{% extends 'core/_base.html' %}
+
+{% block content %}
+    <div class="w-full mb-8 md:mb-10 flex flex-wrap justify-between">
+        <div class="flex">
+            <div>
+                <button type="button" class="text-gray-600 bg-white border-gray-300 border hover:bg-gray-100 hover:text-gray-900 font-medium rounded-lg text-sm px-5 py-2 me-4">
+                    Hari Ini
+                </button>
+            </div>
+            <div class="flex">
+                <div id="date-range-picker" date-rangepicker class="flex items-center">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                            </svg>
+                        </div>
+                        <input id="datepicker-range-start" name="start" type="text" class="bg-white text-sm border border-gray-300 text-gray-900 rounded-s-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2 w-[170px]" placeholder="Tanggal mulai">
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                            </svg>
+                        </div>
+                        <input id="datepicker-range-end" name="end" type="text" class="bg-white border text-sm border-s-0 border-e-0 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2 w-[170px]" placeholder="Tanggal akhir">
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                        </svg>
+                    </div>
+                    <input type="hidden" name="page" value="{{page}}">
+                    <input name="q" type="text" id="search" 
+                        class="text-sm bg-white border border-gray-300 text-gray-900 focus:ring-blue-500 focus:outline-none focus:border-blue-500 block w-full ps-10 p-2"
+                        placeholder="Cari"
+                        hx-get="{% url 'subject_page' %}" hx-swap="innerHTML" hx-target="#subject-data" hx-trigger="changed"
+                        {% if q %}value="{{q}}"{% endif %}>
+                </div>
+                <button type="submit" class="btn btn-primary rounded-lg rounded-s-none font-medium">
+                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-width="3" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'home' %}" class="btn btn-primary py-2">
+                <svg class="w-5 h-5 text-white md:me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7 7V5"/>
+                </svg>
+                <div class="hidden md:block font-medium text-sm">
+                    Tambah Jadwal
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="w-full mb-8 md:mb-14" hx-get="{% url 'schedule_items' %}" hx-trigger='load' hx-target="this" hx-swap="innerHTML"></div>
+
+{% endblock %}  

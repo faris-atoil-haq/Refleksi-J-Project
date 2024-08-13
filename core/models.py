@@ -68,3 +68,18 @@ class Journal(models.Model):
     
     def __str__(self):
         return f'{self.id} {self.agenda}'
+    
+class HeadNews(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    text = models.TextField(blank=True, null=True)
+    link_text = models.CharField(blank=True, null=True, max_length=255)
+    link_url = models.TextField(blank=True, null=True)
+    published = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        if self.text:
+            return f'{self.id} {self.text[:20]}...'
+        else:
+            return f'{self.id}'

@@ -1,14 +1,18 @@
 from django.urls import path
 
-from core import main, public
+from core import journal, main, public
 
 urlpatterns = [
     path('', public.main, name='public'),
     
-    path('signin/', main.signin, name='signin'),
-    path('signin/user/', main.signin, name='user_signin'),
+    path('login/', main.signin, name='login'),
+    path('logout/', main.signout, name='logout'),
 
     path('app/', main.home, name='home'),
+    path('app/refleksi/today/', journal.today_agenda, name='today_agenda'),
+    path('app/refleksi/history/', journal.latest_reflection_journals, name='latest_reflection_journals'),
+    path('app/jadwal/', journal.schedule, name='schedule'),
+    path('app/jadwal/items/', journal.schedule_items, name='schedule_items'),
     
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
