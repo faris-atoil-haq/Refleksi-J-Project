@@ -1,3 +1,4 @@
+import uuid
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -6,7 +7,8 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
-from core.models import Subject, SubjectReflection
+
+from core.models import Subject, SubjectReflection, Verification
 
 
 @login_required
@@ -146,11 +148,19 @@ def signin(request):
     if request.POST:
         email = request.POST.get('email')
         password = request.POST.get('password')
+        if 'signup' in request.POST:
+            context = {
+                "email": email,
+            }
+            return render(request, 'core/signup.html', context=context)
 
         user = authenticate(request, email=email, password=password)
-        if user:
-            login(request, user)
-            return redirect('home')
+        verif = Verification.objects.filter(user=user)
+        if verif:    
+            verif = verif[0]
+            if verif.verified == True and user:
+                login(request, user)
+                return redirect('home')
         
         error_message = "Email atau kata sandi salah."
         context = {
@@ -158,6 +168,48 @@ def signin(request):
             "error_message": error_message,
         }
         return render(request, 'core/login.html', context=context)
+    return render(request, 'core/login.html')
+
+def signup(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    if request.POST:
+        email = request.POST.get('email')
+        nama = request.POST.get('nama')
+        instansi = request.POST.get('instansi')
+        password = request.POST.get('password')
+        verif_code = str(uuid.uuid4())[:5]
+        print("Kode verifikasi: ")
+        print(verif_code)
+
+        user = User.objects.create_user(
+            username=verif_code,
+            email=email,
+            first_name=nama,
+            password=password
+            )
+                            
+        Verification.objects.create(user=user, instansi=instansi,verified = False)
+
+        return render(request, 'core/confirm.html')
+    return render(request, 'core/login.html')
+
+def confirm_signup(request):
+    if request.GET:
+        verif_code = request.GET.get('code')
+        email = request.GET.get('email')
+
+        user = User.objects.filter(username=verif_code,email=email)
+        print(user)
+        if user:
+            user = user[0]
+            verif = Verification.objects.filter(user=user)
+            if verif:
+                verif = verif[0]
+                verif.verified = True
+                verif.save()
+
+            return render(request, 'core/confirm.html',{'verified':True})
     return render(request, 'core/login.html')
 
 def signout(request):

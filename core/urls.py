@@ -5,6 +5,8 @@ from core import journal, main, public
 urlpatterns = [
     path('', public.main, name='public'),
     
+    path('confirm_signup/', main.confirm_signup, name='confirm_signup'),
+    path('signup/', main.signup, name='signup'),
     path('login/', main.signin, name='login'),
     path('logout/', main.signout, name='logout'),
 

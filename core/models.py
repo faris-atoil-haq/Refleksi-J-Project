@@ -1,7 +1,24 @@
 import uuid
-
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+
+class Verification(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_query_name="verification"
+    )
+    verified = models.BooleanField(default=False)
+    profile_photo = models.FileField(
+        upload_to="refleksi-j-photo", null=True, blank=True)
+    admin = models.BooleanField(default=False)
+    instansi = models.CharField(max_length=256, null=True, blank=True)
+    team = models.CharField(max_length=256, null=True, blank=True)
+
+    def __str__(self):
+        return 'Verification for: ' + self.user.username
 
 
 class Article(models.Model):

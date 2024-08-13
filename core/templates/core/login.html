@@ -10,8 +10,8 @@
             {% csrf_token %}
             <h5 class="mb-6 text-xl font-medium text-gray-900">Masuk Akun</h5>
             <div class="mb-4">
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email Anda</label>
-                <input type="email" name="email" autocomplete="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required 
+                <label for="email" class="block mb-2 text-sm font-medium text-gray-900" >Email Anda</label>
+                <input type="email" name="email" autocomplete="email" id="email" onchange="prefilled_email(this)" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required 
                     {% if email %}value="{{email}}"{% endif %}
                     >
             </div>
@@ -33,12 +33,23 @@
                     {{error_message}}
                 </div>
             {% endif %}
-            <button type="submit" class="mb-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Masuk</button>
+            <button type="submit" id="login" class="mb-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Masuk</button>
             <a href="#" class="ms-auto text-sm text-blue-700 hover:underline">Lupa Kata Sandi?</a>
+        </form>
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <input hidden name="email" id="signup_email">
             <div class="text-sm font-medium text-gray-500">
-                Belum punya akun? <a href="#" class="text-blue-700 hover:underline">Daftar di sini</a>
+                Belum punya akun? <button type="submit" id="signup" name="signup" class="text-blue-700 hover:underline">Daftar di sini</button>
             </div>
         </form>
+        <script>
+            function prefilled_email(elm) {
+                // Prevent the default form submission
+                document.getElementById("signup_email").value = elm.value;
+            }
+        </script>
     </div>
 </div>
 

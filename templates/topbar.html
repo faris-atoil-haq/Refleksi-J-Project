@@ -6,8 +6,12 @@
             </a>
         </div>
         <div class="items-center hidden md:flex">
-            <a href="#" class="block me-5 py-2 px-3 rounded text-white">Daftar</a>
-            <a href="{% url 'login' %}" class="block text-darkblue bg-white hover:bg-gray-100 font-semibold rounded-lg px-4 py-2 text-center">Masuk</a>
+            {% if request.user.first_name %}
+                <a href="{% url 'home' %}" class="block text-darkblue bg-white hover:bg-gray-100 font-semibold rounded-lg px-4 py-2 text-center">Buka Refleksi</a>
+            {% else %}
+                <a href="#" class="block me-5 py-2 px-3 rounded text-white">Daftar</a>
+                <a href="{% url 'login' %}" class="block text-darkblue bg-white hover:bg-gray-100 font-semibold rounded-lg px-4 py-2 text-center">Masuk</a>
+            {% endif %}
         </div>
     </div>
 </nav>
