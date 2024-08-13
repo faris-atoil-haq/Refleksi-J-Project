@@ -6,7 +6,7 @@
 
 @layer components {
     .btn-sm {
-        @apply rounded font-medium text-sm px-5 pt-0.5 pb-1 text-center inline-flex items-center;
+        @apply rounded font-medium text-sm px-5 py-0 md:pt-0.5 md:pb-1 text-center inline-flex items-center;
     }
 
     .btn {

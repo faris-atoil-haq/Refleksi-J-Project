@@ -6,9 +6,7 @@
             Refleksi Hari Ini
         </div>
 
-        <div class="flex gap-9 mb-6">
-            {% include 'components/main-agenda-skeleton.html' %}
-            {% include 'components/main-agenda-skeleton.html' %}
+        <div class="flex gap-9 mb-6 flex-wrap" hx-get="{% url 'today_agenda' %}" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
             {% include 'components/main-agenda-skeleton.html' %}
             {% include 'components/main-agenda-skeleton.html' %}
         </div>
@@ -19,7 +17,7 @@
             Catatan Refleksi Sebelumnya . . .
         </div>
 
-        <div class="pe-6">
+        <div class="pe-6" hx-get="{% url 'latest_reflection_journals' %}" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
             {% include 'components/related-journal-history-skeleton.html' %}
             {% include 'components/related-journal-history-skeleton.html' %}
             {% include 'components/related-journal-history-skeleton.html' %}

@@ -6,9 +6,15 @@
 {% include 'head.html' %}
 
 <style>
-    body {
-        background-color: #1F2873;
-    }
+    {% if main_public %}
+        body {
+            background-color: #F2F6FF;
+        }
+    {% else %}
+        body {
+            background-color: #1F2873;
+        }
+    {% endif %}
 </style>
 <body>
     <title>
@@ -32,17 +38,17 @@
             }, 5000);
         })
     </script>
-    <div class="bg-gradient-to-b from-bgdarkblue to-bglightblue {% if main_public %}min-h-[650px] rounded-b-[100px] {% else %}h-screen min-h-100{% endif %} w-full absolute top-0 left-0 z-0">
+    <div class="bg-gradient-to-b from-bgdarkblue to-bglightblue {% if main_public %}min-h-[1000px] md:min-h-[700px] rounded-b-[65px] {% else %}h-screen min-h-100{% endif %} w-full absolute top-0 left-0 z-0">
     </div>
     
     {% if main_public %}
-        <div class="bg-skyblue min-h-[650px] w-full absolute top-[650px] left-0 z-0">
+        <div class="bg-skyblue min-h-[1000px] md:min-h-[700px] w-full absolute top-[1000px] md:top-[700px] left-0 z-0">
         </div>
     {% endif %}
 
     {% include 'topbar.html' %}
     
-    <div class="absolute top-[90px] px-3 md:px-24 w-full">
+    <div class="absolute top-[90px] px-6 md:px-24 w-full">
     {% block content %}
     
     {% endblock %}

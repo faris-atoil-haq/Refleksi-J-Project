@@ -1,12 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 {% include 'head.html' %}
 
-<body class="bg-zinc-50 bg-gray-900">
+<body class="bg-bggray">
     <title>
         {% block title %}
         {{page_title}}
-        {% endblock %} | MyReflecTJ
+        {% endblock %} | MyReflecTJournal
     </title>
 
     <script>
@@ -21,18 +22,14 @@
         })
     </script>
     
-    <div class="flex">
-        {% if not request.user.is_authenticated %}
-            {% include 'sidebar.html' %}
-        {% endif %}
-        <div class="grow">
-            {% include 'core/topbar.html' %}
-            <div class="{% comment %} p-3 md:p-6 md:px-9 bg-gray-50 font-sans  {% endcomment %}"> 
-                
-                {% block content %}
-                
-                {% endblock %}
-            </div>
+    {% include 'core/sidebar.html' %}
+    <div class="sm:ml-64 bg-bggray">
+        {% include 'core/topbar.html' %}
+        <div class="p-4 px-7 md:p-6 md:px-9 w-full"> 
+            
+            {% block content %}
+            
+            {% endblock %}
         </div>
     </div>
     
@@ -48,7 +45,7 @@
 
     {% if PROD %}
     {% else %}
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+    <script src="{% static 'dist/js/flowbite.js' %}"></script>
     {% endif %}
         
 </body>

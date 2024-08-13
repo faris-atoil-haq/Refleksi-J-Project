@@ -8,11 +8,9 @@
     {% endif %}
 
     {% if PROD or STAGING %}
-        <link rel="stylesheet" href="{% static 'src/output.css' %}">
+        <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
     {% else %}
-        {% compress css %}
-        <link rel="stylesheet" href="{% static 'src/output.css' %}">
-        {% endcompress %}
+        <link rel="stylesheet" href="{% static 'dist/css/main-dev.css' %}">
     {% endif %}
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
