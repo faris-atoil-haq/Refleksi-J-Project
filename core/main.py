@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 
-from core.models import Subject, SubjectReflection, Verification
+from core.models import Subject, SubjectReflection, Verification, Module
 
 
 @login_required
@@ -19,6 +19,19 @@ def home(request):
         'page': 'home',
     }
     return render(request, 'core/home.html', context)
+
+@login_required
+def module(request):
+    page_title = 'Module'
+    user = request.user
+
+    modules = Module.objects.filter(user=user)
+    context = {
+        'page_title': page_title,
+        'page': 'module',
+        'modules': modules,
+    }
+    return render(request, 'core/module.html', context)
 
 @login_required
 def app_settings(request):
@@ -211,6 +224,18 @@ def confirm_signup(request):
 
             return render(request, 'core/confirm.html',{'verified':True})
     return render(request, 'core/login.html')
+
+def upload_module(request):
+    print('Upload')
+    print(request.POST)
+    module_file = request.FILES.get('module_file',None)
+    print(module_file)
+    if module_file:
+        module_obj = Module.objects.create(user=request.user)
+        module_obj.module_file = module_file
+        module_obj.save()
+
+    return redirect('module')
 
 def signout(request):
     if not request.user.is_authenticated:

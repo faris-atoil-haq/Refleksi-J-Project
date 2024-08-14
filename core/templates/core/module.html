@@ -1,0 +1,38 @@
+{% extends 'core/_base.html' %}
+{% load custom_tags %}
+
+{% block content %}
+    <div class="mb-8 md:mb-14">
+        <div class="text-xl font-semibold mb-4">
+            Dasar Pendidikan
+        </div>
+        {% for module in modules %}
+        <div class="pb-6">
+            <a class="mb-6 w-full text-white bg-gray-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" href="{{module.module_file.url}}" >Modul {{forloop.counter}} - {{module.module_file.name|show_file_name}} </a>
+        </div>
+        {% endfor %}
+        <form method="POST" action="{% url 'upload_module' %}" id="module-upload-form" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div class="flex flex-col justify-center items-center rounded-lg py-4 px-10 text-center w-[575px] h-[228px]">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Max. File Size: 30MB</p>
+                    </div>
+                    <input id="dropzone-file" type="file" name="module_file" class="hidden" />
+                </label>
+                <button type="submit" class="mb-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Upload Module</button>
+            </div> 
+        </form> 
+        
+
+        {% comment %} <div class="flex gap-9 mb-6 flex-wrap" hx-get="{% url 'today_agenda' %}" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
+            {% include 'components/main-agenda-skeleton.html' %}
+            {% include 'components/main-agenda-skeleton.html' %}
+            
+        </div> {% endcomment %}
+    </div>
+{% endblock %}  

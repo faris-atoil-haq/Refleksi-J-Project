@@ -12,13 +12,21 @@ class Verification(models.Model):
     )
     verified = models.BooleanField(default=False)
     profile_photo = models.FileField(
-        upload_to="refleksi-j-photo", null=True, blank=True)
+        upload_to="refleksi-j-user-photo", null=True, blank=True)
     admin = models.BooleanField(default=False)
     instansi = models.CharField(max_length=256, null=True, blank=True)
     team = models.CharField(max_length=256, null=True, blank=True)
 
     def __str__(self):
-        return 'Verification for: ' + self.user.username
+        return 'Verification for: ' + self.user.first_name
+
+
+class Module(models.Model):
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
+    module_file = models.FileField(
+        upload_to="refleksi-j-module", null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
 
 class Article(models.Model):
