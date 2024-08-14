@@ -14,6 +14,7 @@ urlpatterns = [
     path('app/', main.home, name='home'),
     path('app/module/', main.module, name='module'),
     path('app/module/upload/', main.upload_module, name='upload_module'),
+    path('app/module/delete/', main.delete_module, name='delete_module'),
     path('app/refleksi/today/', journal.today_agenda, name='today_agenda'),
     path('app/refleksi/history/', journal.latest_reflection_journals, name='latest_reflection_journals'),
     path('app/jadwal/', journal.schedule, name='schedule'),

@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from config.settings import (AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT)
 
 
 from core.models import Subject, SubjectReflection, Verification, Module
@@ -22,7 +23,7 @@ def home(request):
 
 @login_required
 def module(request):
-    page_title = 'Module'
+    page_title = 'Modul'
     user = request.user
 
     modules = Module.objects.filter(user=user)
@@ -277,14 +278,36 @@ def reset_password(request):
     return render(request, 'core/login.html',context)
 
 def upload_module(request):
-    print('Upload')
-    print(request.POST)
-    module_file = request.FILES.get('module_file',None)
-    print(module_file)
-    if module_file:
-        module_obj = Module.objects.create(user=request.user)
-        module_obj.module_file = module_file
-        module_obj.save()
+    module_files = request.FILES.getlist('module_file',None)
+    try:
+        if module_files:
+            for module_file in module_files:
+                module_obj = Module.objects.create(user=request.user)
+                module_obj.module_file = module_file
+                module_obj.save()
+    except Exception as e:
+        print("Error Upload Modul: ",e)
+
+    return redirect('module')
+
+def delete_module(request):
+    module_file_id = request.POST.get('module_file_id',None)
+    if module_file_id:
+        module_obj = Module.objects.filter(id=module_file_id)
+        if module_obj:
+            module_obj = module_obj[0]
+            try:
+                module_file = module_obj.module_file
+                if "sgp1.digitaloceanspaces.com" in module_file.url:
+                    folder = 'refleksi-j-module'
+                    file_name = module_file.url.split("/")[-1]
+                    file_name = f"{folder}/{file_name}"
+                    sc_file = module_file
+                    S3_CLIENT.delete_object(Bucket=AWS_STORAGE_BUCKET_NAME,  Key=f"{AWS_LOCATION}/{sc_file.file}")
+                    module_obj.delete()
+            except Exception as e:
+                print("Error :", e)
+            
 
     return redirect('module')
 
