@@ -196,6 +196,16 @@ def signup(request):
         nama = request.POST.get('nama')
         instansi = request.POST.get('instansi')
         password = request.POST.get('password')
+        
+        user = User.objects.filter(email=email)
+        if user:
+            error_message = "Email sudah digunakan."
+            context = {
+                "email": email,
+                "error_message": error_message,
+            }
+            return render(request, 'core/signup.html', context=context)
+        
         verif_code = str(uuid.uuid4())[:5]
         print("Kode verifikasi: ")
         print(verif_code)
@@ -210,7 +220,7 @@ def signup(request):
         Verification.objects.create(user=user, instansi=instansi,verified = False)
 
         return render(request, 'core/confirm.html')
-    return render(request, 'core/login.html')
+    return render(request, 'core/signup.html')
 
 def confirm_signup(request):
     if request.GET:
@@ -248,7 +258,7 @@ def reset_password(request):
             user = user[0]
             if 'confirm_password' in request.POST:
                 password = request.POST.get('password')
-                user.password = password
+                user.set_password(password)
                 user.save()
 
                 return render(request, 'core/confirm.html',{'verified':True,'option':'reseted'})

@@ -8,10 +8,10 @@
     <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow md:p-8">
         <form method="POST" action="{% url 'signup' %}" id="signup-form" >
             {% csrf_token %}
-            <h5 class="mb-6 text-xl font-medium text-gray-900">Masuk Akun</h5>
+            <h5 class="mb-6 text-xl font-medium text-gray-900">Daftar</h5>
             <div class="mb-4">
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email Anda</label>
-                <input type="email" name="email" autocomplete="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required 
+                <input type="email" name="email" autocomplete="email" id="email" class="{% if error_message and email %}outline ring-red-500 outline-red-500{% endif %} bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@email.com" required 
                     {% if email %}value="{{email}}"{% endif %}
                     >
             </div>
@@ -28,15 +28,20 @@
 
             <div class="mb-4">
                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Kata Sandi</label>
-                <input type="password" name="password" id="password" autocomplete="current-password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 {% if error_message and email %}outline ring-red-500 outline-red-500{% endif %}" required>
+                <input type="password" name="password" id="password" autocomplete="current-password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
             </div>
             <div class="mb-4">
                 <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900">Ulangi Kata Sandi</label>
-                <input type="password" name="confirm_password" id="confirm_password" autocomplete="current-password" id="confirm_password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 {% if error_message and email %}outline ring-red-500 outline-red-500{% endif %}" required>
+                <input type="password" name="confirm_password" id="confirm_password" autocomplete="current-password" id="confirm_password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
             </div>
-            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 hidden" id="alert" role="alert">
+            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50-800 hidden" id="alert" role="alert">
                 Konfirmasi kata sandi tidak cocok
             </div>
+            {% if error_message %}
+                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50-800" id="alert" role="alert">
+                    {{error_message}}
+                </div>
+            {% endif %}
 
             <button type="submit" onclick="return validate_password()" class="mb-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Daftar</button>
             <div class="text-sm font-medium text-gray-500">
