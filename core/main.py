@@ -166,6 +166,11 @@ def signin(request):
                 "email": email,
             }
             return render(request, 'core/signup.html', context=context)
+        elif 'reset_password' in request.POST:
+            context = {
+                "email": email,
+            }
+            return render(request, 'core/reset_password.html', context=context)
 
         user = authenticate(request, email=email, password=password)
         verif = Verification.objects.filter(user=user)
@@ -222,8 +227,44 @@ def confirm_signup(request):
                 verif.verified = True
                 verif.save()
 
-            return render(request, 'core/confirm.html',{'verified':True})
+            return render(request, 'core/confirm.html',{'verified':True,'option':'signup'})
     return render(request, 'core/login.html')
+
+def reset_password(request):
+    if request.GET:
+        verif_code = request.GET.get('code')
+        email = request.GET.get('email')
+
+        user = User.objects.filter(username=verif_code,email=email)
+        if user:
+            user = user[0]
+            verif = Verification.objects.filter(user=user)
+            if verif:
+                return render(request, 'core/reset_password.html',{'verified':True, 'email':email})
+    if request.POST:
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email)
+        if user:
+            user = user[0]
+            if 'confirm_password' in request.POST:
+                password = request.POST.get('password')
+                user.password = password
+                user.save()
+
+                return render(request, 'core/confirm.html',{'verified':True,'option':'reseted'})
+            else:
+                verif_code = str(uuid.uuid4())[:5]
+                print("Reset Code: ",verif_code)
+                user.username = verif_code
+                user.save()
+                
+                return render(request, 'core/confirm.html',{'verified':True,'option':'reset'})
+            
+    
+    context = {
+        "error_message": 'Akun anda belum terdaftar',
+    }
+    return render(request, 'core/login.html',context)
 
 def upload_module(request):
     print('Upload')

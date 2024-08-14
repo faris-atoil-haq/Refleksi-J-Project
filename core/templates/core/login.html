@@ -34,12 +34,12 @@
                 </div>
             {% endif %}
             <button type="submit" id="login" class="mb-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Masuk</button>
-            <a href="#" class="ms-auto text-sm text-blue-700 hover:underline">Lupa Kata Sandi?</a>
         </form>
         <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
 
             <input hidden name="email" id="signup_email">
+            <button type="submit" id="reset" name="reset_password" class="ms-auto text-sm text-blue-700 hover:underline">Lupa Kata Sandi?</button>
             <div class="text-sm font-medium text-gray-500">
                 Belum punya akun? <button type="submit" id="signup" name="signup" class="text-blue-700 hover:underline">Daftar di sini</button>
             </div>

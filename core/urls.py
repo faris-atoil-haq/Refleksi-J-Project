@@ -6,6 +6,7 @@ urlpatterns = [
     path('', public.main, name='public'),
     
     path('confirm_signup/', main.confirm_signup, name='confirm_signup'),
+    path('reset_password/', main.reset_password, name='reset_password'),
     path('signup/', main.signup, name='signup'),
     path('login/', main.signin, name='login'),
     path('logout/', main.signout, name='logout'),
