@@ -1,8 +1,10 @@
 import uuid
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+
 
 class Verification(models.Model):
     user = models.OneToOneField(
@@ -11,11 +13,10 @@ class Verification(models.Model):
         related_query_name="verification"
     )
     verified = models.BooleanField(default=False)
-    profile_photo = models.FileField(
-        upload_to="refleksi-j-user-photo", null=True, blank=True)
     admin = models.BooleanField(default=False)
     instansi = models.CharField(max_length=256, null=True, blank=True)
-    team = models.CharField(max_length=256, null=True, blank=True)
+    code = models.CharField(max_length=256, null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return 'Verification for: ' + self.user.first_name
