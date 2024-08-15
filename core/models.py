@@ -23,6 +23,7 @@ class Verification(models.Model):
 
 
 class Module(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
     module_file = models.FileField(
         upload_to="refleksi-j-module", null=True, blank=True)
