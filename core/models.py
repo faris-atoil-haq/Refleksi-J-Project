@@ -49,6 +49,16 @@ class Subject(models.Model):
     
     def __str__(self):
         return f'{self.id} {self.name}'
+    
+class UserSubject(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="subjects")
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.subject}'
 
 class SubjectReflection(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -74,19 +84,18 @@ class ReflectionQuestion(models.Model):
     
 class TeacherAgenda(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.SET_NULL)
-    # user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="agenda")
+    user_subject = models.ForeignKey(UserSubject, blank=True, null=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f'{self.id} {self.subject}'
+        return f'{self.id} {self.user_subject}'
 
 class Journal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.CASCADE)
     question = models.ForeignKey(ReflectionQuestion, blank=True, null=True, on_delete=models.SET_NULL)
     content = models.TextField(blank=True, null=True)
