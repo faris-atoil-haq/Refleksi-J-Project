@@ -39,9 +39,9 @@
             {% csrf_token %}
 
             <input hidden name="email" id="signup_email">
-            <button type="submit" id="reset" name="reset_password" class="ms-auto text-sm text-blue-700 hover:underline">Lupa Kata Sandi?</button>
-            <div class="text-sm font-medium text-gray-500">
-                Belum punya akun? <a href="{% url 'signup' %}" class="text-blue-700 hover:underline">Daftar di sini</button>
+            <a href="{% url 'reset_password_email' %}" id="reset" class="ms-auto text-sm text-blue-700 hover:underline">Lupa kata sandi?</a>
+            <div class="text-sm text-blue-700 ">
+                Belum punya akun? <a href="{% url 'signup' %}" class="hover:underline">Daftar di sini</a>
             </div>
         </form>
         <script>
