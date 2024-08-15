@@ -7,6 +7,8 @@ from core.models import Article
 
 
 def main(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     context = {
         'articles': Article.objects.all().order_by('-created_at'),
         'main_public': True,

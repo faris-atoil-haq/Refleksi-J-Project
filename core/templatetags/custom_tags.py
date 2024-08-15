@@ -32,3 +32,8 @@ def month_in_bahasa(value):
         'december': 'Desember'
     }
     return months[value.lower()]
+
+@register.filter
+def show_file_name(value):
+    value = value.split('/')[1]
+    return value

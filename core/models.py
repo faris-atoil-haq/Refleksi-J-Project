@@ -1,7 +1,33 @@
 import uuid
 
+from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+
+
+class Verification(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_query_name="verification"
+    )
+    verified = models.BooleanField(default=False)
+    admin = models.BooleanField(default=False)
+    instansi = models.CharField(max_length=256, null=True, blank=True)
+    code = models.CharField(max_length=256, null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return 'Verification for: ' + self.user.first_name
+
+
+class Module(models.Model):
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
+    module_file = models.FileField(
+        upload_to="refleksi-j-module", null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
 
 class Article(models.Model):

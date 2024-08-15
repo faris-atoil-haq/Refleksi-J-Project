@@ -25,7 +25,7 @@
                 </a>
             </li>
             <li>
-                <a href="#"
+                <a href="{% url 'module'%}"
                     class="flex items-center p-2 {% if page == 'module' %}text-darkblue{% else %}text-gray-600{% endif %}  rounded-lg hover:bg-gray-100">
                     <svg class="flex-shrink-0 w-6 h-6 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4"/>
@@ -56,15 +56,17 @@
             </li>
         </ul>
         <ul class="space-y-1 font-medium border-t border-gray-200 py-4">
-            <li>
-                <a href="{% url 'app_settings' %}"
-                    class="flex items-center p-2 {% if page == 'admin' %}text-darkblue{% else %}text-gray-600{% endif %}  rounded-lg hover:bg-gray-100">
-                    <svg class="flex-shrink-0 w-6 h-6 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
-                    </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">Admin</span>
-                </a>
-            </li>
+            {% if request.user.verification.admin %}
+                <li>
+                    <a href="{% url 'app_settings' %}"
+                        class="flex items-center p-2 {% if page == 'admin' %}text-darkblue{% else %}text-gray-600{% endif %}  rounded-lg hover:bg-gray-100">
+                        <svg class="flex-shrink-0 w-6 h-6 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
+                        </svg>
+                        <span class="flex-1 ms-3 whitespace-nowrap">Admin</span>
+                    </a>
+                </li>
+            {% endif %}
             <li>
                 <a href="{% url 'app_settings' %}"
                     class="flex items-center p-2 {% if page == 'akun' %}text-darkblue{% else %}text-gray-600{% endif %}  rounded-lg hover:bg-gray-100">
