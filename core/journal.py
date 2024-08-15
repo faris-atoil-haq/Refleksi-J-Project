@@ -49,11 +49,13 @@ def schedule(request):
 def schedule_items(request):
     agenda_list = []
     for i in range(0, 7):
-        date = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0) + timezone.timedelta(days=i)
-        schedules = TeacherAgenda.objects.filter(start_time__date=date.date()).order_by('start_time')
-        agenda_list.append({'date': date, 'schedules': schedules})
+        date = (timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0) + timezone.timedelta(days=i)).date()
+        schedules = TeacherAgenda.objects.filter(start_time__date=date).order_by('start_time')
+        if schedules:
+            agenda_list.append({'date': date, 'schedules': schedules})
     print(agenda_list)
     context = {
         'agenda_list': agenda_list,
+        'today': timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
     }
     return render(request, 'core/journal/schedule-items.html', context)
