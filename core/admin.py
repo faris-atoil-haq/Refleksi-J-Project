@@ -38,3 +38,8 @@ class JournalAdmin(admin.ModelAdmin):
     date_hierarchy='created_at'
 admin.site.register(Journal, JournalAdmin)
 
+class VerificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'verified', 'code', 'admin', 'instansi', 'created_at']
+    search_fields = ['user__username', 'instansi']
+    date_hierarchy='created_at'
+admin.site.register(Verification, VerificationAdmin)

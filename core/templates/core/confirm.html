@@ -13,15 +13,15 @@
                     Silahkan <a href="{% url 'login' %}"class="text-blue-700 hover:underline">Masuk di sini</a>
                 </div>
             {% elif verified and option == 'reset'%}
-                Tautan sudah dikirim ke Email anda
+                Email pengaturan ulang kata sandi telah dikirim ke Email anda.
             {% elif verified and option == 'reseted'%}
-                Password Berhasil diatur ulang
+                Password berhasil diatur ulang
                 
                 <div class="text-sm font-medium text-gray-500">
-                    Silahkan <a href="{% url 'login' %}"class="text-blue-700 hover:underline">Masuk di sini</a>
+                    <a href="{% url 'login' %}"class="text-blue-700 hover:underline">Masuk di sini</a>
                 </div>
             {% else %}
-                Email konfirmasi sudah dikirim ke Email anda
+            Email konfirmasi sudah dikirim ke e-mail Anda. Silahkan cek e-mail Anda untuk melakukan verifikasi.
             {% endif %}
         </div>
     </div>

@@ -1,4 +1,5 @@
 import uuid
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -6,10 +7,9 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from config.settings import (AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT)
 
-
-from core.models import Subject, SubjectReflection, Verification, Module
+from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
+from core.models import Module, Subject, SubjectReflection, Verification
 
 
 @login_required
@@ -162,22 +162,14 @@ def signin(request):
     if request.POST:
         email = request.POST.get('email')
         password = request.POST.get('password')
-        if 'signup' in request.POST:
-            context = {
-                "email": email,
-            }
-            return render(request, 'core/signup.html', context=context)
-        elif 'reset_password' in request.POST:
-            context = {
-                "email": email,
-            }
-            return render(request, 'core/reset_password.html', context=context)
 
         user = authenticate(request, email=email, password=password)
-        verif = Verification.objects.filter(user=user)
-        if verif:    
-            verif = verif[0]
-            if verif.verified == True and user:
+        if user:
+            try:
+                verif = Verification.objects.get(user=user)
+            except Verification.DoesNotExist:
+                verif = None
+            if verif and verif.verified == True:
                 login(request, user)
                 return redirect('home')
         
@@ -197,60 +189,66 @@ def signup(request):
         nama = request.POST.get('nama')
         instansi = request.POST.get('instansi')
         password = request.POST.get('password')
-        
-        user = User.objects.filter(email=email)
-        if user:
-            error_message = "Email sudah digunakan."
-            context = {
-                "email": email,
-                "error_message": error_message,
-            }
-            return render(request, 'core/signup.html', context=context)
-        
+        confirm_password = request.POST.get('confirm_password')
         verif_code = str(uuid.uuid4())[:5]
         print("Kode verifikasi: ")
         print(verif_code)
+        
+        if confirm_password != password:
+            return render(request, 'core/signup.html', {'error_message': 'Kata sandi tidak cocok.'})
 
-        user = User.objects.create_user(
-            username=verif_code,
-            email=email,
-            first_name=nama,
-            password=password
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                email=email,
+                username=str(uuid.uuid4()),
+                first_name=nama,
+                password=password
             )
-                            
-        Verification.objects.create(user=user, instansi=instansi,verified = False)
+        verification = Verification.objects.filter(user=user).first()
+        if not verification:
+            verification, _ = Verification.objects.get_or_create(user=user)
+            verification.verified = False
+            verification.instansi = instansi
+            verification.code = verif_code
+            verification.save()
+            
+            # send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}/?code={verif_code}&email={email}')
+        
 
         return render(request, 'core/confirm.html')
     return render(request, 'core/signup.html')
 
+def reset_password_email(request):
+    if request.POST:
+        email = request.POST.get('email')
+        if 'reset_password' in request.POST and email:
+            return redirect('reset_password', kwargs={'email':email})
+    return render(request, 'core/reset_password_email.html')
+
 def confirm_signup(request):
-    if request.GET:
-        verif_code = request.GET.get('code')
-        email = request.GET.get('email')
+    verif_code = request.GET.get('code')
+    email = request.GET.get('email')
 
-        user = User.objects.filter(username=verif_code,email=email)
-        print(user)
-        if user:
-            user = user[0]
-            verif = Verification.objects.filter(user=user)
-            if verif:
-                verif = verif[0]
-                verif.verified = True
-                verif.save()
-
+    user = User.objects.filter(email=email).first()
+    if user:
+        verif = Verification.objects.filter(user=user).first()
+        if verif_code == verif.code:
+            verif.verified = True
+            verif.save()
             return render(request, 'core/confirm.html',{'verified':True,'option':'signup'})
-    return render(request, 'core/login.html')
+
+    return render(request, 'core/confirm.html')
 
 def reset_password(request):
     if request.GET:
-        verif_code = request.GET.get('code')
         email = request.GET.get('email')
 
-        user = User.objects.filter(username=verif_code,email=email)
+        user = User.objects.filter(email=email).first()
         if user:
-            user = user[0]
-            verif = Verification.objects.filter(user=user)
-            if verif:
+            verif = Verification.objects.filter(user=user).first()
+            if verif.verified:
                 return render(request, 'core/reset_password.html',{'verified':True, 'email':email})
     if request.POST:
         email = request.POST.get('email')
