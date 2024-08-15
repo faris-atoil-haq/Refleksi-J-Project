@@ -182,7 +182,15 @@ STATICFILES_FINDERS = [
 
 # else:
 
+import boto3
 
+session = boto3.session.Session()
+S3_CLIENT = session.client('s3',
+    endpoint_url=AWS_S3_ENDPOINT_URL, # Find your endpoint in the control panel, under Settings. Prepend "https://".
+    region_name=AWS_S3_REGION_NAME, # Use the region in your endpoint.
+    aws_access_key_id=AWS_ACCESS_KEY_ID, # Access key pair. You can create access key pairs using the control panel or API.
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY # Secret access key defined through an environment variable.
+) 
 MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{MEDIA_LOCATION}/'
 DEFAULT_FILE_STORAGE = 'config.storage_backend.PublicMediaStorage'
 

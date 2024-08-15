@@ -5,7 +5,9 @@ from core import journal, main, public
 urlpatterns = [
     path('', public.main, name='public'),
     
-    path('confirm_signup/', main.confirm_signup, name='confirm_signup'),
+    path('confirm/', main.confirm, name='confirm'),
+    path('reset_password/', main.reset_password, name='reset_password'),
+    path('forgot/', main.reset_password_email, name='reset_password_email'),
     path('signup/', main.signup, name='signup'),
     path('login/', main.signin, name='login'),
     path('logout/', main.signout, name='logout'),
@@ -13,6 +15,7 @@ urlpatterns = [
     path('app/', main.home, name='home'),
     path('app/module/', main.module, name='module'),
     path('app/module/upload/', main.upload_module, name='upload_module'),
+    path('app/module/delete/', main.delete_module, name='delete_module'),
     path('app/refleksi/today/', journal.today_agenda, name='today_agenda'),
     path('app/refleksi/history/', journal.latest_reflection_journals, name='latest_reflection_journals'),
     path('app/jadwal/', journal.schedule, name='schedule'),

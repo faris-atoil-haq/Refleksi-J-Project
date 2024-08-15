@@ -7,7 +7,9 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
+from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
 from core.models import Module, Subject, SubjectReflection, Verification
 
 
@@ -22,7 +24,7 @@ def home(request):
 
 @login_required
 def module(request):
-    page_title = 'Module'
+    page_title = 'Modul'
     user = request.user
 
     modules = Module.objects.filter(user=user)
@@ -183,6 +185,7 @@ def signin(request):
 def signup(request):
     if request.user.is_authenticated:
         return redirect('home')
+    
     if request.POST:
         email = request.POST.get('email')
         nama = request.POST.get('nama')
@@ -217,9 +220,10 @@ def signup(request):
         
 
         return render(request, 'core/confirm.html')
-    return render(request, 'core/signup.html')
+    email = request.GET.get('email', None)
+    return render(request, 'core/signup.html', {'email': email})
 
-def confirm_signup(request):
+def confirm(request):
     verif_code = request.GET.get('code')
     email = request.GET.get('email')
 
@@ -229,19 +233,99 @@ def confirm_signup(request):
         if verif_code == verif.code:
             verif.verified = True
             verif.save()
-            return render(request, 'core/confirm.html',{'verified':True})
+            return render(request, 'core/confirm.html',{'verified':True,'option':'signup'})
 
     return render(request, 'core/confirm.html')
 
+def reset_password_email(request):
+    if request.POST:
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+        if user:
+            verif = Verification.objects.filter(user=user).first()
+            if verif.verified:
+                code = str(uuid.uuid4())
+                verif.code = code
+                verif.save()
+                reset_password_link = request.build_absolute_uri(reverse('reset_password')+f'?email={email}&code={code}')
+                print("Reset Password Link: ",reset_password_link)
+                # send_email('Reset Password', email, f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}/?code={code}&email={email}')
+                # send_email('Reset Password',email,f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}/?code={code}&email={email}')
+            else:
+                reset_password_link = request.build_absolute_uri(reverse('confirm')+f'?email={email}&code={verif.code}')
+                print("Email belum terverifikasi. Link: ",reset_password_link)
+                # send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami melihat bahwa Anda belum menyelesaikan verifikasi email. Klik tautan berikut untuk melakukan verifikasi: \n{link_verifikasi}')
+        else:
+            reset_password_link = request.build_absolute_uri(reverse('signup')+f'?email={email}')
+            print("Email belum terdaftar. Link: ",reset_password_link)
+            # send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami tidak menemukan email Anda. Daftarkan email Anda di sini: \n{signup_link}')
+        return redirect(reverse('confirm')+'?email='+email)
+    return render(request, 'core/reset_password_email.html')
+
+
+def reset_password(request):
+    if request.GET:
+        email = request.GET.get('email')
+        code = request.GET.get('code')
+
+        user = User.objects.filter(email=email).first()
+        if user:
+            verif = Verification.objects.filter(user=user).first()
+            if verif.verified and code == verif.code:
+                return render(request, 'core/reset_password.html',{'verified':True, 'email':email})
+    if request.POST:
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email)
+        if user:
+            user = user[0]
+            if 'confirm_password' in request.POST:
+                password = request.POST.get('password')
+                user.set_password(password)
+                user.save()
+
+                return render(request, 'core/confirm.html',{'verified':True,'option':'reseted'})
+            else:
+                verif_code = str(uuid.uuid4())
+                print("Reset Code: ",verif_code)
+                verif = user.verification
+                verif.code = verif_code
+                verif.save()
+                
+                return render(request, 'core/confirm.html',{'verified':True,'option':'reset'})
+            
+    return redirect('reset_password_email')
+
 def upload_module(request):
-    print('Upload')
-    print(request.POST)
-    module_file = request.FILES.get('module_file',None)
-    print(module_file)
-    if module_file:
-        module_obj = Module.objects.create(user=request.user)
-        module_obj.module_file = module_file
-        module_obj.save()
+    module_files = request.FILES.getlist('module_file',None)
+    try:
+        if module_files:
+            for module_file in module_files:
+                module_obj = Module.objects.create(user=request.user)
+                module_obj.module_file = module_file
+                module_obj.save()
+    except Exception as e:
+        print("Error Upload Modul: ",e)
+
+    return redirect('module')
+
+def delete_module(request):
+    module_file_id = request.POST.get('module_file_id',None)
+    if module_file_id:
+        module_obj = Module.objects.filter(id=module_file_id)
+        if module_obj:
+            module_obj = module_obj[0]
+            try:
+                module_file = module_obj.module_file
+                if "sgp1.digitaloceanspaces.com" in module_file.url:
+                    folder = 'refleksi-j-module'
+                    file_name = module_file.url.split("/")[-1]
+                    file_name = f"{folder}/{file_name}"
+                    sc_file = module_file
+                    S3_CLIENT.delete_object(Bucket=AWS_STORAGE_BUCKET_NAME,  Key=f"{AWS_LOCATION}/{sc_file.file}")
+                    module_obj.delete()
+            except Exception as e:
+                print("Error :", e)
+            
 
     return redirect('module')
 
