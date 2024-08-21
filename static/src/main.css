@@ -10,7 +10,7 @@
     }
 
     .btn {
-        @apply rounded-lg text-sm px-5 p-1.5 text-center inline-flex items-center me-2;
+        @apply rounded-md text-sm px-5 p-1.5 text-center inline-flex items-center me-2;
     }
 
     .btn-primary {
@@ -34,7 +34,7 @@
     }
 
     .input-sm {
-        @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:outline-none focus:border-blue-500 p-1.5;
+        @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:outline-none focus:border-blue-500 p-1.5;
     }
 
     .alert-primary {
