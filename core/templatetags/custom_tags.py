@@ -1,3 +1,4 @@
+import pytz
 from django import template
 
 register = template.Library()
@@ -37,3 +38,11 @@ def month_in_bahasa(value):
 def show_file_name(value):
     value = value.split('/')[1]
     return value
+
+@register.simple_tag()
+def as_timezone(time_input, timezone, format=None):
+    if not format:
+        format = '%Y-%m-%d %H:%M'
+    timezone = pytz.timezone(timezone)
+    res = time_input.astimezone(timezone).strftime(format)
+    return res

@@ -15,12 +15,6 @@ class SubjectAdmin(admin.ModelAdmin):
     date_hierarchy='created_at'
 admin.site.register(Subject, SubjectAdmin)
 
-class UserSubjectAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'subject', 'updated_at', 'created_at',]
-    search_fields = ['id', 'user__email', 'user__firstname', 'subject__name']
-    date_hierarchy='created_at'
-admin.site.register(UserSubject, UserSubjectAdmin)
-
 class SubjectReflectionAdmin(admin.ModelAdmin):
     list_display = ['id', 'subject', 'updated_at', 'created_at',]
     search_fields = ['id', 'subject__id', 'subject__name',]
@@ -33,8 +27,8 @@ class ReflectionQuestionAdmin(admin.ModelAdmin):
 admin.site.register(ReflectionQuestion, ReflectionQuestionAdmin)
 
 class TeacherAgendaAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user_subject', 'start_time', 'end_time', 'updated_at', 'created_at',]
-    search_fields = ['id', 'user_subject__id']
+    list_display = ['id', 'user', 'subject', 'start_time', 'end_time', 'updated_at', 'created_at',]
+    search_fields = ['id', 'user__firstname', 'user__id', 'subject__id']
     date_hierarchy='created_at'
 admin.site.register(TeacherAgenda, TeacherAgendaAdmin)
 
