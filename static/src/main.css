@@ -44,4 +44,8 @@
     .alert-warning {
         @apply flex items-center p-4 text-sm text-yellow-800 bg-yellow-50;
     }
+
+    .htmx-request {
+        @apply block
+    }
 }

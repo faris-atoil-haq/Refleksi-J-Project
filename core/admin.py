@@ -43,3 +43,15 @@ class VerificationAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'instansi']
     date_hierarchy='created_at'
 admin.site.register(Verification, VerificationAdmin)
+
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'module_file', 'created_at', 'updated_at']
+    search_fields = ['id', 'user__username', 'module_file__file']
+    date_hierarchy='created_at'
+admin.site.register(Module, ModuleAdmin)
+    
+class ModuleAssessmentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'module', 'category', 'updated_at', 'created_at']
+    search_fields = ['id', 'module__id', 'category']
+    date_hierarchy='created_at'
+admin.site.register(ModuleAssessment, ModuleAssessmentAdmin)

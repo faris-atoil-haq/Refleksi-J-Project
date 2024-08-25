@@ -1,0 +1,187 @@
+import json
+
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.decorators.http import require_GET, require_POST
+
+from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
+from core.models import Module, ModuleAssessment
+from utils.chatpdf import ChatPDF
+
+
+@login_required
+def module(request):
+    page_title = 'Modul'
+    user = request.user
+
+    modules = Module.objects.filter(user=user)
+    context = {
+        'page_title': page_title,
+        'page': 'module',
+        'modules': modules,
+    }
+    return render(request, 'core/module/module.html', context)
+
+def upload_module(request):
+    module_file = request.FILES.get('module_file',None)
+    try:
+        if module_file:
+            # remove extension
+            module_file.name = module_file.name.replace('.'+module_file.name.split('.')[-1], '')
+            # Add timestamp to avoid duplicated file name
+            module_file.name = f"{module_file.name}_{int(timezone.now().timestamp())}"
+            module_obj = Module.objects.create(user=request.user)
+            module_obj.module_file = module_file
+            module_obj.save()
+    except Exception as e:
+        print("Error Upload Modul: ",e)
+
+    return redirect('module')
+
+@login_required
+@require_POST
+def delete_module(request, id):
+    module_obj = Module.objects.filter(id=id, user=request.user)
+    if module_obj:
+        module_obj = module_obj[0]
+        module_obj.delete()
+
+    return redirect('module')
+
+@login_required
+@require_GET
+def upload_to_chatpdf(request, id):
+    try:
+        module = Module.objects.get(id=id, user=request.user)
+    except Module.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    response = HttpResponse()
+    response['HX-Trigger'] = json.dumps({'generateFeedback'+str(id).replace('-', ''):''})
+    if not module.chatpdf_id:
+        chatpdf = ChatPDF()
+        res = chatpdf.upload_pdf(module.module_file.url)
+        if res:
+            module.chatpdf_id = res
+            module.save()
+    return response
+    
+@login_required
+@require_GET
+def check_module_components(request,id):
+    try:
+        module = Module.objects.get(id=id, user=request.user)
+    except Module.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    chatpdf = ChatPDF()
+    if module.chatpdf_id:
+        res = chatpdf.check_must_have_components(module.chatpdf_id)
+        if type(res) == dict:
+            ModuleAssessment.objects.create(category='komponen_wajib', module=module, response_json=res)
+        elif type(res) == str:
+            ModuleAssessment.objects.create(category='komponen_wajib', module=module, response=res)
+    else:
+        return HttpResponse(status=404)
+    response = HttpResponse()
+    response['HX-Trigger'] = json.dumps({'checkComponentsDone':''})
+    return response
+    
+@login_required
+@require_GET
+def generate_module_assessment(request, id):
+    try:
+        module = Module.objects.get(id=id, user=request.user)
+    except Module.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    chatpdf = ChatPDF()
+    if module.chatpdf_id:
+        res = chatpdf.provide_assessment(module.chatpdf_id)
+        if type(res) == dict:
+            ModuleAssessment.objects.create(category='penialaian_kesesuaian', module=module, response_json=res)
+        elif type(res) == str:
+            ModuleAssessment.objects.create(category='penialaian_kesesuaian', module=module, response=res)
+    else:
+        print('Module is not uploaded to the ChatPDF yet.')
+        return HttpResponse(status=404)
+    
+    response = HttpResponse()
+    response['HX-Trigger'] = json.dumps({'suitabilityAssessmentDone':''})
+    return response
+
+@login_required
+@require_GET
+def generate_suggestion(request, id):
+    try:
+        module = Module.objects.get(id=id, user=request.user)
+    except Module.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    chatpdf = ChatPDF()
+    if module.chatpdf_id:
+        res = chatpdf.get_suggestion(module.chatpdf_id)
+        ModuleAssessment.objects.create(category='suggestion', module=module, response=res)
+    else:
+        print('Module is not uploaded to the ChatPDF yet.')
+        return HttpResponse(status=404)
+    
+    response = HttpResponse()
+    response['HX-Trigger'] = json.dumps({'suggestionDone':''})
+    return response
+
+@login_required
+@require_GET
+def get_feedback(request, id):
+    try:
+        module = Module.objects.get(id=id, user=request.user, chatpdf_id__isnull=False)
+    except Module.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    feedbacks = []
+    try:
+        module_assessment = ModuleAssessment.objects.get(module=module, category='komponen_wajib', response_json__isnull=False)
+    except ModuleAssessment.DoesNotExist:
+        chatpdf = ChatPDF()
+        res = chatpdf.check_must_have_components(module.chatpdf_id)
+        if type(res) == dict:
+            module_assessment = ModuleAssessment.objects.create(category='komponen_wajib', module=module, response_json=res)
+        elif type(res) == str:
+            ModuleAssessment.objects.create(category='komponen_wajib', module=module, response=res)
+            module_assessment = None
+        else:
+            return HttpResponse(status=404)
+    if module_assessment:
+        feedbacks.append(module_assessment)
+    
+    try:
+        module_assessment = ModuleAssessment.objects.get(module=module, category='penialaian_kesesuaian', response_json__isnull=False)
+    except ModuleAssessment.DoesNotExist:
+        chatpdf = ChatPDF()
+        res = chatpdf.provide_assessment(module.chatpdf_id)
+        if type(res) == dict:
+            module_assessment = ModuleAssessment.objects.create(category='penialaian_kesesuaian', module=module, response_json=res)
+        elif type(res) == str:
+            ModuleAssessment.objects.create(category='penialaian_kesesuaian', module=module, response=res)
+            module_assessment = None
+        else:
+            return HttpResponse(status=404)
+    if module_assessment:
+        feedbacks.append(module_assessment)
+        
+    try:
+        module_assessment = ModuleAssessment.objects.get(module=module, category='suggestion', response__isnull=False)
+    except ModuleAssessment.DoesNotExist:
+        chatpdf = ChatPDF()
+        res = chatpdf.get_suggestion(module.chatpdf_id)
+        module_assessment = ModuleAssessment.objects.create(category='suggestion', module=module, response=res)
+    feedbacks.append(module_assessment)
+    
+    return render(request, 'core/module/module-feedback.html', {'feedbacks': feedbacks})
+
+@login_required
+@require_GET
+def get_view_feedback_btn(request, id):
+    return render(request, 'core/module/view-feedback-btn.html', {'module':{'id': id}})
