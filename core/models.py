@@ -27,6 +27,7 @@ class Module(models.Model):
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
     module_file = models.FileField(
         upload_to="refleksi-j-module", null=True, blank=True)
+    chatpdf_id = models.CharField(max_length=255, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -111,3 +112,21 @@ class HeadNews(models.Model):
             return f'{self.id} {self.text[:20]}...'
         else:
             return f'{self.id}'
+        
+MODULE_ASSESSMENT_CATEGORY = [
+    ('komponen_wajib', 'Komponen Wajib'),
+    ('penialaian_kesesuaian', 'Penilaian Kesesuaian'),
+    ('suggestion', 'Suggestion'),
+]
+
+class ModuleAssessment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    category = models.CharField(max_length=255, blank=True, null=True, choices=MODULE_ASSESSMENT_CATEGORY)
+    module = models.ForeignKey(Module, blank=True, null=True, on_delete=models.CASCADE)
+    response = models.TextField(blank=True, null=True)
+    response_json = models.JSONField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.category} {self.module}'

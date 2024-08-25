@@ -5,6 +5,7 @@ module.exports = {
     './node_modules/flowbite/**/*.{html,js}',
   ],
   safelist: [
+    'mt-4',
     'bg-gray-900/50',
     'dark:bg-gray-900/80',
     'fixed',

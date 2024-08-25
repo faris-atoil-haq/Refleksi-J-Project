@@ -1,6 +1,6 @@
 from django.urls import path
 
-from core import journal, main, public
+from core import journal, main, module, public
 
 urlpatterns = [
     path('', public.main, name='public'),
@@ -13,9 +13,15 @@ urlpatterns = [
     path('logout/', main.signout, name='logout'),
 
     path('app/', main.home, name='home'),
-    path('app/modul/', main.module, name='module'),
-    path('app/modul/upload/', main.upload_module, name='upload_module'),
-    path('app/modul/delete/', main.delete_module, name='delete_module'),
+    path('app/modul/', module.module, name='module'),
+    path('app/modul/upload/', module.upload_module, name='upload_module'),
+    path('app/modul/<uuid:id>/delete/', module.delete_module, name='delete_module'),
+    path('app/modul/<uuid:id>/upload/ai/', module.upload_to_chatpdf, name='upload_to_chatpdf'),
+    path('app/modul/<uuid:id>/generate/check-component/', module.check_module_components, name='check_module_components'),
+    path('app/modul/<uuid:id>/generate/assessment/', module.generate_module_assessment, name='generate_module_assessment'),
+    path('app/modul/<uuid:id>/generate/suggestion/', module.generate_suggestion, name='generate_suggestion'),
+    path('app/modul/<uuid:id>/feedback/', module.get_feedback, name='get_feedback'),
+    path('app/modul/<uuid:id>/view-feedback-btn/', module.get_view_feedback_btn, name='get_view_feedback_btn'),
     path('app/refleksi/today/', journal.today_agenda, name='today_agenda'),
     path('app/refleksi/history/', journal.latest_reflection_journals, name='latest_reflection_journals'),
     path('app/jadwal/', journal.schedule, name='schedule'),

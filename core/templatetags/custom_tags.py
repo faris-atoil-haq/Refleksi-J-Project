@@ -1,3 +1,6 @@
+import re
+
+import markdown
 import pytz
 from django import template
 
@@ -46,3 +49,21 @@ def as_timezone(time_input, timezone, format=None):
     timezone = pytz.timezone(timezone)
     res = time_input.astimezone(timezone).strftime(format)
     return res
+
+@register.filter
+def remove_dash(value):
+    return str(value).replace('-', '')
+
+
+@register.filter
+def render_markdown(text):
+    html = markdown.markdown(text)
+    html = html.replace('<h1>', '<h1 class="mb-4">')
+    html = html.replace('<h2>', '<h2 class="mb-4">')
+    html = html.replace('<h3>', '<h3 class="mb-4">')
+    html = html.replace('<h4>', '<h4 class="mb-4">')
+    html = html.replace('<h5>', '<h5 class="mb-4">')
+    html = html.replace('<h6>', '<h6 class="mb-4">')
+    html = html.replace('<ol>', '<ol class="mb-4">')
+    html = re.sub(r'<li>\s*<p>\s*<strong>', '<li><p class="mt-4"><strong>', html)
+    return html

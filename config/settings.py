@@ -218,6 +218,8 @@ SENTRY_KEY = env('SENTRY_KEY', default='')
 LOCKDOWN_ENABLED = env.bool('LOCKDOWN', default=False)
 LOCKDOWN_PASSWORDS = tuple(env.list('LOCKDOWN_PASSWORDS', default=['letmein']))
 
+CHATPDF_API_KEY = env('CHATPDF_API_KEY', default='')
+
 
 # Debug
 if PROD:
