@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
 from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
-from core.models import Module, ModuleAssessment
+from core.models import Module, ModuleAssessment, Subject
 from utils.chatpdf import ChatPDF
 
 
@@ -16,13 +16,54 @@ def module(request):
     page_title = 'Modul'
     user = request.user
 
+    subjects = Subject.objects.filter(user=user)
     modules = Module.objects.filter(user=user)
     context = {
         'page_title': page_title,
         'page': 'module',
         'modules': modules,
+        'subjects': subjects,
     }
-    return render(request, 'core/module/module.html', context)
+    return render(request, 'core/module/module-main.html', context)
+
+@login_required
+def subject_manager(request, subject_id=None):
+    """Create or edit a subject"""
+    user=request.user
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        if subject_id:
+            is_delete = request.POST.get('delete')
+            if not (name or is_delete):
+                return HttpResponse(status=400)
+            
+            try:
+                subject_ = Subject.objects.get(id=subject_id)
+                if is_delete:
+                    subject_.delete()
+                    return HttpResponse()
+                else:
+                    subject_.name = name
+                    subject_.save()
+            except:
+                return HttpResponse(status=404)
+            context = {
+                'subject': subject_
+            }
+            return render(request, 'core/module/module-subject-item.html', context=context)
+        
+        else:
+            if not name:
+                return HttpResponse(status=400)
+            order_ = len(Subject.objects.filter(user=user)) + 1
+            subject_ = Subject.objects.create(name=name,user=user,order=order_)
+        return redirect('module')
+    
+    # GET METHOD
+    context = {
+        'page_title': 'Tambah Mata Pelajaran'
+    }
+    return render(request, 'core/module/module-create-subject.html', context)
 
 def upload_module(request):
     module_file = request.FILES.get('module_file',None)

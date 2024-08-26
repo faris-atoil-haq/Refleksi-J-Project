@@ -14,6 +14,7 @@ urlpatterns = [
 
     path('app/', main.home, name='home'),
     path('app/modul/', module.module, name='module'),
+    path('app/modul/subjects/create/', module.subject_manager, name='create_new_subject'),
     path('app/modul/upload/', module.upload_module, name='upload_module'),
     path('app/modul/<uuid:id>/delete/', module.delete_module, name='delete_module'),
     path('app/modul/<uuid:id>/upload/ai/', module.upload_to_chatpdf, name='upload_to_chatpdf'),
