@@ -10,7 +10,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
-from core.models import Module, Subject, SubjectReflection, Verification
+from core.models import Module, Subject, Verification
 
 
 @login_required
