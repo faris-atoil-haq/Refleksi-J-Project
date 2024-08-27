@@ -1,16 +1,17 @@
 import uuid
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
-from core.models import Module, Subject, SubjectReflection, Verification
+from core.models import ReflectionQuestion, Subject, Verification
+from utils.mail import send_email
 
 
 @login_required
@@ -33,43 +34,53 @@ def app_settings(request):
 
 @login_required
 def reflection_templates(request):
-    try:
-        page = int(request.GET.get('page', 1))
-        if page < 1:
-            page = 1
-    except:
-        page = 1
-    q = request.GET.get('q', '')
-    
-    conditions = Q()
-    if q:
-        conditions = Q(subject__name__icontains=q)
-        conditions |= Q(subject__class_levl__icontains=q)
-    paginator = Paginator(
-        SubjectReflection.objects.filter(conditions).distinct().order_by('-created_at'), 
-        25
-    )
-    if page > paginator.num_pages:
-        page = 1
-    current_page = paginator.page(page)
-    objects = current_page.object_list
-        
+    reflection_questions = ReflectionQuestion.objects.all().order_by('order')
     context = {
-        'page_title': 'Template Refleksi',
-        'page': page,
-        'current_page': current_page,
-        'paginator': paginator,
-        'q': q,
-        'subject_reflections': objects,
+        'page_title': 'Admin',
+        'page': 'admin',
+        'reflection_questions': reflection_questions,
     }
-    return render(request, 'core/settings/reflection/reflection.html', context)
+    return render(request, 'core/settings/reflection/manage-reflection-template.html', context)
 
 @login_required
-def manage_reflection_template(request, id=None):
+def manage_reflection_question(request, id=None):
+    if id:
+        try:
+            reflection_question = ReflectionQuestion.objects.get(id=id)
+        except:
+            return HttpResponse(status=404)
+        if request.POST.get('delete'):
+            current_order = reflection_question.order
+            ReflectionQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            reflection_question.delete()
+            return redirect('reflection_templates')
+    else:
+        questions = ReflectionQuestion.objects.all()
+        reflection_question = ReflectionQuestion.objects.create(order=len(questions) + 1)
+    
+    reflection_question.question = request.POST.get('question', reflection_question.question)
+    reflection_question.save()
     context = {
-        'page_title': 'Template Refleksi'
+        'id': reflection_question.id,
+        'order': reflection_question.order,
+        'question': reflection_question.question
     }
-    return render(request, 'core/settings/reflection/reflection.html', context)
+    return render(request, 'core/settings/reflection/reflection-question-card.html', context)
+
+@login_required
+def order_reflection_question(request):
+    ids = request.POST.getlist('id')
+    if not ids:
+        return HttpResponse(status=400)
+    
+    for order, question_id in enumerate(ids, start=1):
+        try:
+            reflection_question = ReflectionQuestion.objects.get(id=question_id)
+            reflection_question.order = order
+            reflection_question.save()
+        except ReflectionQuestion.DoesNotExist:
+            return HttpResponse(status=404)
+    return render(request, 'core/settings/reflection/reflection-questions.html', {'reflection_questions': ReflectionQuestion.objects.all().order_by('order')})
 
 @login_required
 def subject_page(request):
@@ -203,7 +214,8 @@ def signup(request):
             verification.code = verif_code
             verification.save()
             
-            # send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}/?code={verif_code}&email={email}')
+            confirm_signup_link = settings.PARENT_HOST + reverse('confirm')
+            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}/?code={verif_code}&email={email}')
         
 
         return render(request, 'core/confirm.html')
@@ -234,18 +246,17 @@ def reset_password_email(request):
                 code = str(uuid.uuid4())
                 verif.code = code
                 verif.save()
-                reset_password_link = request.build_absolute_uri(reverse('reset_password')+f'?email={email}&code={code}')
+                reset_password_link = settings.PARENT_HOST+reverse('reset_password')+f'?email={email}&code={code}'
                 print("Reset Password Link: ",reset_password_link)
-                # send_email('Reset Password', email, f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}/?code={code}&email={email}')
-                # send_email('Reset Password',email,f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}/?code={code}&email={email}')
+                send_email('Reset Password', email, f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}')
             else:
-                reset_password_link = request.build_absolute_uri(reverse('confirm')+f'?email={email}&code={verif.code}')
-                print("Email belum terverifikasi. Link: ",reset_password_link)
-                # send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami melihat bahwa Anda belum menyelesaikan verifikasi email. Klik tautan berikut untuk melakukan verifikasi: \n{link_verifikasi}')
+                link_verifikasi = settings.PARENT_HOST+reverse('confirm')+f'?email={email}&code={verif.code}'
+                print("Email belum terverifikasi. Link: ",link_verifikasi)
+                send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami melihat bahwa Anda belum menyelesaikan verifikasi email. Klik tautan berikut untuk melakukan verifikasi: \n{link_verifikasi}')
         else:
-            reset_password_link = request.build_absolute_uri(reverse('signup')+f'?email={email}')
-            print("Email belum terdaftar. Link: ",reset_password_link)
-            # send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami tidak menemukan email Anda. Daftarkan email Anda di sini: \n{signup_link}')
+            signup_link = settings.PARENT_HOST+reverse('signup')+f'?email={email}'
+            print("Email belum terdaftar. Link: ",signup_link)
+            send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami tidak menemukan email Anda. Daftarkan email Anda di sini: \n{signup_link}')
         return redirect(reverse('confirm')+'?email='+email)
     return render(request, 'core/reset_password_email.html')
 

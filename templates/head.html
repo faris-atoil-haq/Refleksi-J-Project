@@ -3,9 +3,10 @@
 <head class="">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if favicon %}
-    <link rel="icon" type="image/x-icon" href="{{favicon.image.url}}">
-    {% endif %}
+    <link rel="apple-touch-icon" sizes="180x180" href="https://pesaneen.sgp1.cdn.digitaloceanspaces.com/refleksi-j/pesaneen/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://pesaneen.sgp1.cdn.digitaloceanspaces.com/refleksi-j/pesaneen/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://pesaneen.sgp1.cdn.digitaloceanspaces.com/refleksi-j/pesaneen/static/favicon-16x16.png">
+    <link rel="manifest" href="https://pesaneen.sgp1.cdn.digitaloceanspaces.com/refleksi-j/pesaneen/static/site.webmanifest">
 
     {% if PROD or STAGING %}
         <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
