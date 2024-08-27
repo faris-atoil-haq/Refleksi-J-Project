@@ -122,3 +122,39 @@ class ModuleAssessment(models.Model):
     
     def __str__(self):
         return f'{self.id} {self.category} {self.module}'
+    
+class AngketQuestion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    question = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    order = models.IntegerField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.order}'
+    
+class AngketAnswerOption(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    question = models.ForeignKey(AngketQuestion, blank=True, null=True, on_delete=models.CASCADE)
+    text = models.TextField(blank=True, null=True)
+    order = models.IntegerField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.order}'
+
+class AngketResponse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    respondent = models.CharField(max_length=255, blank=True, null=True)
+    question = models.ForeignKey(AngketQuestion, blank=True, null=True, on_delete=models.CASCADE)
+    question_text = models.TextField(blank=True, null=True)
+    answer = models.ForeignKey(AngketAnswerOption, blank=True, null=True, on_delete=models.CASCADE)
+    answer_text = models.TextField(blank=True, null=True)
+    answer_options = models.JSONField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.respondent} {self.question}'

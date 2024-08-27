@@ -4,6 +4,8 @@ import markdown
 import pytz
 from django import template
 
+from core.models import AngketAnswerOption
+
 register = template.Library()
 
 @register.filter
@@ -67,3 +69,8 @@ def render_markdown(text):
     html = html.replace('<ol>', '<ol class="mb-4">')
     html = re.sub(r'<li>\s*<p>\s*<strong>', '<li><p class="mt-4"><strong>', html)
     return html
+
+@register.filter
+def get_answer_options(question_id):
+    answer_options = AngketAnswerOption.objects.filter(question=question_id).order_by('order')
+    return answer_options

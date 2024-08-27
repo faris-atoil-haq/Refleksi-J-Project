@@ -1,0 +1,123 @@
+{% load static %}
+{% load custom_tags %}
+
+<div class="w-full p-6 pt-1 mb-6 bg-white border border-gray-200 rounded-lg shadow" id="question-card-{{order}}">
+    <input type="hidden" name="id" value="{{id}}" />
+    <div class="w-full py-1 cursor-grab grab-handler flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
+            <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+        </svg>
+    </div>
+    <div class="flex justify-between">
+        <div><span id="num-1" class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">No. {{order}}
+        </span></div>
+        
+        <button id="manage-question-{{order}}" data-dropdown-toggle="manage-question-menu-{{order}}"
+            class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button">
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15">
+            <path d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+            </svg>
+        </button>    
+        <!-- Dropdown menu -->
+        <div id="manage-question-menu-{{order}}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow">
+            <ul class="py-2 text-sm text-gray-700" aria-labelledby="manage-question-{{order}}">
+                <li>
+                    <form action="{% url 'manage_angket_question' id=id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" name="delete" value="delete" class="block px-4 py-2 hover:bg-red-600 hover:text-white">Hapus</a>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    
+    </div>
+    
+    <form class="mt-6" hx-swap="outerHTML" hx-target="#question-card-{{order}}" hx-post="{% url 'manage_angket_question' id=id %}">
+        <div class="relative z-0 w-full mb-5 group">
+            <input type="text" id="question-{{order}}" name="question" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 
+                {% if question %}value="{{question}}"{% endif %} required />
+            <input type="hidden" id="question-defined-{{order}}" {% if question %}value="{{question}}"{% endif %} />
+            <label for="question-1" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                Pertanyaan angket
+            </label>
+        </div>
+        <div class="relative z-0 w-full mb-5 group">
+            <input type="text" id="description-{{order}}" name="description" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 
+                {% if description %}value="{{description}}"{% endif %} required />
+            <input type="hidden" id="description-defined-{{order}}" {% if description %}value="{{description}}"{% endif %} />
+            <label for="description-1" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                Deskripsi (opsional)
+            </label>
+        </div>
+        <div id="options-container-{{order}}" class="mb-5 option-sortable" hx-post="{% url 'order_angket_option' angket_id=id %}" hx-trigger="end" hx-include="[name='question_id']">
+            {% include "core/settings/angket/angket-options.html" with answer_options=id|get_answer_options %}
+        </div>
+        <div class="mb-6">
+            <button hx-get="{% url 'create_angket_option' angket_id=id %}" hx-target="#options-container-{{order}}" hx-swap="beforeend" type="button" class="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5 text-center">
+                Tambah Pilihan <svg class="ms-3 w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
+                </svg>
+            </button>
+        </div>
+        <div id="action-{{order}}" class="hidden gap-3 mt-4">
+            <button id="submit-{{order}}" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5 text-center">Simpan</button>
+            <button id="cancel-{{order}}" type="button" class=" text-gray-600 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 text-center"><svg class="w-6 h-6 text-gray-800 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+            </svg>
+            </button>
+        </div>
+        <script>
+            document.querySelector('#question-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+            });
+            document.querySelector('#description-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+            });
+            document.querySelector('#submit-{% firstof order "1" %}').addEventListener('click', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('flex');
+            });
+            document.querySelector('#cancel-{% firstof order "1" %}').addEventListener('click', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('flex');
+                document.querySelector('#question-{% firstof order "1" %}').value = document.querySelector('#question-defined-{% firstof order "1" %}').value;
+            });
+
+            $( document ).ready(function (){
+                const Dropdown = window.Dropdown
+                new Dropdown(document.getElementById('manage-question-menu-{{order}}'), document.getElementById('manage-question-{{order}}'));
+            })
+
+            htmx.onLoad(function(content) {
+                var sortables = content.querySelectorAll(".option-sortable");
+                for (var i = 0; i < sortables.length; i++) {
+                    var sortable = sortables[i];
+                    var sortableInstance = new Sortable(sortable, {
+                        animation: 150,
+                        ghostClass: 'blue-background-class',
+                        handle: ".option-grab-handle",
+                
+                        // Make the `.htmx-indicator` unsortable
+                        filter: ".htmx-indicator",
+                        onMove: function (evt) {
+                            return evt.related.className.indexOf('htmx-indicator') === -1;
+                        },
+                
+                        // Disable sorting on the `end` event
+                        onEnd: function (evt) {
+                            this.option("disabled", true);
+                        }
+                    });
+            
+                    // Re-enable sorting on the `htmx:afterSwap` event
+                    sortable.addEventListener("htmx:afterSwap", function() {
+                        sortableInstance.option("disabled", false);
+                    });
+                }
+            })
+        </script>
+
+    </form>
+</div>

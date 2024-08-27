@@ -1,0 +1,3 @@
+{% for ao in answer_options %}
+    {% include "core/settings/angket/option-card.html" with question_id=ao.question.id option_id=ao.id text=ao.text option_order=ao.order %}
+{% endfor %}
