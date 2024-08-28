@@ -41,7 +41,4 @@ urlpatterns = [
     path('app/settings/angket/create/', main.manage_angket_question, name='create_angket_question'),
     path('app/settings/angket/order/', main.order_angket_question, name='order_angket_question'),
     path('app/settings/angket/<uuid:id>/', main.manage_angket_question, name='manage_angket_question'),
-    path('app/settings/angket/<uuid:angket_id>/option/create/', main.manage_angket_option, name='create_angket_option'),
-    path('app/settings/angket/<uuid:angket_id>/option/order/', main.order_angket_option, name='order_angket_option'),
-    path('app/settings/angket/<uuid:angket_id>/option/<uuid:id>/', main.manage_angket_option, name='manage_angket_option'),
 ]

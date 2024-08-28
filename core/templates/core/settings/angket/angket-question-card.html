@@ -37,27 +37,45 @@
             <input type="text" id="question-{{order}}" name="question" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 
                 {% if question %}value="{{question}}"{% endif %} required />
             <input type="hidden" id="question-defined-{{order}}" {% if question %}value="{{question}}"{% endif %} />
-            <label for="question-1" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+            <label for="question-{{order}}" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Pertanyaan angket
             </label>
         </div>
         <div class="relative z-0 w-full mb-5 group">
             <input type="text" id="description-{{order}}" name="description" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 
-                {% if description %}value="{{description}}"{% endif %} required />
+                {% if description %}value="{{description}}"{% endif %} />
             <input type="hidden" id="description-defined-{{order}}" {% if description %}value="{{description}}"{% endif %} />
-            <label for="description-1" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+            <label for="description-{{order}}" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                 Deskripsi (opsional)
             </label>
         </div>
-        <div id="options-container-{{order}}" class="mb-5 option-sortable" hx-post="{% url 'order_angket_option' angket_id=id %}" hx-trigger="end" hx-include="[name='question_id']">
-            {% include "core/settings/angket/angket-options.html" with answer_options=id|get_answer_options %}
+        <div id="options-container-{{order}}">
+            <div class="mb-5">
+                <label for="rentang-1" class="text-xs text-gray-500 ">
+                    Rentang Respon
+                </label>
+                <input type="number" id="rentang-{{order}}" min="0" max="10" name="rentang" class="block py-2.5 px-0 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="0 - 10" 
+                    {% if rentang %}value="{{rentang}}"{% endif %} required />
+                <input type="hidden" id="rentang-defined-{{order}}" {% if rentang %}value="{{rentang}}"{% endif %} />
+            </div>
         </div>
-        <div class="mb-6">
-            <button hx-get="{% url 'create_angket_option' angket_id=id %}" hx-target="#options-container-{{order}}" hx-swap="beforeend" type="button" class="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5 text-center">
-                Tambah Pilihan <svg class="ms-3 w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
-                </svg>
-            </button>
+        <div class="flex flex-wrap items-center">
+            <div class="relative z-0 group mb-5 me-5">
+                <input type="text" id="label-min-{{order}}" name="label_min" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 
+                    {% if label_min %}value="{{label_min}}"{% endif %} required />
+                <input type="hidden" id="label-min-defined-{{order}}" {% if label_min %}value="{{label_min}}"{% endif %} />
+                <label for="label-min-{{order}}" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                    Label titik terbawah
+                </label>
+            </div>
+            <div class="relative z-0 group mb-5">
+                <input type="text" id="label-max-{{order}}" name="label_max" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 
+                    {% if label_max %}value="{{label_max}}"{% endif %} required />
+                <input type="hidden" id="label-max-defined-{{order}}" {% if label_max %}value="{{label_max}}"{% endif %} />
+                <label for="label-max-{{order}}" class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                    Label titik teratas
+                </label>
+            </div>
         </div>
         <div id="action-{{order}}" class="hidden gap-3 mt-4">
             <button id="submit-{{order}}" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-1.5 text-center">Simpan</button>
@@ -75,6 +93,18 @@
                 document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
                 document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
             });
+            document.querySelector('#rentang-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+            });
+            document.querySelector('#label-min-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+            });
+            document.querySelector('#label-max-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+            });
             document.querySelector('#submit-{% firstof order "1" %}').addEventListener('click', function() {
                 document.querySelector('#action-{% firstof order "1" %}').classList.add('hidden');
                 document.querySelector('#action-{% firstof order "1" %}').classList.remove('flex');
@@ -83,6 +113,10 @@
                 document.querySelector('#action-{% firstof order "1" %}').classList.add('hidden');
                 document.querySelector('#action-{% firstof order "1" %}').classList.remove('flex');
                 document.querySelector('#question-{% firstof order "1" %}').value = document.querySelector('#question-defined-{% firstof order "1" %}').value;
+                document.querySelector('#description-{% firstof order "1" %}').value = document.querySelector('#description-defined-{% firstof order "1" %}').value;
+                document.querySelector('#rentang-{% firstof order "1" %}').value = document.querySelector('#rentang-defined-{% firstof order "1" %}').value;
+                document.querySelector('#label-min-{% firstof order "1" %}').value = document.querySelector('#label-min-defined-{% firstof order "1" %}').value;
+                document.querySelector('#label-max-{% firstof order "1" %}').value = document.querySelector('#label-max-defined-{% firstof order "1" %}').value;
             });
 
             $( document ).ready(function (){
@@ -90,33 +124,6 @@
                 new Dropdown(document.getElementById('manage-question-menu-{{order}}'), document.getElementById('manage-question-{{order}}'));
             })
 
-            htmx.onLoad(function(content) {
-                var sortables = content.querySelectorAll(".option-sortable");
-                for (var i = 0; i < sortables.length; i++) {
-                    var sortable = sortables[i];
-                    var sortableInstance = new Sortable(sortable, {
-                        animation: 150,
-                        ghostClass: 'blue-background-class',
-                        handle: ".option-grab-handle",
-                
-                        // Make the `.htmx-indicator` unsortable
-                        filter: ".htmx-indicator",
-                        onMove: function (evt) {
-                            return evt.related.className.indexOf('htmx-indicator') === -1;
-                        },
-                
-                        // Disable sorting on the `end` event
-                        onEnd: function (evt) {
-                            this.option("disabled", true);
-                        }
-                    });
-            
-                    // Re-enable sorting on the `htmx:afterSwap` event
-                    sortable.addEventListener("htmx:afterSwap", function() {
-                        sortableInstance.option("disabled", false);
-                    });
-                }
-            })
         </script>
 
     </form>

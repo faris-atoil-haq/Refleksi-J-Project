@@ -10,8 +10,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from core.models import (AngketAnswerOption, AngketQuestion,
-                         ReflectionQuestion, Subject, Verification)
+from core.models import AngketQuestion, ReflectionQuestion, Verification
 from utils.mail import send_email
 
 
@@ -105,18 +104,37 @@ def manage_angket_question(request, id=None):
             AngketQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
             angket_question.delete()
             return redirect('angket_templates')
+        
+        question = request.POST.get('question')
+        try:
+            option_range = int(request.POST.get('rentang'))
+        except:
+            print("Option range must be an integer")
+            return HttpResponse(status=400)
+        option_start_label = request.POST.get('label_min')
+        option_end_label = request.POST.get('label_min')
+        if not question or option_range <= 0 or option_range > 10 or not option_start_label or not option_end_label:
+            print(f"Invalid input. {question=} {option_range=} {option_start_label=} {option_end_label=}")
+            return HttpResponse(status=400)
+        
+        angket_question.question = question
+        angket_question.description = request.POST.get('description', angket_question.description)
+        angket_question.option_range = option_range
+        angket_question.option_start_label = option_start_label 
+        angket_question.option_end_label = option_end_label 
+        angket_question.save()
     else:
         questions = AngketQuestion.objects.all()
         angket_question = AngketQuestion.objects.create(order=len(questions) + 1)
     
-    angket_question.question = request.POST.get('question', angket_question.question)
-    angket_question.description = request.POST.get('description', angket_question.description)
-    angket_question.save()
     context = {
         'id': angket_question.id,
         'order': angket_question.order,
         'question': angket_question.question,
-        'description': angket_question.description
+        'description': angket_question.description,
+        'rentang': angket_question.option_range,
+        'label_min': angket_question.option_start_label,
+        'label_max': angket_question.option_end_label,
     }
     return render(request, 'core/settings/angket/angket-question-card.html', context)
 
@@ -134,55 +152,6 @@ def order_angket_question(request):
         except AngketQuestion.DoesNotExist:
             return HttpResponse(status=404)
     return render(request, 'core/settings/angket/angket-questions.html', {'angket_questions': AngketQuestion.objects.all().order_by('order')})
-
-@login_required
-def manage_angket_option(request, angket_id, id=None):
-    try:
-        angket_question = AngketQuestion.objects.get(id=angket_id)
-    except:
-        return HttpResponse(status=404)
-    
-    print(request.GET)
-    if id:
-        try:
-            answer_option = AngketAnswerOption.objects.get(id=id, question=angket_question)
-        except:
-            return HttpResponse(status=404)
-        
-        if request.GET.get('delete'):
-            current_order = answer_option.order
-            AngketAnswerOption.objects.filter(question=angket_question, order__gt=current_order).update(order=F('order') - 1)
-            answer_option.delete()
-            return HttpResponse(status=200)
-    else:
-        answer_option = AngketAnswerOption.objects.create(question=angket_question, order=len(AngketAnswerOption.objects.all()) + 1)
-    
-    answer_option.text = request.GET.get('text', answer_option.text)
-    answer_option.save()
-    context = {
-        'question_id': angket_id,
-        'option_id': answer_option.id,
-        'text': answer_option.text,
-        'order': answer_option.order,
-    }
-    return render(request, 'core/settings/angket/option-card.html', context)
-
-@login_required
-def order_angket_option(request, angket_id):
-    print(request.POST)
-    ids = request.POST.getlist('option_id')
-    if not ids:
-        return HttpResponse(status=400)
-    
-    for order, id_ in enumerate(ids, start=1):
-        try:
-            answer_option = AngketAnswerOption.objects.get(question__id=angket_id, id=id_)
-            answer_option.order = order
-            answer_option.save()
-        except AngketAnswerOption.DoesNotExist:
-            return HttpResponse(status=404)
-    return render(request, 'core/settings/angket/angket-questions.html', {'answer_options': AngketAnswerOption.objects.filter(question__id=angket_id).order_by('order')})
-
 
 def signin(request):
     if request.user.is_authenticated:
