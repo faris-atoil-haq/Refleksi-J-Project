@@ -16,9 +16,9 @@ class SubjectAdmin(admin.ModelAdmin):
 admin.site.register(Subject, SubjectAdmin)
 
 class ReflectionQuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'order','updated_at', 'created_at',]
+    list_display = ['id', 'question', 'order', 'updated_at', 'created_at',]
     search_fields = ['id', 'question']
-    date_hierarchy='created_at'
+    order='order'
 admin.site.register(ReflectionQuestion, ReflectionQuestionAdmin)
 
 class TeacherAgendaAdmin(admin.ModelAdmin):
@@ -50,3 +50,15 @@ class ModuleAssessmentAdmin(admin.ModelAdmin):
     search_fields = ['id', 'module__id', 'category']
     date_hierarchy='created_at'
 admin.site.register(ModuleAssessment, ModuleAssessmentAdmin)
+
+class AngketQuestionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'question', 'description', 'order', 'option_range', 'option_step', 'option_start_label', 'option_end_label', 'updated_at', 'created_at']
+    search_fields = ['id', 'question']
+    date_hierarchy='created_at'
+admin.site.register(AngketQuestion, AngketQuestionAdmin)
+    
+class AngketResponseAdmin(admin.ModelAdmin):
+    list_display = ['id', 'agenda', 'respondent', 'question', 'question_text', 'answer', 'answer_options', 'created_at', 'updated_at']
+    search_fields = ['id', 'respondent', 'question_text']
+    date_hierarchy='created_at'
+admin.site.register(AngketResponse, AngketResponseAdmin)

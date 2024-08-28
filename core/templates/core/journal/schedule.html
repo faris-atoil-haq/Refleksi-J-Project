@@ -29,7 +29,6 @@
                         <input name="q" type="text" id="search" 
                             class="text-sm bg-white border border-gray-300 text-gray-900 focus:ring-blue-500 focus:outline-none focus:border-blue-500 block w-full ps-10 p-2"
                             placeholder="Cari"
-                            hx-get="{% url 'subject_page' %}" hx-swap="innerHTML" hx-target="#subject-data" hx-trigger="changed"
                             {% if q %}value="{{q}}"{% endif %}>
                     </div>
                     <button type="submit" class="btn btn-primary rounded-md rounded-s-none font-medium">

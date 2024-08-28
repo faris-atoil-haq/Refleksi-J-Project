@@ -124,3 +124,34 @@ class ModuleAssessment(models.Model):
     
     def __str__(self):
         return f'{self.id} {self.category} {self.module}'
+    
+class AngketQuestion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    question = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    order = models.IntegerField(null=True, blank=True)
+    option_range = models.IntegerField(null=True, blank=True)
+    option_step = models.IntegerField(null=True, blank=True)
+    option_start_label = models.CharField(max_length=255, blank=True, null=True)
+    option_end_label = models.CharField(max_length=255, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.order}'
+    
+class AngketResponse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.SET_NULL)
+    respondent = models.CharField(max_length=255, blank=True, null=True)
+    question = models.ForeignKey(AngketQuestion, blank=True, null=True, on_delete=models.CASCADE)
+    question_text = models.TextField(blank=True, null=True)
+    answer = models.IntegerField(blank=True, null=True)
+    answer_options = models.JSONField(blank=True, null=True)
+    # answer_options format:
+    # {"range": 3, "step": 1, "start_label": "Sangat Tidak Puas", "end_label": "Sangat Puas"}
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.respondent} {self.question}'

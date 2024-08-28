@@ -1,0 +1,3 @@
+{% for rq in angket_questions %}
+    {% include "core/settings/angket/angket-question-card.html" with id=rq.id question=rq.question description=rq.description order=rq.order rentang=rq.option_range label_min=rq.option_start_label label_max=rq.option_end_label %}
+{% endfor %}
