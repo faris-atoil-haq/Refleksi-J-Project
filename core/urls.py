@@ -31,8 +31,14 @@ urlpatterns = [
     
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
+    
     path('app/settings/refleksi/', main.reflection_templates, name='reflection_templates'),
     path('app/settings/refleksi/create/', main.manage_reflection_question, name='create_reflection_question'),
     path('app/settings/refleksi/order/', main.order_reflection_question, name='order_reflection_question'),
     path('app/settings/refleksi/<uuid:id>/', main.manage_reflection_question, name='manage_reflection_question'),
+    
+    path('app/settings/angket/', main.angket_templates, name='angket_templates'),
+    path('app/settings/angket/create/', main.manage_angket_question, name='create_angket_question'),
+    path('app/settings/angket/order/', main.order_angket_question, name='order_angket_question'),
+    path('app/settings/angket/<uuid:id>/', main.manage_angket_question, name='manage_angket_question'),
 ]

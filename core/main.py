@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from core.models import ReflectionQuestion, Subject, Verification
+from core.models import AngketQuestion, ReflectionQuestion, Verification
 from utils.mail import send_email
 
 
@@ -83,77 +83,75 @@ def order_reflection_question(request):
     return render(request, 'core/settings/reflection/reflection-questions.html', {'reflection_questions': ReflectionQuestion.objects.all().order_by('order')})
 
 @login_required
-def subject_page(request):
-    page_title = 'Mata Pelajaran'
-    
-    try:
-        page = int(request.GET.get('page', 1))
-    except:
-        return HttpResponse(status=400)
-    if page < 1:
-        page = 1
-    q = request.GET.get('q', '')
-    
-    conditions = Q()
-    if q:
-        conditions = Q(name__icontains=q)
-    paginator = Paginator(
-        Subject.objects.filter(conditions).order_by('name'), 
-        25
-    )
-    if page > paginator.num_pages:
-        page = 1
-    current_page = paginator.page(page)
-    subjects = current_page.object_list
-        
+def angket_templates(request):
+    angket_questions = AngketQuestion.objects.all().order_by('order')
     context = {
-        'page_title': page_title,
-        'page': page,
-        'current_page': current_page,
-        'paginator': paginator,
-        'q': q,
-        'subjects': subjects,
+        'page_title': 'Admin',
+        'page': 'admin',
+        'angket_questions': angket_questions,
     }
-    return render(request, 'core/settings/subject/subjects.html', context)
+    return render(request, 'core/settings/angket/manage-angket-template.html', context)
 
 @login_required
-def subject(request, subject_id=None):
-    """Create or edit a subject"""
-    
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        if subject_id:
-            is_delete = request.POST.get('delete')
-            if not (name or is_delete):
-                return HttpResponse(status=400)
-            
-            try:
-                subject_ = Subject.objects.get(id=subject_id)
-                if is_delete:
-                    subject_.delete()
-                    return HttpResponse()
-                else:
-                    subject_.name = name
-                    subject_.save()
-            except:
-                return HttpResponse(status=404)
-            context = {
-                'subject': subject_
-            }
-            return render(request, 'core/settings/subject/subject-item.html', context=context)
+def manage_angket_question(request, id=None):
+    if id:
+        try:
+            angket_question = AngketQuestion.objects.get(id=id)
+        except:
+            return HttpResponse(status=404)
+        if request.POST.get('delete'):
+            current_order = angket_question.order
+            AngketQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            angket_question.delete()
+            return redirect('angket_templates')
         
-        else:
-            if not name:
-                return HttpResponse(status=400)
-            
-            subject_ = Subject.objects.create(name=name)
-        return redirect('subject_page')
+        question = request.POST.get('question')
+        try:
+            option_range = int(request.POST.get('rentang'))
+        except:
+            print("Option range must be an integer")
+            return HttpResponse(status=400)
+        option_start_label = request.POST.get('label_min')
+        option_end_label = request.POST.get('label_min')
+        if not question or option_range <= 0 or option_range > 10 or not option_start_label or not option_end_label:
+            print(f"Invalid input. {question=} {option_range=} {option_start_label=} {option_end_label=}")
+            return HttpResponse(status=400)
+        
+        angket_question.question = question
+        angket_question.description = request.POST.get('description', angket_question.description)
+        angket_question.option_range = option_range
+        angket_question.option_start_label = option_start_label 
+        angket_question.option_end_label = option_end_label 
+        angket_question.save()
+    else:
+        questions = AngketQuestion.objects.all()
+        angket_question = AngketQuestion.objects.create(order=len(questions) + 1)
     
-    # GET METHOD
     context = {
-        'page_title': 'Tambah Mata Pelajaran'
+        'id': angket_question.id,
+        'order': angket_question.order,
+        'question': angket_question.question,
+        'description': angket_question.description,
+        'rentang': angket_question.option_range,
+        'label_min': angket_question.option_start_label,
+        'label_max': angket_question.option_end_label,
     }
-    return render(request, 'core/settings/subject/create-subject.html', context)
+    return render(request, 'core/settings/angket/angket-question-card.html', context)
+
+@login_required
+def order_angket_question(request):
+    ids = request.POST.getlist('id')
+    if not ids:
+        return HttpResponse(status=400)
+    
+    for order, question_id in enumerate(ids, start=1):
+        try:
+            angket_question = AngketQuestion.objects.get(id=question_id)
+            angket_question.order = order
+            angket_question.save()
+        except AngketQuestion.DoesNotExist:
+            return HttpResponse(status=404)
+    return render(request, 'core/settings/angket/angket-questions.html', {'angket_questions': AngketQuestion.objects.all().order_by('order')})
 
 def signin(request):
     if request.user.is_authenticated:

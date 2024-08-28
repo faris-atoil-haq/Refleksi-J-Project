@@ -1,0 +1,55 @@
+{% extends 'core/_base.html' %}
+
+{% block content %}
+    <div class="flex items-center mb-6">
+        <a href="{% url 'app_settings' %}" class="me-5 py-1 px-2 rounded bg-white shadow flex">
+            <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+            </svg>
+        </a>
+        <div class="text-xl font-semibold">
+            Pertanyaan Angket
+        </div>
+    </div>
+    
+    <div class="sortable" hx-post="{% url 'order_angket_question' %}" hx-trigger="end" hx-include="[name='id']">
+        {% include "core/settings/angket/angket-questions.html" %}
+    </div>
+    <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_angket_question' %}"
+        hx-target=".sortable" hx-swap="beforeend">
+        <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
+        </svg>
+    </button>
+    <script>
+        htmx.onLoad(function(content) {
+            var sortables = content.querySelectorAll(".sortable");
+            for (var i = 0; i < sortables.length; i++) {
+                var sortable = sortables[i];
+                var sortableInstance = new Sortable(sortable, {
+                    animation: 150,
+                    ghostClass: 'blue-background-class',
+                    handle: ".grab-handler",
+            
+                    // Make the `.htmx-indicator` unsortable
+                    filter: ".htmx-indicator",
+                    onMove: function (evt) {
+                        return evt.related.className.indexOf('htmx-indicator') === -1;
+                    },
+            
+                    // Disable sorting on the `end` event
+                    onEnd: function (evt) {
+                        this.option("disabled", true);
+                    }
+                });
+        
+                // Re-enable sorting on the `htmx:afterSwap` event
+                sortable.addEventListener("htmx:afterSwap", function() {
+                    sortableInstance.option("disabled", false);
+                });
+            }
+        })
+    </script>
+
+
+{% endblock %}  
