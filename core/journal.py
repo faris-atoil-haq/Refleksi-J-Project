@@ -38,22 +38,17 @@ def latest_reflection_journals(request):
 @login_required
 @require_GET
 def schedule(request):
-    subjects = Subject.objects.filter(
-        #class_level=''
-        ).order_by('name').values('id', 'name')
-    
     context = {
         'page': 'schedule',
         'page_title': 'Jadwal Pertemuan',
         'today': timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')),
-        'subjects': subjects,
     }
     return render(request, 'core/journal/schedule.html', context)
 
 @login_required
 @require_POST
 def schedule_subject(request):
-    subject_id = request.POST.get('subject')
+    subject_name = request.POST.get('subject')
     date = request.POST.get('date')
     start_time = request.POST.get('start_time')
     end_time = request.POST.get('end_time')
@@ -62,7 +57,7 @@ def schedule_subject(request):
         repetition = 'no_repetition'
     
     # Add TeacherAgenda based on the POST data
-    subject = Subject.objects.get(id=subject_id)
+    subject, _ = Subject.objects.get_or_create(name=subject_name, user=request.user)
     start_time = timezone.datetime.strptime(f'{date} {start_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
     print(start_time)
     end_time = timezone.datetime.strptime(f'{date} {end_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
@@ -75,7 +70,8 @@ def schedule_subject(request):
             end_time=end_time
         )
     # elif repetition == 'daily':
-        
+    # elif repetition == 'weekly':
+    # elif repetition == 'monthly':
     
     return redirect('schedule')
     
@@ -87,7 +83,7 @@ def schedule_items(request):
     start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
     
-    schedules = TeacherAgenda.objects.filter(start_time__date__range=(start_of_month, end_of_month)).order_by('start_time')
+    schedules = TeacherAgenda.objects.filter(user=request.user, start_time__date__range=(start_of_month, end_of_month)).order_by('start_time')
     for schedule in schedules:
         date = schedule.start_time.date()
         if not any(agenda['date'] == date for agenda in agenda_list):
@@ -95,9 +91,13 @@ def schedule_items(request):
         for agenda in agenda_list:
             if agenda['date'] == date:
                 agenda['schedules'].append(schedule)
+    today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+    # get agenda['date'] that is the most nearest to today
+    nearest_today_agenda = min(agenda_list, key=lambda x: abs(x['date'] - today))
     
     context = {
         'agenda_list': agenda_list,
-        'today': timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date(),
+        'nearest_today_agenda': nearest_today_agenda,
+        'today': today,
     }
     return render(request, 'core/journal/schedule-items.html', context)
