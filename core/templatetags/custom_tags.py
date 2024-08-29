@@ -42,6 +42,11 @@ def show_file_name(value):
     value = value.split('/')[1]
     return value
 
+@register.filter
+def count_total(objects):
+    value = len(objects)
+    return value
+
 @register.simple_tag()
 def as_timezone(time_input, timezone, format=None):
     if not format:

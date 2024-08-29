@@ -22,15 +22,6 @@ class Verification(models.Model):
         return 'Verification for: ' + self.user.first_name
 
 
-class Module(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
-    module_file = models.FileField(
-        upload_to="refleksi-j-module", null=True, blank=True)
-    chatpdf_id = models.CharField(max_length=255, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
 
 class Article(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -45,13 +36,24 @@ class Subject(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class_level = models.CharField(max_length=50, blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
-    users = models.ManyToManyField(User, related_name="subjects")
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    order = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
         return f'{self.id} {self.name}'
     
+class Module(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
+    module_file = models.FileField(
+        upload_to="refleksi-j-module", null=True, blank=True)
+    chatpdf_id = models.CharField(max_length=255, blank=True, null=True)
+    subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
 class ReflectionQuestion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     question = models.TextField(blank=True, null=True)
