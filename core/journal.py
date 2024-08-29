@@ -16,7 +16,7 @@ def today_agenda(request):
     context = {
         'agenda_list': agenda_list,
     }
-    return render(request, 'core/journal/today-agenda.html', context)
+    return render(request, 'core/journal/mata-pelajaran-item.html', context)
 
 @login_required
 @require_GET
