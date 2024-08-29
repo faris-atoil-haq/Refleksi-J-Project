@@ -112,7 +112,7 @@ def manage_angket_question(request, id=None):
             print("Option range must be an integer")
             return HttpResponse(status=400)
         option_start_label = request.POST.get('label_min')
-        option_end_label = request.POST.get('label_min')
+        option_end_label = request.POST.get('label_max')
         if not question or option_range <= 0 or option_range > 10 or not option_start_label or not option_end_label:
             print(f"Invalid input. {question=} {option_range=} {option_start_label=} {option_end_label=}")
             return HttpResponse(status=400)
