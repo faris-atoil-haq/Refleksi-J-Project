@@ -72,3 +72,33 @@ def render_markdown(text):
     html = html.replace('<ol>', '<ol class="mb-4">')
     html = re.sub(r'<li>\s*<p>\s*<strong>', '<li><p class="mt-4"><strong>', html)
     return html
+
+@register.filter
+def total_respondent(angket_session):
+    return angket_session.responses.all().values('session').distinct().count()
+
+@register.filter
+def datetime_as_timezone(time_input, timezone):
+    timezone = pytz.timezone(timezone)
+    res = time_input.astimezone(timezone)
+    return res
+
+@register.filter
+def middle(a, b):
+    return int((a + b) / 2)
+
+@register.filter
+def get_percent(value, total):
+    res = (value-1) / (total-1) * 100
+    if res > 0:
+        if res < 50:
+            return res - 0.3
+        elif res == 50:
+            return res - .4
+        else:
+            return res - 0.8
+    return res
+
+@register.filter
+def in_range(value, start=0):
+    return range(start, value+1)

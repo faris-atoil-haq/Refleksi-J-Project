@@ -57,8 +57,14 @@ class AngketQuestionAdmin(admin.ModelAdmin):
     date_hierarchy='created_at'
 admin.site.register(AngketQuestion, AngketQuestionAdmin)
     
+class AngketSessionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'link', 'accept_response', 'created_at', 'updated_at']
+    search_fields = ['id', 'user__id', 'user__email', 'user__firstname', 'user__username']
+    date_hierarchy='created_at'
+admin.site.register(AngketSession, AngketSessionAdmin)
+
 class AngketResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'agenda', 'respondent', 'question', 'question_text', 'answer', 'answer_options', 'created_at', 'updated_at']
+    list_display = ['id', 'session', 'respondent', 'question', 'question_text', 'answer', 'answer_options', 'created_at', 'updated_at']
     search_fields = ['id', 'respondent', 'question_text']
     date_hierarchy='created_at'
 admin.site.register(AngketResponse, AngketResponseAdmin)

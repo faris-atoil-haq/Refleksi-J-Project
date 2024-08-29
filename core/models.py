@@ -139,17 +139,26 @@ class AngketQuestion(models.Model):
     
     def __str__(self):
         return f'{self.id} {self.order}'
+
+class AngketSession(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    link = models.TextField(blank=True, null=True)
+    accept_response = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
     
 class AngketResponse(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.SET_NULL)
+    session = models.ForeignKey(AngketSession, blank=True, null=True, on_delete=models.CASCADE, related_name="responses")
     respondent = models.CharField(max_length=255, blank=True, null=True)
     question = models.ForeignKey(AngketQuestion, blank=True, null=True, on_delete=models.CASCADE)
     question_text = models.TextField(blank=True, null=True)
     answer = models.IntegerField(blank=True, null=True)
     answer_options = models.JSONField(blank=True, null=True)
     # answer_options format:
-    # {"range": 3, "step": 1, "start_label": "Sangat Tidak Puas", "end_label": "Sangat Puas"}
+    # {"option_range": 3, "option_step": 1, "option_start_label": "Sangat Tidak Puas", "option_end_label": "Sangat Puas"}
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     

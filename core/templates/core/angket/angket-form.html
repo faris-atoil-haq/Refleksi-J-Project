@@ -1,0 +1,61 @@
+{% load custom_tags %}
+<div class="">
+    <form hx-post="{% url 'angket_form' angket.id %}" hx-swap="none" class="flex justify-center mb-3">
+        <input type="text" id="angket-name" class="me-3 border-0 bg-gray-50 hover:border-1 hover:border-blue-500 focus:bg-gray-50 text-gray-900 font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Nama angket"
+            name="name"
+            value="{{angket.name}}" required />
+        <button id="save-angket" type="submit" class="hidden text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
+    </form>
+    <script>
+        document.querySelector('#angket-name').addEventListener('input', function() {
+            document.querySelector('#save-angket').classList.remove('hidden');
+        });
+        document.querySelector('#save-angket').addEventListener('click', function(){
+            document.querySelector('#save-angket').classList.add('hidden');
+        })
+    </script>
+
+    <div class="me-3 mb-3 flex ps-1">
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="checkbox" name="accept_response" class="sr-only peer" hx-post="{% url 'toggle_accept_response' id=angket.id %}" hx-trigger="input" hx-swap="none"
+                {% if angket.accept_response %}checked{% endif %}
+                    >
+            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span class="ms-3 text-sm font-medium text-gray-600">Terima respon</span>
+        </label>
+    </div>
+
+    <div class="flex flex-wrap justify-between w-full mb-6">
+        <button id="copy-{{angket.id}}" class="flex items-start text-gray-600 hover:text-indigo-800 hover:bg-white hover:shadow hover:rounded-lg px-2 py-1 me-10 font-medium text-sm text-center mb-3" type="button">
+            <span id="copy-msg-{{angket.id}}" class="me-2">
+                Copy Link
+            </span>
+            <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.213 9.787a3.391 3.391 0 0 0-4.795 0l-3.425 3.426a3.39 3.39 0 0 0 4.795 4.794l.321-.304m-.321-4.49a3.39 3.39 0 0 0 4.795 0l3.424-3.426a3.39 3.39 0 0 0-4.794-4.795l-1.028.961"/>
+            </svg>
+        </button>
+        <script>
+            document.getElementById("copy-{{angket.id}}").addEventListener("click", function() {
+                var url = "{{HOST}}/angket/{{angket.id}}/";
+                navigator.clipboard.writeText(url).then(function() {
+                    document.getElementById("copy-msg-{{angket.id}}").textContent = "Link Copied!";
+                    setTimeout(function() {
+                        document.getElementById("copy-msg-{{angket.id}}").textContent = "Copy Link";
+                    }, 1000);
+                }).catch(function() {
+                    document.getElementById("copy-msg-{{angket.id}}").textContent = "Failed";
+                    setTimeout(function() {
+                        document.getElementById("copy-msg-{{angket.id}}").textContent = "Copy Link";
+                    }, 1000);
+                });
+            });
+        </script>
+
+        <button data-tooltip-target="tooltip-delete-{{angket.id}}"  data-modal-target="popup-modal-{{angket.id}}" data-modal-toggle="popup-modal-{{angket.id}}" class="text-gray-600 hover:text-red-800 font-medium text-sm text-center px-2 py-1 hover:shadow hover:rounded-lg hover:bg-white" type="button">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
+            </svg>
+        </button>
+    </div>
+    <div class="text-gray-500 text-sm mb-6">Dibuat pada {% as_timezone angket.created_at 'Asia/Jakarta' %}</div>
+</div>

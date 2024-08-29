@@ -1,0 +1,64 @@
+{% extends 'core/_base.html' %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="w-full flex flex-col items-center justify-center">
+    <div class="font-medium text-gray-700 mb-6">
+        {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"l"|lower|day_in_bahasa }}, {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"j" }} {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"F"|lower|month_in_bahasa }} {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"Y" }}
+    </div>
+    <div class="w-full p-6 pb-8 pt-1 mb-6 bg-white border md:max-w-[900px] border-gray-200 rounded-lg shadow" id="question-card-{{order}}">
+
+        <div class="text-lg font-semibold py-3 text-gray-800">
+            {{question_number}} dari {{total_questions}}
+        </div>
+        
+        <form class="mt-6" action="{% url 'respond_angket' angket_session.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="question_id" value="{{angket_question.id}}" />
+            <div class="relative z-0 w-full mb-2 group text-xl md:text-2xl font-semibold text-gray-900">
+                {{angket_question.question}}
+            </div>
+            <div class="relative z-0 w-full mb-5 group text-sm text-gray-500">
+                {{angket_question.description}}
+            </div>
+            {{user_response.answer}}
+            <div class="relative z-0 w-full mb-20 group text-sm text-gray-500">
+                <div class="relative z-0 w-full mb-5 group text-sm text-gray-500">
+                    <label for="labels-range-input" class="sr-only">Labels range</label>
+                    <input id="labels-range-input" type="range" min="1" max="{{angket_question.option_range}}" class="w-full h-2 range bg-gray-200 accent-blue-700 rounded-lg appearance-none cursor-pointer"
+                        name="answer" {% if user_response %}value="{{user_response.answer}}"{% else %}value="{{angket_question.option_range|middle:1}}"{% endif %}>
+                    
+                    <div class="w-full px-1">
+                        <div class="w-full relative">
+                            {% for k in angket_question.option_range|in_range:1 %}
+                                <span class="text-sm text-gray-500 absolute -bottom-6" style="left:{{k|get_percent:angket_question.option_range}}%">{{forloop.counter}}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="relative z-0 w-full mb-5 group text-sm text-gray-500">
+                    <span class="text-sm text-gray-500 absolute start-0 -bottom-6">{{angket_question.option_start_label}}</span>
+                    <span class="text-sm text-gray-500 absolute end-0 -bottom-6">{{angket_question.option_end_label}}</span>
+                </div>
+            </div>
+            <div class="flex sm:flex-wrap">
+                {% if question_number > 1 %}
+                <a class="flex flex-grow justify-center items-center p-3 py-1.5 me-3 text-blue-700 bg-white hover:bg-gray-50 border-2 border-blue-500 rounded-md" href="{% url 'public_angket' angket_session.id %}?page={{question_number|add:'-1'}}">
+                    <svg class="w-6 h-6 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                    </svg>
+                    Kembali
+                </a>
+                {% else %}
+                {% endif %}
+                <button class="text-white flex flex-grow justify-center items-center p-3 py-1.5 me-3 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-md" type="submit">
+                    Simpan & lanjutkan
+                    <svg class="w-6 h-6 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+<div>
+{% endblock %}
