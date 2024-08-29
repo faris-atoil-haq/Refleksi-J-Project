@@ -75,7 +75,9 @@ class TeacherAgenda(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f'{self.id} {self.user} {self.subject}'
+        if self.subject:
+            return f'{self.id} {self.user} {self.subject.name} {self.start_time}'
+        return f'{self.id} {self.user}'
 
 class Journal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
