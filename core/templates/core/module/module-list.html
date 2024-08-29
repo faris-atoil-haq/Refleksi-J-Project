@@ -18,12 +18,13 @@
                 </svg> 
             </a>
             <div class="text-xl font-semibold">
-                Dasar Pendidikan
+                {{subject.name}}
             </div>
         </div>
 
         <form class="mb-5" method="POST" action="{% url 'upload_module' %}" id="module-upload-form" enctype="multipart/form-data" >
             {% csrf_token %}
+            <input hidden name="subject" value="{{subject.id}}"></input>
             <div class="flex flex-col justify-center items-center rounded-lg py-4 text-center w-[575px] h-[228px]">
                 <label for="dropzone-file" class="mb-2 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-white">
                     <div id="uploader-instruction" class="flex flex-col items-center justify-center px-2 pt-5 pb-5">

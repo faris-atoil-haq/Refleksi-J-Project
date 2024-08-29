@@ -1,5 +1,5 @@
 import json
-
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -12,17 +12,35 @@ from utils.chatpdf import ChatPDF
 
 
 @login_required
-def module(request):
-    page_title = 'Modul'
+def module(request,subject=None):
+    page_title = 'Daftar Mata Pelajaran'
     user = request.user
+    query = None
 
-    subjects = Subject.objects.filter(user=user)
-    modules = Module.objects.filter(user=user)
+    if subject:
+        page_title = 'Modul'
+        subject = Subject.objects.get(id=subject)
+        modules = Module.objects.filter(user=user,subject=subject)    
+
+        context = {
+            'page_title': page_title,
+            'page': 'module',
+            'modules': modules,
+            'subject': subject,
+        }
+        return render(request, 'core/module/module-list.html', context)
+    
+    # Main Module
+    if request.GET.get('search'):
+        query = request.GET.get('search')
+        subjects = Subject.objects.filter(user=user,name__icontains=query.lower())    
+    else:
+        subjects = Subject.objects.filter(user=user)
     context = {
         'page_title': page_title,
         'page': 'module',
-        'modules': modules,
         'subjects': subjects,
+        'query': query if query else None,
     }
     return render(request, 'core/module/module-main.html', context)
 
@@ -66,20 +84,23 @@ def subject_manager(request, subject_id=None):
     return render(request, 'core/module/module-create-subject.html', context)
 
 def upload_module(request):
+    print(request.POST)
     module_file = request.FILES.get('module_file',None)
+    subject_id = request.POST.get("subject",None)
     try:
-        if module_file:
+        if module_file and subject_id:
+            subject = Subject.objects.get(id=subject_id)
             # remove extension
             module_file.name = module_file.name.replace('.'+module_file.name.split('.')[-1], '')
             # Add timestamp to avoid duplicated file name
             module_file.name = f"{module_file.name}_{int(timezone.now().timestamp())}"
-            module_obj = Module.objects.create(user=request.user)
+            module_obj = Module.objects.create(user=request.user,subject=subject)
             module_obj.module_file = module_file
             module_obj.save()
     except Exception as e:
         print("Error Upload Modul: ",e)
 
-    return redirect('module')
+    return redirect(reverse('module_subject',kwargs={'subject': subject_id}))
 
 @login_required
 @require_POST
