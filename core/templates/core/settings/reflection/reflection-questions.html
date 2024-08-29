@@ -1,0 +1,3 @@
+{% for rq in reflection_questions %}
+    {% include "core/settings/reflection/reflection-question-card.html" with id=rq.id question=rq.question order=rq.order %}
+{% endfor %}

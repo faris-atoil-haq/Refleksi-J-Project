@@ -1,39 +1,55 @@
 {% extends 'core/_base.html' %}
 
 {% block content %}
-<div class="p-8 flex flex-wrap">
-    <div class="text-lg">
-        <div>
+    <div class="flex items-center mb-6">
+        <a href="{% url 'app_settings' %}" class="me-5 py-1 px-2 rounded bg-white shadow flex">
+            <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+            </svg> 
+        </a>
+        <div class="text-xl font-semibold">
+            Pertanyaan Refleksi
         </div>
-        {{subject_reflection.subject.name}}
     </div>
-    <div class="text-base">
-        {{subject_reflection.subject.get_class_level_display}}
+    
+    <div class="sortable" hx-post="{% url 'order_reflection_question' %}" hx-trigger="end" hx-include="[name='id']">
+        {% include "core/settings/reflection/reflection-questions.html" %}
     </div>
-</div>
-
-<div id="reflection-form">
-    {% for question in reflection_questions %}
-        <div class="flex mb-6">
-            <div class="rounded-s hover:bg-200 hover:cursor-move">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grip-vertical" viewBox="0 0 16 16">
-                    <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-                </svg>
-            </div>
-            {% include 'core/settings/reflection/reflection-question-card.html' %}
-        </div>
-    {% endfor %}
-</div>
-
-<div>
-    <button type="button" class="btn btn-primary w-100">
-        <svg class="w-5 h-5 text-white me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+    <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_reflection_question' %}"
+        hx-target=".sortable" hx-swap="beforeend">
+        <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
         </svg>
-        <div>
-            Tambah Pertanyaan
-        </div>
     </button>
-</div>
+    <script>
+        htmx.onLoad(function(content) {
+            var sortables = content.querySelectorAll(".sortable");
+            for (var i = 0; i < sortables.length; i++) {
+                var sortable = sortables[i];
+                var sortableInstance = new Sortable(sortable, {
+                    animation: 150,
+                    ghostClass: 'blue-background-class',
+                    handle: ".grab-handler",
+            
+                    // Make the `.htmx-indicator` unsortable
+                    filter: ".htmx-indicator",
+                    onMove: function (evt) {
+                        return evt.related.className.indexOf('htmx-indicator') === -1;
+                    },
+            
+                    // Disable sorting on the `end` event
+                    onEnd: function (evt) {
+                        this.option("disabled", true);
+                    }
+                });
+        
+                // Re-enable sorting on the `htmx:afterSwap` event
+                sortable.addEventListener("htmx:afterSwap", function() {
+                    sortableInstance.option("disabled", false);
+                });
+            }
+        })
+    </script>
+
 
 {% endblock %}  

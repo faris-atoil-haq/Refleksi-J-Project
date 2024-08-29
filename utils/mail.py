@@ -1,9 +1,11 @@
+import random
+import string
+
 from django.conf import settings
 from django.core.mail import send_mail
-import string
-import random
 
-def send_admin_email(title,destination_email,message):
+
+def send_email(title,destination_email,message):
     send_mail(
         title,
         message,
