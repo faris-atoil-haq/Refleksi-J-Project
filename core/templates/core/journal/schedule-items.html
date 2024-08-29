@@ -7,7 +7,10 @@
                 <div class="sticky top-0 shadow rounded {% if agenda.date == today %}bg-blue-700 text-white{% else %}bg-white text-gray-700{% endif %} px-3 py-2 flex items-center justify-evenly me-4 mb-3" {% if agenda.date == nearest_today_agenda.date %}id="nearest_today"{% endif %}>
                     <script>
                         {% if agenda.date == nearest_today_agenda.date %}
-                            document.getElementById('nearest_today').scrollIntoView();
+                            function goNearestToday() {
+                                document.getElementById('nearest_today').scrollIntoView();
+                            }
+                            goNearestToday()
                         {% endif %}
                     </script>
                     <div class="text-2xl font-bold me-3 leading-tight">{{ agenda.date|date:"d" }}</div>
@@ -73,19 +76,21 @@
             <div class="text-lg text-center font-medium">
                 Tidak ada jadwal
             </div>
-            <div class="mb-4 text-center">
-                Ayo mulai kelola jadwal pertemuan sekarang
-            </div>
-            <div class="text-center">
-                <a href="{% url 'home' %}" class="btn btn-primary py-2.5 px-10">
-                    <svg class="w-5 h-5 text-white md:me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7 7V5"/>
-                    </svg>
-                    <div class="hidden md:block font-medium text-sm">
-                        Tambah Jadwal
-                    </div>
-                </a>
-            </div>
+            {% if today %}
+                <div class="mb-4 text-center">
+                    Ayo mulai kelola jadwal pertemuan sekarang
+                </div>
+                <div class="text-center">
+                    <a href="{% url 'home' %}" class="btn btn-primary py-2.5 px-10">
+                        <svg class="w-5 h-5 text-white md:me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7 7V5"/>
+                        </svg>
+                        <div class="hidden md:block font-medium text-sm">
+                            Tambah Jadwal
+                        </div>
+                    </a>
+                </div>
+            {% endif %}
         </div>
     {% endfor %}
 </div>

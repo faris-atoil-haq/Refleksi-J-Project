@@ -79,11 +79,39 @@ def schedule_subject(request):
 @require_GET
 def schedule_items(request):
     agenda_list = []
-    now = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta'))
-    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    month = request.GET.get('month')
+    q = request.GET.get('q', '')
     
-    schedules = TeacherAgenda.objects.filter(user=request.user, start_time__date__range=(start_of_month, end_of_month)).order_by('start_time')
+    today = None
+    nearest_today_agenda = None
+    if start_date and end_date:
+        start_of_month = timezone.datetime.strptime(start_date, '%m/%d/%Y').replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
+        end_of_month = timezone.datetime.strptime(end_date, '%m/%d/%Y').replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
+        if start_of_month <= timezone.now() <= end_of_month:
+            today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+    elif month:
+        month_date = timezone.datetime.strptime(month, '%B %Y')
+        start_of_month = month_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
+        end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
+        if start_of_month <= timezone.now() <= end_of_month:
+            today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+    else:
+        now = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta'))
+        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
+        
+        today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+    
+    conditions = {
+        'user':request.user, 
+        'start_time__date__range':(start_of_month, end_of_month),
+    }
+    if q or q != '':
+        conditions['subject__name__icontains'] = q
+    print(conditions)
+    schedules = TeacherAgenda.objects.filter(**conditions).order_by('start_time')
     for schedule in schedules:
         date = schedule.start_time.date()
         if not any(agenda['date'] == date for agenda in agenda_list):
@@ -91,9 +119,10 @@ def schedule_items(request):
         for agenda in agenda_list:
             if agenda['date'] == date:
                 agenda['schedules'].append(schedule)
-    today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+    
     # get agenda['date'] that is the most nearest to today
-    nearest_today_agenda = min(agenda_list, key=lambda x: abs(x['date'] - today))
+    if today:
+        nearest_today_agenda = min(agenda_list, key=lambda x: abs(x['date'] - today))
     
     context = {
         'agenda_list': agenda_list,
