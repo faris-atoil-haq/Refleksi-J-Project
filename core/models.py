@@ -22,15 +22,6 @@ class Verification(models.Model):
         return 'Verification for: ' + self.user.first_name
 
 
-class Module(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
-    module_file = models.FileField(
-        upload_to="refleksi-j-module", null=True, blank=True)
-    chatpdf_id = models.CharField(max_length=255, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
 
 class Article(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -45,29 +36,29 @@ class Subject(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     class_level = models.CharField(max_length=50, blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
-    users = models.ManyToManyField(User, related_name="subjects")
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    order = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
         return f'{self.id} {self.name}'
     
-class SubjectReflection(models.Model):
+class Module(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name="module_file")
+    module_file = models.FileField(
+        upload_to="refleksi-j-module", null=True, blank=True)
+    chatpdf_id = models.CharField(max_length=255, blank=True, null=True)
     subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
-    
-    def __str__(self):
-        return f'{self.id} {self.subject}'
-    
+
 class ReflectionQuestion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    subject_reflection = models.ForeignKey(SubjectReflection, blank=True, null=True, on_delete=models.CASCADE)
     question = models.TextField(blank=True, null=True)
     articles = models.ManyToManyField(Article, related_name="reflection_questions")
     order = models.IntegerField(null=True, blank=True)
-    show = models.BooleanField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
@@ -88,9 +79,12 @@ class TeacherAgenda(models.Model):
 
 class Journal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.SET_NULL)
+    subject_text = models.CharField(max_length=255, blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.CASCADE)
     question = models.ForeignKey(ReflectionQuestion, blank=True, null=True, on_delete=models.SET_NULL)
+    question_text = models.TextField(blank=True, null=True)
     content = models.TextField(blank=True, null=True) # jawaban dari pertanyaan refleksi
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -130,3 +124,34 @@ class ModuleAssessment(models.Model):
     
     def __str__(self):
         return f'{self.id} {self.category} {self.module}'
+    
+class AngketQuestion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    question = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    order = models.IntegerField(null=True, blank=True)
+    option_range = models.IntegerField(null=True, blank=True)
+    option_step = models.IntegerField(null=True, blank=True)
+    option_start_label = models.CharField(max_length=255, blank=True, null=True)
+    option_end_label = models.CharField(max_length=255, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.order}'
+    
+class AngketResponse(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.SET_NULL)
+    respondent = models.CharField(max_length=255, blank=True, null=True)
+    question = models.ForeignKey(AngketQuestion, blank=True, null=True, on_delete=models.CASCADE)
+    question_text = models.TextField(blank=True, null=True)
+    answer = models.IntegerField(blank=True, null=True)
+    answer_options = models.JSONField(blank=True, null=True)
+    # answer_options format:
+    # {"range": 3, "step": 1, "start_label": "Sangat Tidak Puas", "end_label": "Sangat Puas"}
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f'{self.id} {self.respondent} {self.question}'
