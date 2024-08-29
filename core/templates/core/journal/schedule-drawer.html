@@ -22,12 +22,9 @@
 
                 <div>
                     <label for="subject-selector" class="block mb-2 text-sm font-medium text-gray-900">Pilih mata pelajaran</label>
-                    <select required id="subject-selector" name="subject" class="hover:cursor-pointer hover:bg-gray-100 rounded-md bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                        <option value="">Mata pelajaran</option>
-                        {% for subject in subjects %}
-                            <option value="{{subject.id}}">{{subject.name}}</option>
-                        {% endfor %}
-                    </select>
+                    <input name="subject" type="text" class="hover:bg-gray-100 rounded-md bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer" 
+                        required placeholder="Mata pelajaran"
+                        {% if schedule %}value=""{% endif %} />
                 </div>
             </div>
 
