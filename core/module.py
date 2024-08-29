@@ -13,6 +13,7 @@ from utils.chatpdf import ChatPDF
 
 @login_required
 def module(request,subject=None):
+    print(request.POST)
     page_title = 'Daftar Mata Pelajaran'
     user = request.user
     query = None
@@ -28,7 +29,14 @@ def module(request,subject=None):
             'modules': modules,
             'subject': subject,
         }
-        return render(request, 'core/module/module-list.html', context)
+        
+        if 'name' in request.POST:
+            subject.name = request.POST.get('name')
+            subject.save()
+            return render(request, 'core/module/module-edit.html', {'subject':subject})
+
+        else:
+            return render(request, 'core/module/module-list.html', context)
     
     # Main Module
     if request.GET.get('search'):

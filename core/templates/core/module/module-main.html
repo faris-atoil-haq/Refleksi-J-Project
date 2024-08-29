@@ -36,30 +36,11 @@
 
             <div class="w-full bg-white rounded-lg py-4 px-6" id="subject-data">
                 {% for subject in subjects %}
-                    <div class="mb-4 flex items-center justify-between" id="subject-{{subject.id}}-container">
-                        <div id="subject-{{subject.id}}-row align-">
-                             <a href="{% url 'module_subject' subject=subject.id %}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                {{subject.name}}
-                            </a>    
-                        </div>
-                        <div>
-                             
-                        <span class="">
-                            {% if subject.module_set.all %}
-                                {% for modul in subject.module_set.all %}
-                                        {% if forloop.last %}
-                                            {{forloop.counter}}
-                                        {% endif %}
-                                {% endfor %}
-                            {% else %}
-                                Tidak ada
-                            {% endif %}
-                            Modul Terupload
-                        </span>
-                        </div>
-                        
+                    <div class="mb-4 flex items-center justify-between" id="subject-{{subject.id}}-row">
+                        {% include 'core/module/module-edit.html' %}
                     </div>
                 {% endfor %}
+                </div>
 
                 <div class="mt-14 flex justify-between">
                     <div class="text-sm text-gray-700">
