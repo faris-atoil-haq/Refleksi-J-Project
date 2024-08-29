@@ -1,8 +1,9 @@
 import json
-from django.urls import reverse
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
@@ -14,7 +15,7 @@ from utils.chatpdf import ChatPDF
 @login_required
 def module(request,subject=None):
     print(request.POST)
-    page_title = 'Daftar Mata Pelajaran'
+    page_title = 'Modul'
     user = request.user
     query = None
 
