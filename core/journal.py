@@ -16,19 +16,23 @@ def today_agenda(request):
     context = {
         'agenda_list': agenda_list,
     }
-    return render(request, 'core/journal/mata-pelajaran-item.html', context)
+    return render(request, 'core/journal/today-agenda.html', context)
 
 @login_required
 @require_GET
 def latest_reflection_journals(request):
-    subjects = TeacherAgenda.objects.filter(user=request.user,
+    schedules = TeacherAgenda.objects.filter(user=request.user,
         start_time=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0)
     ).values('subject')
     
     latest_journals = []
-    for subject in subjects:
-        latest_journal = Journal.objects.filter(subject=subject['subject']).latest('created_at')
+    for schedule in schedules:
+        subject = schedule.subject
+        latest_journal = Journal.objects.filter(subject=subject).latest('created_at')
         latest_journals.append(latest_journal)
+    
+    # For Testing Faris , comment it out to test on home for refleksi list
+    # latest_journals = Journal.objects.all()
 
     context = {
         'latest_journals': latest_journals
@@ -88,6 +92,7 @@ def schedule_items(request):
     end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
     
     schedules = TeacherAgenda.objects.filter(start_time__date__range=(start_of_month, end_of_month)).order_by('start_time')
+    refleksi_list = ReflectionQuestion.objects.all()
     for schedule in schedules:
         date = schedule.start_time.date()
         if not any(agenda['date'] == date for agenda in agenda_list):
@@ -98,6 +103,53 @@ def schedule_items(request):
     
     context = {
         'agenda_list': agenda_list,
+        'refleksi_list': refleksi_list,
         'today': timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date(),
     }
     return render(request, 'core/journal/schedule-items.html', context)
+
+
+@login_required
+def refleksi_input(request,id=None,refleksi=None):
+    refleksi_list = ReflectionQuestion.objects.all()
+
+    if request.method == 'GET':
+        schedule = TeacherAgenda.objects.get(id=id)
+        subject = schedule.subject
+        refleksi_quest = ReflectionQuestion.objects.get(order=refleksi)
+        jurnal,_ = Journal.objects.get_or_create(subject=subject,agenda=schedule,question=refleksi_quest)
+        context = {
+            'refleksi_quest': refleksi_quest,
+            'refleksi_list': refleksi_list,
+            'schedule': schedule,
+            'jurnal': jurnal,
+            'page': 'schedule',
+        }
+    else:
+        schedule = request.POST.get('schedule',None)
+        order = request.POST.get('order',None)
+        refleksi_answer = request.POST.get('refleksi_answer',None)
+
+        schedule = TeacherAgenda.objects.get(id=schedule)
+        question = ReflectionQuestion.objects.get(order=order)
+        subject = schedule.subject
+        jurnal,_ = Journal.objects.get_or_create(subject=subject,agenda=schedule,question=question)
+        
+        jurnal.content = refleksi_answer
+        jurnal.question_text = question.question
+        jurnal.save()
+
+        try:
+            refleksi_quest = ReflectionQuestion.objects.get(order=int(order)+1)
+        except:
+            print("No more question")
+            return redirect('schedule')
+
+        context = {
+            'refleksi_quest': refleksi_quest,
+            'refleksi_list': refleksi_list,
+            'schedule': schedule,
+            'page': 'schedule',
+        }
+    return render(request, 'core/journal/refleksi-list.html', context)
+

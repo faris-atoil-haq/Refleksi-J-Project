@@ -63,7 +63,7 @@ class ReflectionQuestion(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f'{self.id} {self.subject_reflection}'
+        return f'{self.id} {self.order}'
     
 class TeacherAgenda(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

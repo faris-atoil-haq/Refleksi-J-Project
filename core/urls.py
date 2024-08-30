@@ -30,6 +30,8 @@ urlpatterns = [
     path('app/jadwal/add/', journal.schedule_subject, name='add_schedule'),
     path('app/jadwal/<uuid:id>/', journal.schedule_subject, name='edit_schedule'),
     path('app/jadwal/items/', journal.schedule_items, name='schedule_items'),
+    path('app/jadwal/<uuid:id>/refleksi/<int:refleksi>/', journal.refleksi_input, name='refleksi_input'),
+    path('app/jadwal/save/', journal.refleksi_input, name='refleksi_input_save'),
     
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
