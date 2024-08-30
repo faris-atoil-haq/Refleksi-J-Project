@@ -3,6 +3,7 @@ import re
 import markdown
 import pytz
 from django import template
+from core.models import Journal,TeacherAgenda,ReflectionQuestion
 
 register = template.Library()
 
@@ -45,7 +46,10 @@ def show_file_name(value):
 @register.filter
 def count_total(objects):
     value = len(objects)
-    return value
+    if value:
+        return value
+    else:
+        return 0
 
 @register.simple_tag()
 def as_timezone(time_input, timezone, format=None):
@@ -55,9 +59,31 @@ def as_timezone(time_input, timezone, format=None):
     res = time_input.astimezone(timezone).strftime(format)
     return res
 
+
+
+@register.simple_tag()
+def complete_date_in_bahasa(time_input, timezone):
+    timezone = pytz.timezone(timezone)
+
+    # %A %d %B %Y
+    day_name = time_input.astimezone(timezone).strftime('%A')
+    date = time_input.astimezone(timezone).strftime('%d')
+    month_name = time_input.astimezone(timezone).strftime('%B')
+    year = time_input.astimezone(timezone).strftime('%Y')
+    day_name = day_in_bahasa(day_name)
+    month_name = month_in_bahasa(month_name)
+
+    return f'{day_name}, {date} {month_name} {year}'
+
 @register.filter
 def remove_dash(value):
     return str(value).replace('-', '')
+
+@register.filter
+def get_count_refleksi(schedule_id):
+    schedule = TeacherAgenda.objects.get(id=schedule_id)
+    subject = schedule.subject
+    return Journal.objects.filter(subject=subject,agenda=schedule).count()
 
 
 @register.filter
