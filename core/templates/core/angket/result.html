@@ -1,0 +1,119 @@
+{% load custom_tags %}
+
+{% for qd in question_distribution %}
+    <div class="py-6">
+        <div class="text-gray-600 font-medium text-center mb-6">
+            Pertanyaan: {{qd.question}}
+        </div>
+        <div id="pie-chart-{{forloop.counter}}"></div>
+        <script>
+            if (document.getElementById("pie-chart-{{forloop.counter}}") && typeof ApexCharts !== 'undefined') {
+                const chart = new ApexCharts(document.getElementById("pie-chart-{{forloop.counter}}"), {
+                    series: [
+                        {% for k, val in qd.answers.items %}{{val.count}},{% endfor %}
+                        ],
+                    colors: ["#402E7A", "#4C3BCF", "#4B70F5", "#3DC2EC","#DBDFEA","#FFEAD2", "#FABC3F", "#E85C0D", "#C7253E", "#821131"],
+                    chart: {
+                        height: 320,
+                        width: "100%",
+                        type: "donut",
+                    },
+                    stroke: {
+                    colors: ["transparent"],
+                    lineCap: "",
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                            labels: {
+                                show: true,
+                                name: {
+                                    show: true,
+                                    fontFamily: "Inter, sans-serif",
+                                    offsetY: 20,
+                                },
+                                total: {
+                                    showAlways: true,
+                                    show: true,
+                                    label: "Total Responden",
+                                    colors: "#0000",
+                                    fontFamily: "Inter, sans-serif",
+                                    formatter: function (w) {
+                                        const sum = w.globals.seriesTotals.reduce((a, b) => {
+                                        return a + b
+                                        }, 0)
+                                        return sum + ' orang'
+                                    },
+                                },
+                                value: {
+                                    show: true,
+                                    fontFamily: "Inter, sans-serif",
+                                    offsetY: -20,
+                                    formatter: function (value) {
+                                        return value
+                                    },
+                                },
+                            },
+                            size: "80%",
+                            },
+                        },
+                    },
+                    grid: {
+                        padding: {
+                            top: -2,
+                        },
+                    },
+                    labels: [{% for k, val in qd.answers.items %}"Score {{k}}",{% endfor %}],
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            colors: ["#000"],
+                        },
+                        background: {
+                            enabled: true,
+                            foreColor: '#fff',
+                            padding: 4,
+                            borderRadius: 2,
+                            borderWidth: 1,
+                            borderColor: '#fff',
+                            opacity: 0.9,
+                            dropShadow: {
+                                enabled: false,
+                                top: 1,
+                                left: 1,
+                                blur: 1,
+                                color: '#000',
+                                opacity: 0.45
+                            }
+                        },
+                    },
+                    legend: {
+                        position: "bottom",
+                        fontFamily: "Inter, sans-serif",
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function (value) {
+                                return value + " orang"
+                            },
+                        },
+                    },
+                    xaxis: {
+                        labels: {
+                            formatter: function (value) {
+                                return value + " orang"
+                            },
+                        },
+                        axisTicks: {
+                            show: false,
+                        },
+                        axisBorder: {
+                            show: false,
+                        },
+                    },
+                });
+                chart.render();
+            }
+        </script>
+    </div>
+{% endfor %}
