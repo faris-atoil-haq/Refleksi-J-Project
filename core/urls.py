@@ -48,6 +48,7 @@ urlpatterns = [
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
     
+    path('app/settings/article/', main.manage_article, name='manage_article'),
     path('app/settings/refleksi/', main.reflection_templates, name='reflection_templates'),
     path('app/settings/refleksi/create/', main.manage_reflection_question, name='create_reflection_question'),
     path('app/settings/refleksi/order/', main.order_reflection_question, name='order_reflection_question'),

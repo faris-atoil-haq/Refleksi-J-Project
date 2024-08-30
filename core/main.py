@@ -297,3 +297,37 @@ def signout(request):
     
     logout(request)
     return redirect('public')
+
+@login_required
+def manage_article(request, id=None):
+    if request.method == 'GET':
+        reflection_questions = ReflectionQuestion.objects.all().order_by('order')
+        context = {
+            'page_title': 'Admin',
+            'page': 'admin',
+            'reflection_questions': reflection_questions,
+        }
+        return render(request, 'core/settings/article/manage-article-template.html', context)
+    
+    if id:
+        try:
+            reflection_question = ReflectionQuestion.objects.get(id=id)
+        except:
+            return HttpResponse(status=404)
+        if request.POST.get('delete'):
+            current_order = reflection_question.order
+            ReflectionQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            reflection_question.delete()
+            return redirect('reflection_templates')
+    else:
+        questions = ReflectionQuestion.objects.all()
+        reflection_question = ReflectionQuestion.objects.create(order=len(questions) + 1)
+    
+    reflection_question.question = request.POST.get('question', reflection_question.question)
+    reflection_question.save()
+    context = {
+        'id': reflection_question.id,
+        'order': reflection_question.order,
+        'question': reflection_question.question
+    }
+    return render(request, 'core/settings/reflection/reflection-question-card.html', context)
