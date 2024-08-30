@@ -13,8 +13,11 @@
     </div>
     
     <div class="sortable" hx-post="{% url 'order_reflection_question' %}" hx-trigger="end" hx-include="[name='id']">
-        {% include "core/settings/reflection/reflection-questions.html" %}
+        {% comment %} {% include "core/settings/reflection/reflection-questions.html" %} {% endcomment %}
     </div>
+
+    
+    <div class="richtext-this"></div>
     <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_reflection_question' %}"
         hx-target=".sortable" hx-swap="beforeend">
         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -49,6 +52,21 @@
                 });
             }
         })
+        
+    $('.richtext-this').summernote({
+        placeholder: 'Buat Artikel Anda disini',
+        tabsize: 2,
+        height: 120,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture', 'video']],
+          ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+      });
     </script>
 
 
