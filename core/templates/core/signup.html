@@ -31,8 +31,7 @@
                 <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Kata Sandi</label>
                 <div class="relative">
                     <input type="password" name="password" id="password" autocomplete="current-password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 {% if error_message and email %}outline ring-red-500 outline-red-500{% endif %}" required>
-                    {% comment %} Add function to  {% endcomment %}
-                    <button type="button" class="text-gray-600 absolute right-0 top-0 px-4 h-full">
+                    <button type="button" class="text-gray-600 absolute right-0 top-0 px-4 h-full toggle-password">
                         <span class="show-icon">
                             <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
@@ -53,7 +52,7 @@
                 <label for="confirm_password" class="block mb-2 text-sm font-medium text-gray-900">Ulangi Kata Sandi</label>
                 <div class="relative">
                     <input type="password" name="confirm_password" id="confirm_password" autocomplete="current-password" id="confirm_password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 {% if error_message and email %}outline ring-red-500 outline-red-500{% endif %}" required>
-                    <button type="button" class="text-gray-600 absolute right-0 top-0 px-4 h-full">
+                    <button type="button" class="text-gray-600 absolute right-0 top-0 px-4 h-full toggle-password">
                         <span class="show-icon">
                             <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>

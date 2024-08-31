@@ -291,9 +291,54 @@ def reset_password(request):
             
     return redirect('reset_password_email')
 
+@login_required
 def signout(request):
     if not request.user.is_authenticated:
         return redirect('public')
     
     logout(request)
     return redirect('public')
+
+@login_required
+def user_profile(request):
+    if request.POST:
+        if 'password' in request.POST:
+            print(request.POST)
+            current_password = request.POST.get('current_password')
+            user = authenticate(request, email=request.user.email, password=current_password)
+            if not user:
+                return render(request, 'core/settings/update-profile.html', {'error_message': 'Kata sandi salah.'})
+            
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+            if password != confirm_password:
+                return render(request, 'core/settings/update-profile.html', {'error_message': 'Kata sandi baru tidak sesuai.'})
+            
+            user.set_password(password)
+            user.save()
+            user = authenticate(request, email=request.user.email, password=password)
+            login(request, user)
+            
+            return redirect(reverse('user_profile')+f'?success=1')
+        
+        user = request.user
+        name = request.POST.get('nama')
+        email = request.POST.get('email')
+        instansi = request.POST.get('instansi')
+        if not (name and email and instansi):
+            return HttpResponse(status=400)
+        
+        user.first_name = name
+        user.email = email
+        user.save()
+        verification = request.user.verification
+        verification.instansi = instansi
+        verification.save()
+        return redirect(reverse('user_profile')+f'?success=1')
+    
+    context = {
+        'success': request.GET.get('success'),
+        'page_title': 'Pengaturan Akun',
+        'page': 'user_profile',
+    }
+    return render(request, 'core/settings/update-profile.html', context)
