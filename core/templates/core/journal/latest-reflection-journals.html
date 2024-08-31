@@ -1,11 +1,18 @@
+{% load custom_tags %}
+
 {% for journal in latest_journals %}
-<div class="text-gray-600 p-4 bg-white rounded mb-2">
+<div class="text-gray-800 p-4 bg-blue-100 rounded-md mb-2">
     <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">{{journal.agenda.subject.name}}</h5>
+        <div class="card-header flex justify-between sm:flex-wrap mb-3">
+            <h5 class="card-title font-medium">{{journal.agenda.subject.name}}</h5>
+            <div class="text-sm">
+                {{journal.agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'j'}} {{journal.agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'F'}} {{journal.agenda.end_time|datetime_as_timezone:'Asia/Jakarta'|date:'Y'}}, 
+                {% as_timezone journal.agenda.start_time 'Asia/Jakarta' '%H:%M' %} - {% as_timezone journal.agenda.end_time 'Asia/Jakarta' '%H:%M' %}
+            </div>
         </div>
         <div class="card-body">
-            <p class="card-text">{{ journal.content }}</p>
+            <p class="card-text" hx-get="{% url 'summary_refleksi' journal.agenda.id %}" hx-trigger="load" hx-target="this" hx-swap="innerHTML">
+            </p>
         </div>
     </div>
 </div>

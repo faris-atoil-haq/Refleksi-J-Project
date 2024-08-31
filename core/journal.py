@@ -1,5 +1,6 @@
 import pytz
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
@@ -11,7 +12,8 @@ from core.models import *
 @require_GET
 def today_agenda(request):
     agenda_list = TeacherAgenda.objects.filter(
-        start_time=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0)
+        user=request.user,
+        start_time__date=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0).date()
     ).order_by('start_time')
     context = {
         'agenda_list': agenda_list,
@@ -21,15 +23,19 @@ def today_agenda(request):
 @login_required
 @require_GET
 def latest_reflection_journals(request):
-    schedules = TeacherAgenda.objects.filter(user=request.user,
-        start_time=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0)
-    ).values('subject')
+    schedules = TeacherAgenda.objects.filter(
+        user=request.user,
+        start_time__date=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0).date()
+    ).order_by('start_time')
     
     latest_journals = []
     for schedule in schedules:
         subject = schedule.subject
-        latest_journal = Journal.objects.filter(subject=subject).latest('created_at')
-        latest_journals.append(latest_journal)
+        journals = Journal.objects.filter(
+            subject=subject, 
+            agenda__start_time__date__lt=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date())
+        if journals:
+            latest_journals.append(journals.latest('created_at'))
     
     # For Testing Faris , comment it out to test on home for refleksi list
     # latest_journals = Journal.objects.all()
@@ -42,44 +48,62 @@ def latest_reflection_journals(request):
 @login_required
 @require_GET
 def schedule(request):
-    subjects = Subject.objects.filter(
-        #class_level=''
-        ).order_by('name').values('id', 'name')
-    
     context = {
         'page': 'schedule',
         'page_title': 'Jadwal Pertemuan',
         'today': timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')),
-        'subjects': subjects,
     }
     return render(request, 'core/journal/schedule.html', context)
 
 @login_required
-@require_POST
-def schedule_subject(request):
-    subject_id = request.POST.get('subject')
+def schedule_subject(request, id=None):
+    if request.method == 'GET':
+        try:
+            agenda = TeacherAgenda.objects.get(id=id, user=request.user)
+        except TeacherAgenda.DoesNotExist:
+            return HttpResponse(status=404)
+        
+        context = {
+            'agenda': agenda,
+        }
+        print(context)
+        return render(request, 'core/journal/schedule-drawer.html', context)
+    
+    subject_name = request.POST.get('subject')
     date = request.POST.get('date')
     start_time = request.POST.get('start_time')
     end_time = request.POST.get('end_time')
     repetition = request.POST.get('repetition')
+    
+    if not (subject_name and date and start_time and end_time and repetition):
+        return HttpResponse(status=400)
+    
     if repetition not in ['no_repetition', 'daily', 'weekly', 'monthly']:
         repetition = 'no_repetition'
     
     # Add TeacherAgenda based on the POST data
-    subject = Subject.objects.get(id=subject_id)
+    subject, _ = Subject.objects.get_or_create(name=subject_name, user=request.user)
     start_time = timezone.datetime.strptime(f'{date} {start_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
     print(start_time)
     end_time = timezone.datetime.strptime(f'{date} {end_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
     print(end_time)
     if repetition == 'no_repetition':
-        TeacherAgenda.objects.create(
-            user=request.user,
-            subject=subject,
-            start_time=start_time,
-            end_time=end_time
-        )
+        if id:
+            TeacherAgenda.objects.filter(id=id, user=request.user).update(
+                subject=subject,
+                start_time=start_time,
+                end_time=end_time
+            )
+        else:
+            TeacherAgenda.objects.create(
+                user=request.user,
+                subject=subject,
+                start_time=start_time,
+                end_time=end_time
+            )
     # elif repetition == 'daily':
-        
+    # elif repetition == 'weekly':
+    # elif repetition == 'monthly':
     
     return redirect('schedule')
     
@@ -87,13 +111,45 @@ def schedule_subject(request):
 @require_GET
 def schedule_items(request):
     agenda_list = []
-    now = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta'))
-    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    month = request.GET.get('month')
+    q = request.GET.get('q', '')
     
-    schedules = TeacherAgenda.objects.filter(start_time__date__range=(start_of_month, end_of_month)).order_by('start_time')
-    refleksi_list = ReflectionQuestion.objects.all()
+    today = None
+    nearest_today_agenda = None
+    init_flowbite = False
+    if start_date and end_date:
+        start_of_month = timezone.datetime.strptime(start_date, '%m/%d/%Y').replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
+        end_of_month = timezone.datetime.strptime(end_date, '%m/%d/%Y').replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
+        if start_of_month <= timezone.now() <= end_of_month:
+            today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+        init_flowbite = True
+    elif month:
+        month_date = timezone.datetime.strptime(month, '%B %Y')
+        start_of_month = month_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0, tzinfo=pytz.UTC)
+        end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
+        if start_of_month <= timezone.now() <= end_of_month:
+            today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+        init_flowbite = True
+    else:
+        now = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta'))
+        start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        end_of_month = (start_of_month + timezone.timedelta(days=32)).replace(day=1) - timezone.timedelta(seconds=1)
+        print(end_of_month)
+        
+        today = timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()
+    
+    conditions = {
+        'user':request.user, 
+        'start_time__date__range':(start_of_month, end_of_month),
+    }
+    if q or q != '':
+        conditions['subject__name__icontains'] = q
+    print(conditions)
+    schedules = TeacherAgenda.objects.filter(**conditions).order_by('start_time')
     for schedule in schedules:
+        print(schedule.start_time)
         date = schedule.start_time.date()
         if not any(agenda['date'] == date for agenda in agenda_list):
             agenda_list.append({'date': date, 'schedules': []})
@@ -101,16 +157,25 @@ def schedule_items(request):
             if agenda['date'] == date:
                 agenda['schedules'].append(schedule)
     
+    # get agenda['date'] that is the most nearest to today
+    if today:
+        nearest_today_agenda = min(agenda_list, key=lambda x: abs(x['date'] - today))
+    
     context = {
         'agenda_list': agenda_list,
-        'refleksi_list': refleksi_list,
-        'today': timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date(),
+        'nearest_today_agenda': nearest_today_agenda,
+        'today': today,
+        'init_flowbite': init_flowbite,
+        'total_questions': ReflectionQuestion.objects.count(),
     }
     return render(request, 'core/journal/schedule-items.html', context)
 
 
 @login_required
-def refleksi_input(request,id=None,refleksi=None):
+def refleksi_input(request, id, refleksi=None):
+    if not refleksi:
+        refleksi = 1
+    
     refleksi_list = ReflectionQuestion.objects.all()
 
     if request.method == 'GET':
@@ -124,6 +189,7 @@ def refleksi_input(request,id=None,refleksi=None):
             'schedule': schedule,
             'jurnal': jurnal,
             'page': 'schedule',
+            'page_title': "Refleksi",
         }
     else:
         schedule = request.POST.get('schedule',None)
@@ -133,7 +199,7 @@ def refleksi_input(request,id=None,refleksi=None):
         schedule = TeacherAgenda.objects.get(id=schedule)
         question = ReflectionQuestion.objects.get(order=order)
         subject = schedule.subject
-        jurnal,_ = Journal.objects.get_or_create(subject=subject,agenda=schedule,question=question)
+        jurnal,_ = Journal.objects.get_or_create(agenda=schedule,question=question)
         
         jurnal.content = refleksi_answer
         jurnal.question_text = question.question
@@ -153,3 +219,25 @@ def refleksi_input(request,id=None,refleksi=None):
         }
     return render(request, 'core/journal/refleksi-list.html', context)
 
+@login_required
+def summary_refleksi(request, id):
+    try:
+        schedule = TeacherAgenda.objects.get(id=id)
+    except TeacherAgenda.DoesNotExist:
+        return HttpResponse(status=404)
+    journals = Journal.objects.filter(agenda=schedule).order_by('created_at')
+    summary = ''
+    for journal in journals:
+        # get the last character of jhournal.content
+        if not journal.content:
+            continue
+        last_char = journal.content.strip()[-1]
+        if last_char not in ['.', '?', '!', ]:
+            summary += journal.content.strip().capitalize() + '. '
+        else:
+            summary += journal.content.strip().capitalize() + ' '
+        print(summary.capitalize())
+    context = {
+        'summary': summary
+    }
+    return render(request, 'core/journal/refleksi-summary.html', context)

@@ -25,7 +25,7 @@
                 <div class="me-10 text-xl font-semibold items-center mb-3">
                     {{refleksi_quest.order}} dari {{refleksi_list|count_total}}
                 </div>
-                <a href="{% url 'refleksi_input' id=schedule.id refleksi=refleksi_quest.order|add:-1 %}" class="items-center justify-between flex py-1.5 px-3 me-2 mb-2 text-sm text-blue-700 hover:text-blue border border-blue-700 bg-white rounded-lg border hover:bg-gray-100">
+                <a href="{% url 'refleksi_input' id=schedule.id refleksi=refleksi_quest.order|add:-1 %}" class="items-center justify-between flex py-1.5 px-3 me-2 mb-2 text-sm text-blue-700 hover:text-blue border-blue-700 bg-white rounded-lg border hover:bg-gray-100">
                     <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="blue" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 17-5-5 5-5"/>
                     </svg> 
@@ -33,7 +33,7 @@
                     Kembali
                     </span>
                 </a>
-                <button type="submit" form="post_refleksi_content" name="post_content_btn" value="save" class="items-center justify-between flex btn btn-primary border border-white py-2 px-3 me-2 mb-2 text-sm text-white focus:outline-none bg-blue rounded-lg border border-gray-200 hover:bg-blue-800 hover:text-white-100 focus:z-10 focus:ring-4 focus:ring-gray-100">
+                <button type="submit" form="post_refleksi_content" name="post_content_btn" value="save" class="items-center justify-between flex btn btn-primary py-2 px-3 me-2 mb-2 text-sm text-white focus:outline-none bg-blue rounded-lg border border-gray-200 hover:bg-blue-800 hover:text-white-100 focus:z-10 focus:ring-4 focus:ring-gray-100">
                     <span class="ms-2">
                         Simpan & Lanjutkan
                     </span>

@@ -1,16 +1,16 @@
 
-    <div id="subject-{{subject.id}}">
-         <a href="{% url 'module_subject' subject=subject.id %}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+    <div id="subject-{{subject.id}}" class="flex items-center">
+        <a href="{% url 'module_subject' subject=subject.id %}" class="font-medium text-blue-600 me-4 hover:underline">
             {{subject.name}}
         </a>   
-    <button id="subject-{{subject.id}}-edit" type="button" class="font-normal px-2 btn-sm btn-light border-0"
-            onclick="toggleEditSubject('{{subject.id}}', true)">
-            <svg class="me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-            </svg>
-    </button> 
+        <button id="subject-{{subject.id}}-edit" type="button" class="inline-flex items-end font-normal btn-sm btn-light border-0 p-0"
+                onclick="toggleEditSubject('{{subject.id}}', true)">
+                <svg class="me-1 w-5 h-full" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                </svg>
+        </button> 
     </div>
-         
+        
     <div id="subject-{{subject.id}}-input" class="hidden flex justify-between gap-3">
         <input type="hidden" name="subject_id" value="{{subject.id}}">
         <input class="input-sm grow" type="text" name="name" value="{{subject.name}}">
@@ -36,5 +36,5 @@
         {% else %}
             Tidak ada
         {% endif %}
-        Modul Terupload
+        modul
     </span>

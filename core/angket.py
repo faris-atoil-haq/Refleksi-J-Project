@@ -15,7 +15,7 @@ from core.models import AngketQuestion, AngketResponse, AngketSession
 @require_GET
 def main(request):
     user = request.user  # Assuming you have user authentication implemented
-    angket_sessions = AngketSession.objects.filter(user=user)
+    angket_sessions = AngketSession.objects.filter(user=user).order_by('-created_at')
     
     paginator = Paginator(angket_sessions, 20)  # Create a Paginator object with 20 items per page
     page_number = request.GET.get('page')  # Get the current page number from the request's GET parameters

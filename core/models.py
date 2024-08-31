@@ -63,7 +63,7 @@ class ReflectionQuestion(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f'{self.id} {self.order}'
+        return f'{self.id} {self.question}'
     
 class TeacherAgenda(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -75,14 +75,16 @@ class TeacherAgenda(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f'{self.id} {self.user} {self.subject}'
+        if self.subject:
+            return f'{self.id} {self.user} {self.subject.name} {self.start_time}'
+        return f'{self.id} {self.user}'
 
 class Journal(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.SET_NULL)
     subject_text = models.CharField(max_length=255, blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
-    agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.CASCADE)
+    agenda = models.ForeignKey(TeacherAgenda, blank=True, null=True, on_delete=models.CASCADE, related_name='journals')
     question = models.ForeignKey(ReflectionQuestion, blank=True, null=True, on_delete=models.SET_NULL)
     question_text = models.TextField(blank=True, null=True)
     content = models.TextField(blank=True, null=True) # jawaban dari pertanyaan refleksi
@@ -90,7 +92,7 @@ class Journal(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return f'{self.id} {self.agenda}'
+        return f'{self.id} {self.agenda} {self.question}'
     
 class HeadNews(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
