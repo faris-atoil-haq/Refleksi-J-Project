@@ -1,12 +1,14 @@
 {% for journal in latest_journals %}
+<div class="text-gray-600 p-4 bg-white rounded mb-2">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">{{ journal.title }}</h5>
+            <h5 class="card-title">{{journal.agenda.subject.name}}</h5>
         </div>
         <div class="card-body">
             <p class="card-text">{{ journal.content }}</p>
         </div>
     </div>
+</div>
 {% empty %}
     <div class="text-gray-600 p-4 bg-white rounded">
         Tidak ada riwayat refleksi

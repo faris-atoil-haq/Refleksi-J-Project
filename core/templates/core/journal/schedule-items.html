@@ -52,16 +52,18 @@
                                 </div>
                             </button>
                             <div class="block shadow rounded-lg bg-white me-4 px-3 pe-6 py-2 text-gray-700 h-full grow max-w-[200px]">
-                                <div class="flex justify-between h-full">
+                                {% with refleksi_id=schedule.subject.jurnal_set.all|count_total|add:1 %}
+                                <a href="{% url 'refleksi_input' id=schedule.id refleksi=refleksi_id %}" class="flex justify-between h-full">
                                     <div class="font-medium">
                                         Refleksi
                                     </div>
+                                    {% endwith %}
                                     <div class="h-full flex items-end">
                                         <div class="text-xl md:text-2xl">
-                                            0/7
+                                            {{schedule.id|get_count_refleksi}}/{{refleksi_list|count_total}}
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>
