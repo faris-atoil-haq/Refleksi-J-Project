@@ -3,7 +3,9 @@ import re
 import markdown
 import pytz
 from django import template
-from core.models import Journal,TeacherAgenda,ReflectionQuestion
+
+from core.models import *
+from core.models import Journal, ReflectionQuestion, TeacherAgenda
 
 register = template.Library()
 
@@ -59,8 +61,6 @@ def as_timezone(time_input, timezone, format=None):
     res = time_input.astimezone(timezone).strftime(format)
     return res
 
-
-
 @register.simple_tag()
 def complete_date_in_bahasa(time_input, timezone):
     timezone = pytz.timezone(timezone)
@@ -85,6 +85,12 @@ def get_count_refleksi(schedule_id):
     subject = schedule.subject
     return Journal.objects.filter(subject=subject,agenda=schedule).count()
 
+
+@register.filter
+def get_count_refleksi(schedule_id):
+    schedule = TeacherAgenda.objects.get(id=schedule_id)
+    subject = schedule.subject
+    return Journal.objects.filter(subject=subject,agenda=schedule).count()
 
 @register.filter
 def render_markdown(text):
@@ -128,3 +134,18 @@ def get_percent(value, total):
 @register.filter
 def in_range(value, start=0):
     return range(start, value+1)
+
+@register.filter
+def check_relfeksi_fill_progress(agenda):
+    total_questions = ReflectionQuestion.objects.count()
+    total_filled = agenda.journals.filter(content__isnull=False).count()
+    if total_filled == total_questions:
+        return 'done'
+    elif total_filled > 0:
+        return 'progress'
+    else:
+        return 'empty'
+    
+@register.filter
+def total_filled_refleksi(agenda):
+    return agenda.journals.filter(content__isnull=False).count()

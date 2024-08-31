@@ -12,7 +12,8 @@ from core.models import *
 @require_GET
 def today_agenda(request):
     agenda_list = TeacherAgenda.objects.filter(
-        start_time=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0)
+        user=request.user,
+        start_time__date=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0).date()
     ).order_by('start_time')
     context = {
         'agenda_list': agenda_list,
@@ -22,15 +23,19 @@ def today_agenda(request):
 @login_required
 @require_GET
 def latest_reflection_journals(request):
-    schedules = TeacherAgenda.objects.filter(user=request.user,
-        start_time=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0)
-    ).values('subject')
+    schedules = TeacherAgenda.objects.filter(
+        user=request.user,
+        start_time__date=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).replace(hour=0, minute=0, second=0).date()
+    ).order_by('start_time')
     
     latest_journals = []
     for schedule in schedules:
         subject = schedule.subject
-        latest_journal = Journal.objects.filter(subject=subject).latest('created_at')
-        latest_journals.append(latest_journal)
+        journals = Journal.objects.filter(
+            subject=subject, 
+            agenda__start_time__date__lt=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date())
+        if journals:
+            latest_journals.append(journals.latest('created_at'))
     
     # For Testing Faris , comment it out to test on home for refleksi list
     # latest_journals = Journal.objects.all()
@@ -161,12 +166,16 @@ def schedule_items(request):
         'nearest_today_agenda': nearest_today_agenda,
         'today': today,
         'init_flowbite': init_flowbite,
+        'total_questions': ReflectionQuestion.objects.count(),
     }
     return render(request, 'core/journal/schedule-items.html', context)
 
 
 @login_required
-def refleksi_input(request,id=None,refleksi=None):
+def refleksi_input(request, id, refleksi=None):
+    if not refleksi:
+        refleksi = 1
+    
     refleksi_list = ReflectionQuestion.objects.all()
 
     if request.method == 'GET':
@@ -180,6 +189,7 @@ def refleksi_input(request,id=None,refleksi=None):
             'schedule': schedule,
             'jurnal': jurnal,
             'page': 'schedule',
+            'page_title': "Refleksi",
         }
     else:
         schedule = request.POST.get('schedule',None)
@@ -189,7 +199,7 @@ def refleksi_input(request,id=None,refleksi=None):
         schedule = TeacherAgenda.objects.get(id=schedule)
         question = ReflectionQuestion.objects.get(order=order)
         subject = schedule.subject
-        jurnal,_ = Journal.objects.get_or_create(subject=subject,agenda=schedule,question=question)
+        jurnal,_ = Journal.objects.get_or_create(agenda=schedule,question=question)
         
         jurnal.content = refleksi_answer
         jurnal.question_text = question.question
@@ -209,3 +219,25 @@ def refleksi_input(request,id=None,refleksi=None):
         }
     return render(request, 'core/journal/refleksi-list.html', context)
 
+@login_required
+def summary_refleksi(request, id):
+    try:
+        schedule = TeacherAgenda.objects.get(id=id)
+    except TeacherAgenda.DoesNotExist:
+        return HttpResponse(status=404)
+    journals = Journal.objects.filter(agenda=schedule).order_by('created_at')
+    summary = ''
+    for journal in journals:
+        # get the last character of jhournal.content
+        if not journal.content:
+            continue
+        last_char = journal.content.strip()[-1]
+        if last_char not in ['.', '?', '!', ]:
+            summary += journal.content.strip().capitalize() + '. '
+        else:
+            summary += journal.content.strip().capitalize() + ' '
+        print(summary.capitalize())
+    context = {
+        'summary': summary
+    }
+    return render(request, 'core/journal/refleksi-summary.html', context)

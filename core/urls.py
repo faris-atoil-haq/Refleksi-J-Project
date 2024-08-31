@@ -36,7 +36,9 @@ urlpatterns = [
     path('app/jadwal/add/', journal.schedule_subject, name='add_schedule'),
     path('app/jadwal/<uuid:id>/', journal.schedule_subject, name='edit_schedule'),
     path('app/jadwal/items/', journal.schedule_items, name='schedule_items'),
+    path('app/jadwal/<uuid:id>/refleksi/', journal.refleksi_input, name='begin_refleksi_input'),
     path('app/jadwal/<uuid:id>/refleksi/<int:refleksi>/', journal.refleksi_input, name='refleksi_input'),
+    path('app/jadwal/<uuid:id>/refleksi/summary/', journal.summary_refleksi, name='summary_refleksi'),
     path('app/jadwal/save/', journal.refleksi_input, name='refleksi_input_save'),
     
     path('app/angket/', angket.main, name='angket'),

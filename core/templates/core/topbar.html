@@ -1,3 +1,4 @@
+{% load custom_tags %}
 {% if head_news %}
     <div class="shadow flex items-center justify-between p-4 py-3 md:px-9 bg-gray-100 text-sm font-medium text-gray-900">
         <span>{{head_news.text}} <a href="{{head_news.link_url}}" class="inline-flex items-center ml-2 text-sm font-medium text-blue-600 md:ml-2 hover:underline">{{head_news.link_text}}</a></span>
@@ -39,7 +40,7 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
                 </svg>
             {% endif %}
-            {{page_title}}
+            <div class="flex">{{page_title}} {% if page == 'home' %}<div class="font-normal ms-3"> | {% complete_date_in_bahasa now 'Asia/Jakarta' %} </div> {% endif %}</div>
         </div>
     </div>
 

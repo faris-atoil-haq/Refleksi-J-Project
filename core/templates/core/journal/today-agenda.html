@@ -1,8 +1,26 @@
+{% load custom_tags %}
 
 {% for agenda in agenda_list %}
-    <div role="status" class="w-[280px] h-[210px] p-7 border border-gray-200 rounded shadow md:p-6">
-        
-    </div>
+    {% with agenda|check_relfeksi_fill_progress as refleksi_progress %}
+        <a href="{% url 'begin_refleksi_input' id=agenda.id %}" class="w-[280px] p-7 border border-gray-200 rounded shadow md:p-6 {% if now > agenda.start_time and now < agenda.end_time %}bg-blue-500 text-white{% elif refleksi_progress == 'progress' %}bg-yellow-500 text-white{% elif refleksi_progress == 'done' %}bg-green-500 text-white{% endif %}">
+            {% if refleksi_progress == 'empty' %}
+                <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                    Belum diisi
+                </span>
+            {% elif refleksi_progress == 'progress' %}
+                <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                    Sebagian diisi
+                </span>
+            {% elif refleksi_progress == 'done' %}
+                <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                    Sudah diisi
+                </span>
+            {% endif %}
+            <div class="text-xl md:text-2xl font-medium mt-6">{{agenda.subject.name}}</div>
+            <div class="">{% as_timezone agenda.start_time 'Asia/Jakarta' '%H:%M' %} - {% as_timezone agenda.end_time 'Asia/Jakarta' '%H:%M' %}</div>
+            </a>
+    {% endwith %}
+
 {% empty %}
     <div class="flex items-center w-full">
         <div class="flex flex-col justify-center items-center bg-white rounded-lg py-4 px-10 text-center w-[280px] h-[210px]">

@@ -36,9 +36,9 @@
                         </svg>
                     </div> {% endcomment %}
 
-                    <div>
+                    <div class="w-full">
                         <label for="subject-selector" class="block mb-2 text-sm font-medium text-gray-900">Pilih mata pelajaran</label>
-                        <input name="subject" type="text" class="hover:bg-gray-100 rounded-md bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer" 
+                        <input name="subject" type="text" class="hover:bg-gray-100 w-full rounded-md bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer" 
                             required placeholder="Mata pelajaran"
                             {% if agenda %}value="{{agenda.subject.name}}"{% endif %} />
                     </div>
@@ -50,41 +50,43 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
                     </div> {% endcomment %}
-                    <div class="">
+                    <div class="w-full">
                         <label class="block mb-2 text-sm font-medium text-gray-900">Waktu</label>
-                        <div class="flex">
-                            <input datepicker type="text"
-                                id="schedule-date-picker"
-                                name="date"
-                                class="hover:bg-gray-100 rounded-t-md text-center w-[140px] p-0 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                datepicker-format="dd MM yyyy" 
-                                placeholder="Tanggal"
-                                required
+                        <div class="flex items-end">
+                            <div class="flex-grow">
+                                <input datepicker type="text"
+                                    id="schedule-date-picker"
+                                    name="date"
+                                    class="hover:bg-gray-100 rounded-t-md text-center w-full p-0 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                    datepicker-format="dd MM yyyy" 
+                                    placeholder="Tanggal"
+                                    required
 
+                                    {% if agenda %}
+                                        value="{{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'j'}} {{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'F'}} {{agenda.end_time|datetime_as_timezone:'Asia/Jakarta'|date:'Y'}}"
+                                    {% else %}
+                                        value="{{today|date:'j'}} {{today|date:'F'}} {{today|date:'YYYY'}}" 
+                                    {% endif %}
+                                    >
                                 {% if agenda %}
-                                    value="{{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'j'}} {{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'F'}} {{agenda.end_time|datetime_as_timezone:'Asia/Jakarta'|date:'Y'}}"
-                                {% else %}
-                                    value="{{today|date:'j'}} {{today|date:'F'}} {{today|date:'YYYY'}}" 
+                                    <script>
+                                        new Datepicker(document.getElementById('schedule-date-picker'), {
+                                            autohide: true,
+                                            format: 'dd MM yyyy',
+                                            orientation: 'bottom',
+                                            autoSelectToday: 0,
+                                            rangePicker: false,
+                                        });
+                                    </script>
                                 {% endif %}
-                                >
-                            {% if agenda %}
-                                <script>
-                                    new Datepicker(document.getElementById('schedule-date-picker'), {
-                                        autohide: true,
-                                        format: 'dd MM yyyy',
-                                        orientation: 'bottom',
-                                        autoSelectToday: 0,
-                                        rangePicker: false,
-                                    });
-                                </script>
-                            {% endif %}
+                            </div>
                             <div class="relative">
                                 <div class="absolute inset-y-0 end-0 top-0 pe-2 flex items-center pb-1">
                                     <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                         <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <input name="start_time" type="time" id="start-time" class="hover:bg-gray-100 rounded-t-md w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="18:00" value="09:00" required />
+                                <input name="start_time" type="time" id="start-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="18:00" value="09:00" required />
                             </div>
                             <div class="flex items-center ps-1 pe-2 border-0 border-b-2 border-gray-300">-</div>
                             <div class="relative">
@@ -93,14 +95,14 @@
                                         <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <input name="end_time" type="time" id="end-time" class="hover:bg-gray-100 rounded-t-md text-center w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="23:00" value="10:00" required />
+                                <input name="end_time" type="time" id="end-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md text-center w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="23:00" value="10:00" required />
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="mb-4">
+                <div class="mb-4 w-full">
                     <label for="repetition" class="block mb-2 text-sm font-medium text-gray-900">Pengulangan</label>
-                    <select id="repetition" name="repetition" class="hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                    <select id="repetition" name="repetition" class="w-full hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                         <option value="no_repetition" selected>Tidak berulang</option>
                         <option value="daily">Setiap hari kerja</option>
                         <option value="weekly">Pekanan pada hari yang sama</option>
@@ -115,9 +117,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-12">
-                    <button type="submit" class="btn btn-primary p-3 py-2 font-medium">
-                        Tambah Jadwal
+                <div class="mt-6">
+                    <button type="submit" class="btn btn-primary px-6 py-2 font-medium">
+                        {% if agenda %}
+                            Simpan
+                        {% else %}
+                            Tambah Jadwal
+                        {% endif %}
                     </button>
                 </div>
             </form>

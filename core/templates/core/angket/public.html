@@ -44,17 +44,17 @@
             <div class="flex sm:flex-wrap">
                 {% if question_number > 1 %}
                 <a class="flex flex-grow justify-center items-center p-3 py-1.5 me-3 text-blue-700 bg-white hover:bg-gray-50 border-2 border-blue-500 rounded-md" href="{% url 'public_angket' angket_session.id %}?page={{question_number|add:'-1'}}">
-                    <svg class="w-6 h-6 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                    <svg class="w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m15 19-7-7 7-7"/>
                     </svg>
                     Kembali
                 </a>
                 {% else %}
                 {% endif %}
-                <button class="text-white flex flex-grow justify-center items-center p-3 py-1.5 me-3 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-md" type="submit">
+                <button class="text-white flex flex-grow justify-center items-center p-3 py-2 me-3 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-md" type="submit">
                     Simpan & lanjutkan
-                    <svg class="w-6 h-6 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                    <svg class="w-4 h-4 ms-3 relative top-[1px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m9 5 7 7-7 7"/>
                     </svg>
                 </button>
             </div>
