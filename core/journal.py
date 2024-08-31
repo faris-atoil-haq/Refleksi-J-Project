@@ -158,7 +158,7 @@ def schedule_items(request):
                 agenda['schedules'].append(schedule)
     
     # get agenda['date'] that is the most nearest to today
-    if today:
+    if today and agenda_list:
         nearest_today_agenda = min(agenda_list, key=lambda x: abs(x['date'] - today))
     
     context = {

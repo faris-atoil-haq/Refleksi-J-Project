@@ -18,4 +18,24 @@
             }, 2000);
         })
     })
+
+    //add show password toggle function
+    document.querySelectorAll('.toggle-password').forEach(item => {
+        item.addEventListener('click', event => {
+            item.querySelectorAll('.show-icon').forEach(icon => {
+                if (icon.classList.contains('hidden')){
+                    icon.classList.remove('hidden')
+                    icon.nextElementSibling.classList.add('hidden')
+                    item.previousElementSibling.type = 'password'
+                    console.log(item.previousElementSibling)
+                }
+                else{
+                    icon.classList.add('hidden')
+                    icon.nextElementSibling.classList.remove('hidden')
+                    item.previousElementSibling.type = 'text'
+                    console.log(item.previousElementSibling)
+                }
+            })
+        })
+    })
 </script>
