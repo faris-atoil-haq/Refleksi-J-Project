@@ -65,12 +65,18 @@ class ReflectionQuestion(models.Model):
     def __str__(self):
         return f'{self.id} {self.question}'
     
+class AgendaReference(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
 class TeacherAgenda(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, blank=True, null=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
+    reference = models.ForeignKey(AgendaReference, blank=True, null=True, on_delete=models.SET_NULL, related_name='agendas')
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
