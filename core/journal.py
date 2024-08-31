@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytz
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -69,18 +71,44 @@ def schedule_subject(request, id=None):
         print(context)
         return render(request, 'core/journal/schedule-drawer.html', context)
     
+    # POST
     subject_name = request.POST.get('subject')
     date = request.POST.get('date')
     start_time = request.POST.get('start_time')
     end_time = request.POST.get('end_time')
     repetition = request.POST.get('repetition')
+    apply_changes_to = request.POST.get('apply_changes_to')
+    delete = request.POST.get('delete')
     
-    if not (subject_name and date and start_time and end_time and repetition):
+    if not delete:
+        if not (subject_name and date and start_time and end_time):
+            return HttpResponse(status=400)
+        if not id and not repetition:
+            return HttpResponse(status=400)
+        if id and not apply_changes_to:
+            return HttpResponse(status=400)
+    elif not id and not apply_changes_to:
         return HttpResponse(status=400)
     
-    if repetition not in ['no_repetition', 'daily', 'weekly', 'monthly']:
+    if repetition and repetition not in ['no_repetition', 'daily', 'weekly']:
         repetition = 'no_repetition'
     
+    if apply_changes_to and apply_changes_to not in ['this', 'related']:
+        apply_changes_to = 'this'
+    
+    if delete:
+        try:
+            agenda = TeacherAgenda.objects.get(id=id, user=request.user)
+        except:
+            return redirect('schedule')
+        
+        if apply_changes_to == 'related':
+            TeacherAgenda.objects.filter(reference=agenda.reference, start_time__gt=main_agenda.start_time).delete()
+            return HttpResponse
+        
+        agenda.delete
+        return redirect('schedule')
+        
     # Add TeacherAgenda based on the POST data
     subject, _ = Subject.objects.get_or_create(name=subject_name, user=request.user)
     start_time = timezone.datetime.strptime(f'{date} {start_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
@@ -88,23 +116,104 @@ def schedule_subject(request, id=None):
     end_time = timezone.datetime.strptime(f'{date} {end_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
     print(end_time)
     if repetition == 'no_repetition':
-        if id:
-            TeacherAgenda.objects.filter(id=id, user=request.user).update(
-                subject=subject,
-                start_time=start_time,
-                end_time=end_time
-            )
-        else:
+        main_agenda = TeacherAgenda.objects.create(
+            user=request.user,
+            subject=subject,
+            start_time=start_time,
+            end_time=end_time
+        )
+    elif repetition == 'daily':
+        reference = AgendaReference.objects.create()
+        main_agenda = TeacherAgenda.objects.create(
+            user=request.user,
+            subject=subject,
+            start_time=start_time,
+            end_time=end_time,
+            reference=reference
+        )
+        
+        now = timezone.now()
+        next_month = (now+timedelta(days=32-now.day)).replace(day=1)
+        next_two_month = (next_month+timedelta(days=32)).replace(day=1)
+        next_three_month = (next_two_month+timedelta(days=32)).astimezone(pytz.timezone('Asia/Jakarta')).replace(day=now.day, hour=start_time.hour, minute=start_time.minute)
+        for i in range(1, 91):
+            if main_agenda.start_time + timezone.timedelta(days=i) > next_three_month:
+                break
+            
+            day_name = timezone.now().strftime('%A')
+            if day_name.lower() in ['saturday', 'sunday']:
+                continue
+            
+            next_start_time = main_agenda.start_time + timezone.timedelta(days=i)
+            next_end_time = main_agenda.end_time + timezone.timedelta(days=i)
+            
             TeacherAgenda.objects.create(
                 user=request.user,
                 subject=subject,
-                start_time=start_time,
-                end_time=end_time
+                start_time=next_start_time,
+                end_time=next_end_time,
+                reference=reference
             )
-    # elif repetition == 'daily':
-    # elif repetition == 'weekly':
-    # elif repetition == 'monthly':
-    
+    elif repetition == 'weekly':
+        reference = AgendaReference.objects.create()
+        main_agenda = TeacherAgenda.objects.create(
+            user=request.user,
+            subject=subject,
+            start_time=start_time,
+            end_time=end_time,
+            reference=reference
+        )
+        
+        now = timezone.now()
+        next_month = (now+timedelta(days=32-now.day)).replace(day=1)
+        next_two_month = (next_month+timedelta(days=32)).replace(day=1)
+        next_three_month = (next_two_month+timedelta(days=32)).astimezone(pytz.timezone('Asia/Jakarta')).replace(day=now.day, hour=start_time.hour, minute=start_time.minute)
+        for i in range(1, 12):
+            if main_agenda.start_time + timezone.timedelta(days=i*7) > next_three_month:
+                break
+            
+            day_name = timezone.now().strftime('%A')
+            if day_name.lower() in ['saturday', 'sunday']:
+                continue
+            
+            next_start_time = main_agenda.start_time + timezone.timedelta(days=i*7)
+            next_end_time = main_agenda.end_time + timezone.timedelta(days=i*7)
+            
+            TeacherAgenda.objects.create(
+                user=request.user,
+                subject=subject,
+                start_time=next_start_time,
+                end_time=next_end_time,
+                reference=reference,
+            )
+            
+    if id:
+        try:
+            agenda = TeacherAgenda.objects.get(id=id, user=request.user)
+        except TeacherAgenda.DoesNotExist:
+            return HttpResponse(status=404)
+        
+        start_time_delta = agenda.start_time-start_time
+        end_time_delta = agenda.end_time-end_time
+        
+        agenda.subject=subject
+        agenda.start_time=start_time
+        agenda.end_time=end_time
+        agenda.save()
+        
+        if apply_changes_to == 'this':
+            if start_time_delta.seconds/60 >= 1 and end_time_delta.seconds/60 >= 1:
+                agenda.reference = None
+                agenda.save()
+                
+        if apply_changes_to == 'related':
+            if not agenda.reference:
+                return redirect('schedule')
+            for agenda_ in TeacherAgenda.objects.filter(reference=agenda.reference, start_time__gt=start_time):
+                agenda_.start_time = agenda_.start_time + timezone.timedelta(days=start_time_delta.days, seconds=start_time_delta.seconds)
+                agenda_.end_time = agenda_.end_time + timezone.timedelta(days=end_time_delta.days, seconds=end_time_delta.seconds)
+                agenda_.subject=subject
+                agenda_.save()
     return redirect('schedule')
     
 @login_required
