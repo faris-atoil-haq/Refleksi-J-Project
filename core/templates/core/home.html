@@ -1,25 +1,30 @@
 {% extends 'core/_base.html' %}
 
 {% block content %}
-    <div class="mb-8 md:mb-14">
-        <div class="text-xl font-semibold mb-4">
-            Refleksi Hari Ini
+    <div class="mb-8 md:mb-14 md:max-w-screen-lg">
+        <div class="text-gray-800 text-xl font-semibold mb-4 flex justify-between">
+            <div>
+                Refleksi Hari Ini
+            </div>
+            <a class="text-base flex items-center font-normal hover:text-blue-700 hover:underline" href="{% url 'schedule' %}">
+                lihat jadwal <span><svg class="w-5 h-5 ms-1 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4"/>
+                </svg></span>
+            </a>
         </div>
 
-        <div class="flex gap-9 mb-6">
-            {% include 'components/main-agenda-skeleton.html' %}
-            {% include 'components/main-agenda-skeleton.html' %}
+        <div class="flex gap-6 mb-6 flex-wrap md:max-w-screen-lg" hx-get="{% url 'today_agenda' %}" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
             {% include 'components/main-agenda-skeleton.html' %}
             {% include 'components/main-agenda-skeleton.html' %}
         </div>
     </div>
 
-    <div class="mb-6 me-4">
-        <div class="text-xl font-semibold mb-4">
+    <div class="mb-6 me-4 md:max-w-screen-lg">
+        <div class="text-gray-800 text-xl font-semibold mb-4">
             Catatan Refleksi Sebelumnya . . .
         </div>
 
-        <div class="pe-6">
+        <div class="pe-6 md:max-w-screen-lg" hx-get="{% url 'latest_reflection_journals' %}" hx-target="this" hx-swap="innerHTML" hx-trigger="load">
             {% include 'components/related-journal-history-skeleton.html' %}
             {% include 'components/related-journal-history-skeleton.html' %}
             {% include 'components/related-journal-history-skeleton.html' %}

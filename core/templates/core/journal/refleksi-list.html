@@ -1,0 +1,68 @@
+{% extends 'core/_base.html' %}
+{% load custom_tags %}
+
+{% block content %}
+    <style>
+        .htmx-request > .animate-spin {
+            display: block !important;
+        }
+        .htmx-request > .wand {
+            display: none !important;
+        }
+    </style>
+    <div class="mb-8 md:mb-14 w-full">
+        <div class="flex items-center mb-6 justify-between">
+            <div class=''>
+                <div class="text-xl font-semibold">
+                    {{schedule.subject.name}}
+                </div>
+                <div>
+                    {% complete_date_in_bahasa schedule.start_time 'Asia/Jakarta' %}
+                </div>
+            </div>
+            
+            <div class="flex items-center mb-6 justify-between">
+                <div class="me-10 text-xl font-semibold items-center mb-3">
+                    {{refleksi_quest.order}} dari {{refleksi_list|count_total}}
+                </div>
+                <a href="{% url 'refleksi_input' id=schedule.id refleksi=refleksi_quest.order|add:-1 %}" class="items-center justify-between flex py-1.5 px-3 me-2 mb-2 text-sm text-blue-700 hover:text-blue border-blue-700 bg-white rounded-lg border hover:bg-gray-100">
+                    <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="blue" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 17-5-5 5-5"/>
+                    </svg> 
+                    <span class="ms-2">
+                    Kembali
+                    </span>
+                </a>
+                <button type="submit" form="post_refleksi_content" name="post_content_btn" value="save" class="items-center justify-between flex btn btn-primary py-2 px-3 me-2 mb-2 text-sm text-white focus:outline-none bg-blue rounded-lg border border-gray-200 hover:bg-blue-800 hover:text-white-100 focus:z-10 focus:ring-4 focus:ring-gray-100">
+                    <span class="ms-2">
+                        Simpan & Lanjutkan
+                    </span>
+                    
+                    <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14 7 5 5-5 5"/>
+                    </svg> 
+                </button>
+            </div>
+        </div>
+
+        <label for="message" class="text-xl font-semibold mb-4 required">
+            {{refleksi_quest.question}}
+        </label>        
+        <form id="post_refleksi_content" method="POST" action="{% url 'refleksi_input' id=schedule.id refleksi=refleksi_quest.order|add:1 %}">
+            {% csrf_token %}
+            <input hidden name="order" value="{{refleksi_quest.order}}"></input>
+            <input hidden name="schedule" value="{{schedule.id}}"></input>
+            <textarea required id="message" name="refleksi_answer" rows="6" class="mt-2 mb-2 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Tulis jawaban anda disini ..."></textarea>
+        </form>
+        
+        <div>
+            <a href="{% url 'schedule' %}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                Lihat Referensi Disini
+            </a>  
+        </div> 
+    </div>
+{% endblock %}  
+
+{% block script %}
+
+{% endblock %}

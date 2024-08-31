@@ -1,0 +1,7 @@
+{% if page == 'schedule' %}
+    {% include "core/journal/schedule-drawer.html" %}
+{% elif page == 'module' %}
+    {% include "core/module/module-feedback-drawer.html" %}
+{% elif page == 'angket' %}
+    {% include "core/angket/angket-drawer.html" %}
+{% endif %}

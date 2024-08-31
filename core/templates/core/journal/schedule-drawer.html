@@ -1,0 +1,142 @@
+{% load custom_tags %}
+
+<div id="add-schedule-drawer" class="fixed top-0 right-0 z-50 h-screen py-4 overflow-y-auto transition-transform translate-x-full bg-white w-[500px]" tabindex="-1" aria-labelledby="drawer-right-label">
+    <div id="schedule-drawer-content">
+        <div class="px-8 border-0 border-b-2 border-gray-300 mb-6">
+            <h5 id="drawer-right-label" class="inline-flex items-center text-xl mb-3 font-semibold text-gray-500">
+                {% if agenda %}
+                    Edit Jadwal
+                {% else %}
+                    Tambah Jadwal
+                {% endif %}
+            </h5>
+            <button type="button" data-drawer-hide="add-schedule-drawer" aria-controls="add-schedule-drawer" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 end-2.5 inline-flex items-center justify-center" >
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close menu</span>
+            </button>
+        </div>
+        <div class="px-8">
+            <form method="POST" 
+                {% if agenda %}
+                    action="{% url 'edit_schedule' agenda.id %}" 
+                {% else %}
+                    action="{% url 'add_schedule' %}" 
+                {% endif %}
+                class="mx-auto">
+                {% csrf_token %}
+                {% if agenda %}
+                    <input type="hidden" name="agenda" value="{{agenda.id}}">
+                {% endif %}
+                <div class="flex mb-6">
+                    {% comment %} <div class="min-w-[50px] me-2 flex items-center">
+                        <svg class="w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                    </div> {% endcomment %}
+
+                    <div class="w-full">
+                        <label for="subject-selector" class="block mb-2 text-sm font-medium text-gray-900">Pilih mata pelajaran</label>
+                        <input name="subject" type="text" class="hover:bg-gray-100 w-full rounded-md bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer" 
+                            required placeholder="Mata pelajaran"
+                            {% if agenda %}value="{{agenda.subject.name}}"{% endif %} />
+                    </div>
+                </div>
+
+                <div class="flex mb-6">
+                    {% comment %} <div class="min-w-[50px] me-2 flex items-center">
+                        <svg class="w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>
+                    </div> {% endcomment %}
+                    <div class="w-full">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Waktu</label>
+                        <div class="flex items-end">
+                            <div class="flex-grow">
+                                <input datepicker type="text"
+                                    id="schedule-date-picker"
+                                    name="date"
+                                    class="hover:bg-gray-100 rounded-t-md text-center w-full p-0 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                    datepicker-format="dd MM yyyy" 
+                                    placeholder="Tanggal"
+                                    required
+
+                                    {% if agenda %}
+                                        value="{{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'j'}} {{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'F'}} {{agenda.end_time|datetime_as_timezone:'Asia/Jakarta'|date:'Y'}}"
+                                    {% else %}
+                                        value="{{today|date:'j'}} {{today|date:'F'}} {{today|date:'YYYY'}}" 
+                                    {% endif %}
+                                    >
+                                {% if agenda %}
+                                    <script>
+                                        new Datepicker(document.getElementById('schedule-date-picker'), {
+                                            autohide: true,
+                                            format: 'dd MM yyyy',
+                                            orientation: 'bottom',
+                                            autoSelectToday: 0,
+                                            rangePicker: false,
+                                        });
+                                    </script>
+                                {% endif %}
+                            </div>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 end-0 top-0 pe-2 flex items-center pb-1">
+                                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <input name="start_time" type="time" id="start-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="18:00" value="09:00" required />
+                            </div>
+                            <div class="flex items-center ps-1 pe-2 border-0 border-b-2 border-gray-300">-</div>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 end-0 top-0 pe-2 flex items-center pb-1">
+                                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <input name="end_time" type="time" id="end-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md text-center w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="23:00" value="10:00" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if agenda %}
+                    <div class="mb-4 w-full">
+                        <label for="apply_changes_to" class="block mb-2 text-sm font-medium text-gray-900">Terapkan perubahan pada</label>
+                        <select id="apply_changes_to" name="apply_changes_to" class="w-full hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <option value="this" selected>Agenda ini saja </option>
+                            <option value="related">Semua agenda yang berkaitan</option>
+                        </select>
+                    </div>
+                {% else %}
+                    <div class="mb-4 w-full">
+                        <label for="repetition" class="block mb-2 text-sm font-medium text-gray-900">Pengulangan</label>
+                        <select id="repetition" name="repetition" class="w-full hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <option value="no_repetition" selected>Tidak berulang</option>
+                            <option value="daily">Di jam yang sama, setiap hari kerja selama 3 bulan</option>
+                            <option value="weekly">Pekanan pada waktu yang sama selama 3 bulan</option>
+                        </select>
+                    </div>
+                {% endif %}
+                <div id="repetition_range" class="hidden">
+                    <label for="repetition-range" class="block mb-2 text-sm font-medium text-gray-900">Pengulangan sampai</label>
+                    <div class="flex items-center">
+                        <input type="number" name="repetition_range" class="me-2 bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+                            min="1" max="6" value="1">
+                        <div>Bulan
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button type="submit" class="btn btn-primary px-6 py-2 font-medium">
+                        {% if agenda %}
+                            Simpan
+                        {% else %}
+                            Tambah Jadwal
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

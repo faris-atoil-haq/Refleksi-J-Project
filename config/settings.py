@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     
     'lockdown',
     
-    'whitenoise',
     'compressor',
     
     # Django app below here
@@ -88,6 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processor.general_context',
             ],
         },
     },
@@ -145,47 +145,60 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_QUERYSTRING_AUTH = False
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-AWS_DEFAULT_ACL = 'public-read'
-AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
-AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_REGION_NAME}.digitaloceanspaces.com'
-AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-AWS_LOCATION = 'static'
 MEDIA_LOCATION = 'media'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    # ('nm', os.path.join(BASE_DIR, 'node_modules/')),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-if PROD or STAGING:
-    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/'
-    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{MEDIA_LOCATION}/'
-else:
+AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = 'public-read'
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
+AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_REGION_NAME}.digitaloceanspaces.com/refleksi-j'
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+AWS_LOCATION = 'static'
+
+if not STAGING and not PROD:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
     STATIC_URL = '/static/'
-    MEDIA_URL = '/media/'
+#     MEDIA_URL = '/media/'
+    
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+#     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+else:
+    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+COMPRESS_ROOT = BASE_DIR / 'static'
+COMPRESS_ENABLED = True
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
+
+# else:
+
+import boto3
+
+session = boto3.session.Session()
+S3_CLIENT = session.client('s3',
+    endpoint_url=AWS_S3_ENDPOINT_URL, # Find your endpoint in the control panel, under Settings. Prepend "https://".
+    region_name=AWS_S3_REGION_NAME, # Use the region in your endpoint.
+    aws_access_key_id=AWS_ACCESS_KEY_ID, # Access key pair. You can create access key pairs using the control panel or API.
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY # Secret access key defined through an environment variable.
+) 
+MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{MEDIA_LOCATION}/'
 DEFAULT_FILE_STORAGE = 'config.storage_backend.PublicMediaStorage'
+
 # private media settings
 PRIVATE_MEDIA_LOCATION = 'private'
 PRIVATE_FILE_STORAGE = 'config.storage_backend.PrivateMediaStorage'
-
-if not STAGING and not PROD:
-    COMPRESS_ROOT = BASE_DIR / 'static'
-
-    COMPRESS_ENABLED = True
-
-    STATICFILES_FINDERS = [
-        'django.contrib.staticfiles.finders.FileSystemFinder',
-        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-        'compressor.finders.CompressorFinder',
-    ]
-
+    
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -202,9 +215,10 @@ EMAIL_USE_TLS = True
 
 SENTRY_KEY = env('SENTRY_KEY', default='')
 
-# For staging
 LOCKDOWN_ENABLED = env.bool('LOCKDOWN', default=False)
 LOCKDOWN_PASSWORDS = tuple(env.list('LOCKDOWN_PASSWORDS', default=['letmein']))
+
+CHATPDF_API_KEY = env('CHATPDF_API_KEY', default='')
 
 
 # Debug

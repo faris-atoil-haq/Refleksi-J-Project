@@ -11,3 +11,4 @@ static/CACHE/*
 static/src/output.css
 staticfiles/
 venv
+static/

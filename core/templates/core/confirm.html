@@ -1,0 +1,28 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block content %}
+  
+
+<div class="flex justify-center py-8">
+    <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow md:p-8">
+        {% if verified and option == 'signup'%}
+            Akun anda berhasil di verifikasi
+            <div class="">
+                Silahkan <a href="{% url 'login' %}"class="font-medium text-blue-700 hover:underline">Masuk di sini</a>
+            </div>
+        {% elif verified and option == 'reset'%}
+            Email pengaturan ulang kata sandi telah dikirimkan ke Email anda.
+        {% elif verified and option == 'reseted'%}
+            Password berhasil diatur ulang
+            
+            <div class="text-sm font-medium text-gray-500">
+                <a href="{% url 'login' %}"class="text-blue-700 hover:underline">Masuk di sini</a>
+            </div>
+        {% else %}
+            Email sudah dikirimkan ke e-mail Anda. Silahkan cek e-mail Anda.
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
