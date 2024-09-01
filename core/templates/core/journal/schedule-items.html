@@ -2,7 +2,7 @@
 
 <div class="relative overflow-x-auto h-[64vh] {% if agenda_list %}pb-[50vh]{% endif %}">
     {% for agenda in agenda_list %}
-        <div class="mb-3 w-full relative flex">
+        <div class="mb-3 w-full relative flex flex-wrap md:flex-nowrap">
             <div class="w-[160px]">
                 <div class="sticky top-0 shadow rounded {% if agenda.date == today %}bg-blue-700 text-white{% else %}bg-white text-gray-700{% endif %} px-3 py-2 flex items-center justify-evenly me-4 mb-3" {% if agenda.date == nearest_today_agenda.date %}id="nearest_today"{% endif %}>
                     <script>
@@ -14,7 +14,7 @@
                         {% endif %}
                     </script>
                     <div class="text-2xl font-bold me-3 leading-tight">{{ agenda.date|date:"d" }}</div>
-                    <div class="text-sm font-medium">
+                    <div class="text-xs md:text-sm font-medium">
                         <div class="">
                             {% with agenda.date|date:"F" as month %}
                                 {{ month|month_in_bahasa }}
@@ -30,37 +30,31 @@
             </div>
             <div class="grow">
                 {% for schedule in agenda.schedules %}
-                    <div class="flex w-full mb-3">
+                    <div class="flex w-full {% if not forloop.last %}mb-3{% endif %} md:flex-nowrap flex-wrap">
                         
                         <div class="grow flex">
-                            <button data-drawer-target="add-schedule-drawer" data-drawer-show="add-schedule-drawer" data-drawer-placement="right" aria-controls="add-schedule-drawer" class="shadow rounded-lg bg-white me-4 px-3 py-2 text-gray-700 h-full w-[60%]"
-                                hx-get="{% url 'edit_schedule' schedule.id %}" hx-target="#schedule-drawer-content" hx-select="#schedule-drawer-content">
+                            <button data-drawer-target="add-schedule-drawer" data-drawer-show="add-schedule-drawer" data-drawer-placement="right" aria-controls="add-schedule-drawer" class="shadow rounded-lg bg-white me-2 md:me-4 px-3 py-2 text-gray-700 h-full w-[60%]"
+                                hx-get="{% url 'edit_schedule' schedule.id %}" hx-target="#schedule-form-content" hx-select="#schedule-form-content" hx-swap="outerHTML">
                                 <div class="flex">
-                                    <div class="p-1 me-2">
+                                    {% comment %} <div class="p-1 me-2">
                                         <svg class="w-6 h-6 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7.171 12.906-2.153 6.411 2.672-.89 1.568 2.34 1.825-5.183m5.73-2.678 2.154 6.411-2.673-.89-1.568 2.34-1.825-5.183M9.165 4.3c.58.068 1.153-.17 1.515-.628a1.681 1.681 0 0 1 2.64 0 1.68 1.68 0 0 0 1.515.628 1.681 1.681 0 0 1 1.866 1.866c-.068.58.17 1.154.628 1.516a1.681 1.681 0 0 1 0 2.639 1.682 1.682 0 0 0-.628 1.515 1.681 1.681 0 0 1-1.866 1.866 1.681 1.681 0 0 0-1.516.628 1.681 1.681 0 0 1-2.639 0 1.681 1.681 0 0 0-1.515-.628 1.681 1.681 0 0 1-1.867-1.866 1.681 1.681 0 0 0-.627-1.515 1.681 1.681 0 0 1 0-2.64c.458-.361.696-.935.627-1.515A1.681 1.681 0 0 1 9.165 4.3ZM14 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
                                         </svg>
-                                    </div>
-                                    <div class="text-base">
+                                    </div> {% endcomment %}
+                                    <div class="text-sm md:text-base">
                                         <div class="font-medium">
                                             {{schedule.subject.name|title}}
                                         </div>
-                                        <div class="text-sm">
-                                            {% as_timezone schedule.start_time 'Asia/Jakarta' '%H:%M' %} - {% as_timezone schedule.end_time 'Asia/Jakarta' '%H:%M' %}
-                                        </div>
+                                        <div class="text-sm">{% as_timezone schedule.start_time 'Asia/Jakarta' '%H:%M' %} - {% as_timezone schedule.end_time 'Asia/Jakarta' '%H:%M' %}</div>
                                     </div>
                                 </div>
                             </button>
                             
                             {% with schedule|total_filled_refleksi as total_filled %}
                                 <button data-modal-target="popup-modal-{{schedule.id}}" id="refleksi-modal-{{schedule.id}}" data-modal-toggle="popup-modal-{{schedule.id}}" type="button" class="block shadow rounded-lg {% if total_filled == total_questions %}bg-green-500 text-white{% elif total_filled > 0 and total_filled < total_questions %}bg-yellow-400 text-white{% else %}bg-white text-gray-700{% endif %} me-4 px-3 pe-6 py-2 h-full grow max-w-[200px]">
-                                    <div class="flex justify-between h-full">
-                                        <div class="font-medium">
-                                            Refleksi
-                                        </div>
-                                        <div class="h-full flex items-end">
-                                            <div class="text-xl md:text-2xl">
-                                                {{total_filled}}/{{total_questions}}
+                                    <div class="text-left md:flex md:justify-between h-full">
+                                        <div class="text-sm md:text-base font-medium">Refleksi</div>
+                                        <div class="md:h-full flex md:items-end"><div class="text-sm md:text-2xl">{{total_filled}}/{{total_questions}}
                                             </div>
                                         </div>
                                     </div>
@@ -96,6 +90,8 @@
                     </div>
                 {% endfor %}
             </div>
+        </div>
+        <div class="mb-3 border border-gray-300">
         </div>
     
     {% empty %}
