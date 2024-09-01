@@ -29,7 +29,7 @@
                 {% if agenda %}
                     <input type="hidden" name="agenda" value="{{agenda.id}}">
                 {% endif %}
-                <div class="flex mb-4">
+                <div class="flex mb-6">
                     {% comment %} <div class="min-w-[50px] me-2 flex items-center">
                         <svg class="w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="flex mb-4">
+                <div class="flex mb-6">
                     {% comment %} <div class="min-w-[50px] me-2 flex items-center">
                         <svg class="w-5 h-5 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -100,14 +100,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-4 w-full">
-                    <label for="repetition" class="block mb-2 text-sm font-medium text-gray-900">Pengulangan</label>
-                    <select id="repetition" name="repetition" class="w-full hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                        <option value="no_repetition" selected>Tidak berulang</option>
-                        <option value="daily">Setiap hari kerja</option>
-                        <option value="weekly">Pekanan pada hari yang sama</option>
-                    </select>
-                </div>
+                {% if agenda %}
+                    <div class="mb-4 w-full">
+                        <label for="apply_changes_to" class="block mb-2 text-sm font-medium text-gray-900">Terapkan perubahan pada</label>
+                        <select id="apply_changes_to" name="apply_changes_to" class="w-full hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <option value="this" selected>Agenda ini saja </option>
+                            <option value="related">Semua agenda yang berkaitan</option>
+                        </select>
+                    </div>
+                {% else %}
+                    <div class="mb-4 w-full">
+                        <label for="repetition" class="block mb-2 text-sm font-medium text-gray-900">Pengulangan</label>
+                        <select id="repetition" name="repetition" class="w-full hover:cursor-pointer bg-white text-gray-900 text-sm bg-transparent border-2 border-gray-300 hover:bg-gray-100 rounded-md appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                            <option value="no_repetition" selected>Tidak berulang</option>
+                            <option value="daily">Di jam yang sama, setiap hari kerja selama 3 bulan</option>
+                            <option value="weekly">Pekanan pada waktu yang sama selama 3 bulan</option>
+                        </select>
+                    </div>
+                {% endif %}
                 <div id="repetition_range" class="hidden">
                     <label for="repetition-range" class="block mb-2 text-sm font-medium text-gray-900">Pengulangan sampai</label>
                     <div class="flex items-center">
@@ -127,25 +137,6 @@
                     </button>
                 </div>
             </form>
-            <script>
-                var select = document.querySelector('#repetition');
-                var weeklyDay = document.querySelector('#repetition_range');
-                {% comment %} select.addEventListener('change', (e) => {
-                    if (e.target.value === 'weekly') {
-                        weeklyDay.innerHTML = `
-                            <select class="bg-white text-gray-900 text-sm bg-transparent border-0 border-b-2 border-gray-200 appearance-none focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                                <option value="1">Senin</option>
-                                <option value="2">Selasa</option>
-                                <option value="3">Rabu</option>
-                                <option value="4">Kamis</option>
-                                <option value="5">Jumat</option>
-                            </select>
-                        `;
-                    } else {
-                        weeklyDay.innerHTML = '';
-                    }
-                }); {% endcomment %}
-            </script>
         </div>
     </div>
 </div>

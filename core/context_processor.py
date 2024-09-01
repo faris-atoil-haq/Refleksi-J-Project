@@ -6,7 +6,7 @@ from core.models import HeadNews
 
 def general_context(request):
     STAGING = settings.STAGING
-    PROD = settings.STAGING
+    PROD = settings.PROD
     HOST = settings.PARENT_HOST
     head_news = HeadNews.objects.filter(published=True).first()
     context = {
