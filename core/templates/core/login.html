@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block content %}
-  
 
-<div class="flex justify-center py-8">
+
+<div class="flex justify-center pb-8 md:py-8">
     <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow md:p-8">
         <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
