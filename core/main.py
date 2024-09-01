@@ -112,7 +112,7 @@ def manage_angket_question(request, id=None):
             print("Option range must be an integer")
             return HttpResponse(status=400)
         option_start_label = request.POST.get('label_min')
-        option_end_label = request.POST.get('label_min')
+        option_end_label = request.POST.get('label_max')
         if not question or option_range <= 0 or option_range > 10 or not option_start_label or not option_end_label:
             print(f"Invalid input. {question=} {option_range=} {option_start_label=} {option_end_label=}")
             return HttpResponse(status=400)
@@ -205,6 +205,11 @@ def signup(request):
                 password=password
             )
         verification = Verification.objects.filter(user=user).first()
+        confirm_signup_link = settings.PARENT_HOST + reverse('confirm')
+        if settings.PROD or settings.STAGING:
+            confirm_signup_link = 'https://' + confirm_signup_link
+        else:
+            confirm_signup_link = 'http://' + confirm_signup_link
         if not verification:
             verification, _ = Verification.objects.get_or_create(user=user)
             verification.verified = False
@@ -212,8 +217,12 @@ def signup(request):
             verification.code = verif_code
             verification.save()
             
-            confirm_signup_link = settings.PARENT_HOST + reverse('confirm')
-            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}/?code={verif_code}&email={email}')
+            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}?code={verif_code}&email={email}')
+        elif not verification.verified:
+            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}?code={verification.code}&email={email}')
+        else:
+            send_email('Akun tersedia',email,f'Halo,\n\nAnda telah memiliki akun di platform kami. Silakan login dengan email dan kata sandi Anda.\nJika Anda lupa kata sandi, silahkan melakukan reset kata sandi.')
+            return render(request, 'core/confirm.html',{'verified':True,'option':'signup'})
         
 
         return render(request, 'core/confirm.html')
@@ -227,6 +236,7 @@ def confirm(request):
     user = User.objects.filter(email=email).first()
     if user:
         verif = Verification.objects.filter(user=user).first()
+        print(verif.code)
         if verif_code == verif.code:
             verif.verified = True
             verif.save()
@@ -245,14 +255,26 @@ def reset_password_email(request):
                 verif.code = code
                 verif.save()
                 reset_password_link = settings.PARENT_HOST+reverse('reset_password')+f'?email={email}&code={code}'
+                if settings.PROD or settings.STAGING:
+                    reset_password_link = 'https://' + reset_password_link
+                else:
+                    reset_password_link = 'http://' + reset_password_link
                 print("Reset Password Link: ",reset_password_link)
                 send_email('Reset Password', email, f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}')
             else:
                 link_verifikasi = settings.PARENT_HOST+reverse('confirm')+f'?email={email}&code={verif.code}'
+                if settings.PROD or settings.STAGING:
+                    link_verifikasi = 'https://' + link_verifikasi
+                else:
+                    link_verifikasi = 'http://' + link_verifikasi
                 print("Email belum terverifikasi. Link: ",link_verifikasi)
                 send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami melihat bahwa Anda belum menyelesaikan verifikasi email. Klik tautan berikut untuk melakukan verifikasi: \n{link_verifikasi}')
         else:
             signup_link = settings.PARENT_HOST+reverse('signup')+f'?email={email}'
+            if settings.PROD or settings.STAGING:
+                signup_link = 'https://' + signup_link
+            else:
+                signup_link = 'http://' + signup_link
             print("Email belum terdaftar. Link: ",signup_link)
             send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami tidak menemukan email Anda. Daftarkan email Anda di sini: \n{signup_link}')
         return redirect(reverse('confirm')+'?email='+email)
@@ -291,6 +313,7 @@ def reset_password(request):
             
     return redirect('reset_password_email')
 
+@login_required
 def signout(request):
     if not request.user.is_authenticated:
         return redirect('public')
@@ -331,3 +354,47 @@ def manage_article(request, id=None):
         'question': reflection_question.question
     }
     return render(request, 'core/settings/reflection/reflection-question-card.html', context)
+
+@login_required
+def user_profile(request):
+    if request.POST:
+        if 'password' in request.POST:
+            print(request.POST)
+            current_password = request.POST.get('current_password')
+            user = authenticate(request, email=request.user.email, password=current_password)
+            if not user:
+                return render(request, 'core/settings/update-profile.html', {'error_message': 'Kata sandi salah.'})
+            
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+            if password != confirm_password:
+                return render(request, 'core/settings/update-profile.html', {'error_message': 'Kata sandi baru tidak sesuai.'})
+            
+            user.set_password(password)
+            user.save()
+            user = authenticate(request, email=request.user.email, password=password)
+            login(request, user)
+            
+            return redirect(reverse('user_profile')+f'?success=1')
+        
+        user = request.user
+        name = request.POST.get('nama')
+        email = request.POST.get('email')
+        instansi = request.POST.get('instansi')
+        if not (name and email and instansi):
+            return HttpResponse(status=400)
+        
+        user.first_name = name
+        user.email = email
+        user.save()
+        verification = request.user.verification
+        verification.instansi = instansi
+        verification.save()
+        return redirect(reverse('user_profile')+f'?success=1')
+    
+    context = {
+        'success': request.GET.get('success'),
+        'page_title': 'Pengaturan Akun',
+        'page': 'user_profile',
+    }
+    return render(request, 'core/settings/update-profile.html', context)

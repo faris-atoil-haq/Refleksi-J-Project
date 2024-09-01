@@ -36,6 +36,10 @@ urlpatterns = [
     path('app/jadwal/add/', journal.schedule_subject, name='add_schedule'),
     path('app/jadwal/<uuid:id>/', journal.schedule_subject, name='edit_schedule'),
     path('app/jadwal/items/', journal.schedule_items, name='schedule_items'),
+    path('app/jadwal/<uuid:id>/refleksi/', journal.refleksi_input, name='begin_refleksi_input'),
+    path('app/jadwal/<uuid:id>/refleksi/<int:refleksi>/', journal.refleksi_input, name='refleksi_input'),
+    path('app/jadwal/<uuid:id>/refleksi/summary/', journal.summary_refleksi, name='summary_refleksi'),
+    path('app/jadwal/save/', journal.refleksi_input, name='refleksi_input_save'),
     
     path('app/angket/', angket.main, name='angket'),
     path('app/angket/generate/', angket.generate_angket, name='generate_angket'),
@@ -45,9 +49,11 @@ urlpatterns = [
     path('app/angket/<uuid:id>/result/', angket.angket_result, name='angket_result'),
     path('app/angket/<uuid:id>/form/', angket.angket_form, name='angket_form'),
     
+    path('app/profile/', main.user_profile, name='user_profile'),
+    
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
-    
+
     path('app/settings/article/', main.manage_article, name='manage_article'),
     path('app/settings/refleksi/', main.reflection_templates, name='reflection_templates'),
     path('app/settings/refleksi/create/', main.manage_reflection_question, name='create_reflection_question'),
