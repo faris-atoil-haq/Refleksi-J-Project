@@ -13,7 +13,7 @@
                             </svg>
                         </div>
                         <input type="hidden" name="page" value="{{page}}">
-                        <input name="search" type="text" id="search" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-s-lg focus:ring-blue-500 focus:outline-none focus:border-blue-500 block w-full ps-10 p-1.5" placeholder="Cari mata pelajaran"
+                        <input name="search" type="text" id="search" class="h-full bg-white border border-gray-300 text-gray-900 text-sm rounded-s-lg focus:ring-blue-500 focus:outline-none focus:border-blue-500 block w-full ps-10 p-1.5" placeholder="Cari mata pelajaran"
                             hx-get="{% url 'module' %}" hx-swap="innerHTML" hx-target="#subject-data" hx-trigger="changed"
                             {% if query %}value="{{query}}"{% endif %}>
                     </div>
