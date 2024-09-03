@@ -143,7 +143,8 @@ def schedule_subject(request, id=None):
             if main_agenda.start_time + timezone.timedelta(days=i) > next_three_month:
                 break
             
-            day_name = timezone.now().strftime('%A')
+            day_name = (main_agenda.start_time + timezone.timedelta(days=i)).strftime('%A')
+            print(day_name)
             if day_name.lower() in ['saturday', 'sunday']:
                 continue
             
