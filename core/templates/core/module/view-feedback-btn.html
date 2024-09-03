@@ -1,9 +1,9 @@
-<button id="view-feedback-{{module.id}}" class="flex items-end text-gray-600 hover:text-indigo-800 hover:bg-white hover:shadow hover:rounded-lg px-2 py-1 me-10 font-medium text-sm text-center" type="button"
+<button id="view-feedback-{{module.id}}" class="flex md:justify-center items-center text-gray-600 hover:text-indigo-800 hover:bg-white hover:shadow rounded-md px-3 py-2 md:px-2 md:py-1 border border-gray-300 hover:border-white md:me-10 font-medium text-sm text-center" type="button"
     data-drawer-target="module-feedback-drawer" data-drawer-show="module-feedback-drawer" data-drawer-placement="right" aria-controls="module-feedback-drawer"
     hx-get="{% url 'get_feedback' module.id %}" hx-vals='{"module_id": "{{module.id}}"}' hx-swap="innerHTML" hx-target="#content-feedback"
     hx-indicator="#get-feedback-loader">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="w-5 h-5 me-2" viewBox="0 0 18 14">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="w-5 h-5 md:me-2" viewBox="0 0 18 14">
         <path d="M16 2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9.586a1 1 0 0 1 .707.293l2.853 2.853a.5.5 0 0 0 .854-.353zM5 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
     </svg>
-    <span class="text-sm">Lihat Feedback</span>
+    <span class="hidden md:block text-sm text-left text-nowrap">Lihat Feedback</span>
 </button>

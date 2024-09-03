@@ -4,7 +4,7 @@
 {% block content %}
     <div class="mb-8 md:mb-9">
         <div class="">
-            <div class="min-w-[300px] flex flex-wrap-reverse justify-between mb-9">
+            <div class="min-w-[300px] flex flex-wrap-reverse justify-between mb-4 md:mb-9">
                 <form action="{% url 'module' %}" method="GET" class="flex mb-3">
                     <div class="relative">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
@@ -44,7 +44,7 @@
 
                 <div class="mt-14 flex justify-between">
                     <div class="text-sm text-gray-700">
-                        Menampilkan <span class="font-semibold text-gray-900">{{subjects|count_total}}</span> Mata Pelajaran
+                        Menampilkan <span class="font-semibold text-gray-900">{{subjects|length}}</span> Mata Pelajaran
                     </div>
                 </div>
 
@@ -56,9 +56,11 @@
                         if (show) {
                             document.getElementById(`subject-${id}`).classList.add('hidden')
                             document.getElementById(`subject-${id}-input`).classList.remove('hidden')
+                            document.getElementById(`total-${id}`).classList.add('hidden')
                         } else {
                             document.getElementById(`subject-${id}`).classList.remove('hidden')
                             document.getElementById(`subject-${id}-input`).classList.add('hidden')
+                            document.getElementById(`total-${id}`).classList.remove('hidden')
                         }
                     }
                 </script>
