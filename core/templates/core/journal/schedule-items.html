@@ -88,12 +88,18 @@
                                 
                         </div>
                     </div>
+                    <script>
+                        initModals('popup-modal-{{schedule.id}}')
+                    </script>
                 {% endfor %}
             </div>
         </div>
         <div class="mb-3 border border-gray-300">
         </div>
-    
+        <script>
+            initDrawers('add-schedule-drawer')
+        </script>
+        
     {% empty %}
         <div class="bg-white rounded shadow w-full py-8 px-6 text-gray-700">
             <div class="flex justify-center mb-6">
@@ -107,21 +113,16 @@
                     Ayo mulai kelola jadwal pertemuan sekarang
                 </div>
                 <div class="text-center">
-                    <a href="{% url 'home' %}" class="btn btn-primary py-2.5 px-10">
+                    <button type="buttons" class="btn btn-primary py-2.5 px-10" data-drawer-target="add-schedule-drawer" data-drawer-show="add-schedule-drawer" data-drawer-placement="right">
                         <svg class="w-5 h-5 text-white md:me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14m-7 7V5"/>
                         </svg>
                         <div class="font-medium text-sm">
                             Tambah Jadwal
                         </div>
-                    </a>
+                    </button>
                 </div>
             {% endif %}
         </div>
     {% endfor %}
 </div>
-{% if init_flowbite %}
-<script>
-    initFlowbite()
-</script>
-{% endif %}
