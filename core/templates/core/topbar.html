@@ -18,7 +18,7 @@
             </button>
         {% endif %}
 
-        <div class="text-xl font-semibold flex items-center">
+        <div class="text-sm md:text-xl font-semibold flex items-center">
             {% if page == 'home' %}
                 <svg class="me-2 w-6 h-6 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5"/>
@@ -44,13 +44,17 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-width="1.5" d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
                 </svg>
             {% endif %}
-            <div class="flex">{{page_title}} {% if page == 'home' %}<div class="font-normal ms-3"> | {% complete_date_in_bahasa now 'Asia/Jakarta' %} </div> {% endif %}</div>
+            <div class="flex">{{page_title}} {% if page == 'home' %}<div class="font-normal ms-3 hidden md:block"> | {% complete_date_in_bahasa now 'Asia/Jakarta' %} </div> {% endif %}</div>
         </div>
     </div>
 
     {% if not no_sidebar %}
-        <div class="text-sm md:text-normal">
-            {{request.user.first_name|truncatechars:25}}
+        <div class="text-sm md:text-normal" data-tooltip-target="user-tooltip">
+            {{request.user.first_name|truncatechars:15}}
+        </div>
+        <div id="user-tooltip" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+            {{request.user.first_name}}
+            <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
     {% endif %}
 </div>

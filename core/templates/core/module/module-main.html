@@ -4,8 +4,8 @@
 {% block content %}
     <div class="mb-8 md:mb-9">
         <div class="">
-            <div class="min-w-[300px] flex justify-between mb-9">
-                <form action="{% url 'module' %}" method="GET" class="flex">
+            <div class="min-w-[300px] flex flex-wrap-reverse justify-between mb-4 md:mb-9">
+                <form action="{% url 'module' %}" method="GET" class="flex mb-3">
                     <div class="relative">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -13,7 +13,7 @@
                             </svg>
                         </div>
                         <input type="hidden" name="page" value="{{page}}">
-                        <input name="search" type="text" id="search" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-s-lg focus:ring-blue-500 focus:outline-none focus:border-blue-500 block w-full ps-10 p-1.5" placeholder="Cari mata pelajaran"
+                        <input name="search" type="text" id="search" class="h-full bg-white border border-gray-300 text-gray-900 text-sm rounded-s-lg focus:ring-blue-500 focus:outline-none focus:border-blue-500 block w-full ps-10 p-1.5" placeholder="Cari mata pelajaran"
                             hx-get="{% url 'module' %}" hx-swap="innerHTML" hx-target="#subject-data" hx-trigger="changed"
                             {% if query %}value="{{query}}"{% endif %}>
                     </div>
@@ -22,12 +22,12 @@
                     </button>
                 </form>
 
-                <div>
+                <div class="mb-4">
                     <a href="{% url 'create_new_subject' %}" class="btn btn-primary">
                         <svg class="w-5 h-5 text-white md:me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
                         </svg>
-                        <div class="hidden md:block">
+                        <div class="">
                             Tambah mata pelajaran
                         </div>
                     </a>
@@ -44,7 +44,7 @@
 
                 <div class="mt-14 flex justify-between">
                     <div class="text-sm text-gray-700">
-                        Menampilkan <span class="font-semibold text-gray-900">{{subjects|count_total}}</span> Mata Pelajaran
+                        Menampilkan <span class="font-semibold text-gray-900">{{subjects|length}}</span> Mata Pelajaran
                     </div>
                 </div>
 
@@ -56,9 +56,11 @@
                         if (show) {
                             document.getElementById(`subject-${id}`).classList.add('hidden')
                             document.getElementById(`subject-${id}-input`).classList.remove('hidden')
+                            document.getElementById(`total-${id}`).classList.add('hidden')
                         } else {
                             document.getElementById(`subject-${id}`).classList.remove('hidden')
                             document.getElementById(`subject-${id}-input`).classList.add('hidden')
+                            document.getElementById(`total-${id}`).classList.remove('hidden')
                         }
                     }
                 </script>

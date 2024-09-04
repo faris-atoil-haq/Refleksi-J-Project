@@ -79,6 +79,7 @@ def schedule_subject(request, id=None):
     repetition = request.POST.get('repetition')
     apply_changes_to = request.POST.get('apply_changes_to')
     delete = request.POST.get('delete')
+    print(request.POST)
     
     if not delete:
         if not (subject_name and date and start_time and end_time):
@@ -87,7 +88,7 @@ def schedule_subject(request, id=None):
             return HttpResponse(status=400)
         if id and not apply_changes_to:
             return HttpResponse(status=400)
-    elif not id and not apply_changes_to:
+    elif not id:
         return HttpResponse(status=400)
     
     if repetition and repetition not in ['no_repetition', 'daily', 'weekly']:
@@ -103,10 +104,12 @@ def schedule_subject(request, id=None):
             return redirect('schedule')
         
         if apply_changes_to == 'related':
-            TeacherAgenda.objects.filter(reference=agenda.reference, start_time__gt=main_agenda.start_time).delete()
-            return HttpResponse
+            try:
+                TeacherAgenda.objects.filter(reference=agenda.reference, start_time__gt=timezone.now()).delete()
+            except Exception as e:
+                print(e)
         
-        agenda.delete
+        agenda.delete()
         return redirect('schedule')
         
     # Add TeacherAgenda based on the POST data
@@ -140,7 +143,8 @@ def schedule_subject(request, id=None):
             if main_agenda.start_time + timezone.timedelta(days=i) > next_three_month:
                 break
             
-            day_name = timezone.now().strftime('%A')
+            day_name = (main_agenda.start_time + timezone.timedelta(days=i)).strftime('%A')
+            print(day_name)
             if day_name.lower() in ['saturday', 'sunday']:
                 continue
             

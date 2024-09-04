@@ -41,11 +41,6 @@ def month_in_bahasa(value):
     return months[value.lower()]
 
 @register.filter
-def show_file_name(value):
-    value = value.split('/')[1]
-    return value
-
-@register.filter
 def count_total(objects):
     value = len(objects)
     if value:

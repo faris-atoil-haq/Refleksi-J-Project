@@ -8,7 +8,7 @@
 <style>
     {% if main_public %}
         body {
-            background-color: #F2F6FF;
+            background-color: #76a9fa;
         }
     {% else %}
         body {
@@ -38,11 +38,11 @@
             }, 5000);
         })
     </script>
-    <div class="bg-gradient-to-b from-bgdarkblue to-bglightblue {% if main_public %}min-h-[1000px] md:min-h-[700px] rounded-b-[65px] {% else %}h-screen min-h-100{% endif %} w-full absolute top-0 left-0 z-0">
+    <div class="bg-gradient-to-b from-bgdarkblue to-bglightblue {% if main_public %}min-h-[1000px] md:min-h-[700px] rounded-b-[30px] md:rounded-b-[65px] {% else %}h-screen min-h-100{% endif %} w-full absolute top-0 left-0 z-0">
     </div>
     
     {% if main_public %}
-        <div class="bg-skyblue min-h-[1000px] md:min-h-[700px] w-full absolute top-[1000px] md:top-[700px] left-0 z-0">
+        <div class="bg-blue-400 min-h-[1000px] md:min-h-[700px] w-full absolute top-[1000px] md:top-[700px] left-0 z-0">
         </div>
     {% endif %}
 
@@ -64,10 +64,7 @@
     
     {% endblock script %}
 
-    {% if PROD %}
-    {% else %}
     <script src="{% static 'dist/js/flowbite.js' %}"></script>
-    {% endif %}
         
 </body>
 </html>

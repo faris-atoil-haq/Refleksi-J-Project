@@ -2,8 +2,8 @@
 {% load static %}
 {% block content %}
 
-<div class="shadow mt-3 md:mt-10 w-full">
-    <div class="mb-24">
+<div class="mt-3 md:mt-10 w-full">
+    <div class="mb-16 md:mb-24">
         <div class="flex items-center justify-between mb-8 md:mb-4 flex-wrap md:flex-nowrap">
             <p class="font-semibold text-yellow-300 text-2xl md:text-3xl mb-6">Tingkatkan Kualitas Pembelajaran dengan</br>
                 Revolusi Refleksi Guru</p>
@@ -12,7 +12,7 @@
             
         </div>
         <div class="flex justify-center md:justify-start items-center mb-2">
-            <a href="{% url 'login' %}" class="me-4 px-5 inline-flex items-center px-3 py-2 font-bold text-center text-darkblue bg-white rounded-lg hover:bg-gray-200">
+            <a href="#" class="me-4 px-5 inline-flex items-center px-3 py-2 font-bold text-center text-darkblue bg-white rounded-lg hover:bg-gray-200">
                 Mulai refleksi
             </a>
             <a href="#" class="text-white hover:text-white border border-white focus:ring-4 focus:outline-none focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2">Hubungi Kami</a>
@@ -21,10 +21,10 @@
     </div>
 
     
-    <div class="flex flex-wrap gap-3 md:gap-9 mb-6 text-center justify-center font-bold">
-        <div class="flex flex-col items-center">
-            <div class="w-[180px] h-[210px] p-6 border border-4 border-b-0 border-white rounded-t-lg bg-[#92B1F9] flex justify-center items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="127" height="127" viewBox="0 0 127 127" fill="none">
+    <div class="flex flex-col md:flex-row gap-4 md:gap-9 mb-6 text-center justify-center font-medium md:font-bold">
+        <div class="flex flex-col items-center mb-3 md:mb-0">
+            <div class="w-[120px] md:w-[180px] h-[100px] md:h-[210px] p-6 border-4 border-b-0 border-white rounded-t-lg bg-[#92B1F9] flex justify-center items-center">
+                <svg class="w-full" xmlns="http://www.w3.org/2000/svg" width="127" height="127" viewBox="0 0 127 127" fill="none">
                     <path d="M10.5834 56.8854C10.5834 70.9198 16.1585 84.3793 26.0823 94.3031C36.0061 104.227 49.4657 109.802 63.5 109.802C77.5344 109.802 90.994 104.227 100.918 94.3031C110.842 84.3793 116.417 70.9198 116.417 56.8854C116.417 42.851 110.842 29.3915 100.918 19.4677C90.994 9.54388 77.5344 3.96875 63.5 3.96875C49.4657 3.96875 36.0061 9.54388 26.0823 19.4677C16.1585 29.3915 10.5834 42.851 10.5834 56.8854Z" fill="#FFE500"/>
                     <path d="M63.4999 3.96875C53.034 3.96875 42.8031 7.07226 34.101 12.8868C25.3989 18.7014 18.6165 26.9658 14.6113 36.6351C10.6062 46.3043 9.55825 56.9441 11.6001 67.2089C13.6419 77.4738 18.6817 86.9026 26.0822 94.3031C33.4827 101.704 42.9116 106.744 53.1764 108.785C63.4412 110.827 74.081 109.779 83.7503 105.774C93.4195 101.769 101.684 94.9864 107.499 86.2843C113.313 77.5822 116.417 67.3513 116.417 56.8854C116.417 49.9363 115.048 43.0552 112.389 36.6351C109.729 30.2149 105.831 24.3814 100.918 19.4677C96.0039 14.5539 90.1704 10.6561 83.7503 7.99679C77.3301 5.33748 70.4491 3.96875 63.4999 3.96875ZM63.4999 101.865C53.9498 101.865 44.6141 99.0326 36.6734 93.7268C28.7328 88.4211 22.5438 80.8797 18.8891 72.0565C15.2344 63.2334 14.2782 53.5246 16.1413 44.1579C18.0044 34.7912 22.6033 26.1874 29.3563 19.4344C36.1092 12.6815 44.7131 8.08262 54.0797 6.21948C63.4464 4.35633 73.1552 5.31257 81.9784 8.96725C90.8016 12.6219 98.3429 18.8109 103.649 26.7516C108.954 34.6923 111.786 44.028 111.786 53.5781C111.786 66.3845 106.699 78.6663 97.6436 87.7218C88.5882 96.7773 76.3063 101.865 63.4999 101.865Z" fill="#EBCB00"/>
                     <path d="M47.625 14.552C47.625 15.6046 49.2975 16.614 52.2747 17.3583C55.2518 18.1026 59.2897 18.5208 63.5 18.5208C67.7103 18.5208 71.7482 18.1026 74.7253 17.3583C77.7025 16.614 79.375 15.6046 79.375 14.552C79.375 13.4994 77.7025 12.49 74.7253 11.7457C71.7482 11.0014 67.7103 10.5833 63.5 10.5833C59.2897 10.5833 55.2518 11.0014 52.2747 11.7457C49.2975 12.49 47.625 13.4994 47.625 14.552Z" fill="#FFF48C"/>
@@ -38,14 +38,14 @@
                 </svg>
             </div>
 
-            <div class="w-[200px] h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
+            <div class="w-fit w-min-[110px] h-fit md:w-[200px] md:h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
                 Refleksi Mengajar
             </div>
         </div>
 
-        <div class="flex flex-col items-center">
-            <div class="w-[180px] h-[210px] p-6 border border-4 border-b-0 border-white rounded-t-lg bg-[#FFDF9A] flex justify-center items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="137" height="137" viewBox="0 0 137 137" fill="none">
+        <div class="flex flex-col items-center mb-3 md:mb-0">
+            <div class="w-[120px] md:w-[180px] h-[100px] md:h-[210px] p-6 border-4 border-b-0 border-white rounded-t-lg bg-[#FFDF9A] flex justify-center items-center">
+                <svg class="w-full" xmlns="http://www.w3.org/2000/svg" width="137" height="137" viewBox="0 0 137 137" fill="none">
                     <path d="M107.683 117.691L42.271 97.9265V2.84277L107.244 22.4603C110.191 23.3657 112.208 26.1019 112.215 29.2059V114.333C112.227 116.712 109.933 118.411 107.683 117.691Z" fill="#00F5BC"/>
                     <path d="M107.683 117.691L42.271 97.9265V2.84277L107.244 22.4603C110.191 23.3657 112.208 26.1019 112.215 29.2059V114.333C112.227 116.712 109.933 118.411 107.683 117.691Z" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M56.5405 7.17283L42.271 2.84277V97.9265L56.5405 102.227V7.17283Z" fill="#656769" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
@@ -64,14 +64,14 @@
                     <path d="M77.4476 64.877L55.166 58.279V44.1694L77.4476 50.7971V64.877Z" fill="white" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <div class="w-[200px] h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
+            <div class="w-fit h-fit md:w-[200px] md:h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
                 Umpan Balik Modul Ajar
             </div>
         </div>
         
-        <div class="flex flex-col items-center">
-            <div class="w-[180px] h-[210px] p-6 border border-4 border-b-0 border-white rounded-t-lg bg-[#8DD6D2] flex justify-center items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="105" height="113" viewBox="0 0 105 113" fill="none">
+        <div class="flex flex-col items-center mb-3 md:mb-0">
+            <div class="w-[120px] md:w-[180px] h-[100px] md:h-[210px] p-6 border-4 border-b-0 border-white rounded-t-lg bg-[#8DD6D2] flex justify-center items-center">
+                <svg class="max-w-full h-full" xmlns="http://www.w3.org/2000/svg" width="105" height="113" viewBox="0 0 105 113" fill="none">
                     <path d="M79.1058 68.5835L85.4681 67.0601V6.84049C85.476 4.43529 83.4239 2.62019 81.2093 3.07333L25.169 14.4304V8.89033C25.1605 6.49633 23.1143 4.69989 20.9102 5.15093L5.97806 8.05943C4.31031 8.41689 3.1131 9.98419 3.12163 11.7988V81.187C3.12185 83.7677 4.34269 86.1738 6.36766 87.5857L12.704 91.9899L90.8176 75.7578L79.1058 68.5835Z" fill="#ADC4D9"/>
                     <path d="M5.97793 19.9704L20.91 17.2003C23.1141 16.7492 25.1603 18.5459 25.1689 20.9399V26.4797L81.2091 15.2337C83.4183 14.8028 85.4561 16.6053 85.4679 19.0009V6.8405C85.4758 4.43529 83.4237 2.62019 81.2091 3.07333L25.1689 14.4304V8.89033C25.1603 6.49633 23.1141 4.69989 20.91 5.15093L5.97793 8.05943C4.31018 8.4169 3.11296 9.9842 3.12149 11.7988V23.8484C3.04908 21.982 4.26074 20.337 5.97793 19.9704Z" fill="#C0DCEB"/>
                     <path d="M79.1058 68.5835L85.4681 67.0601V6.84049C85.476 4.43529 83.4239 2.62019 81.2093 3.07333L25.169 14.4304V8.89033C25.1605 6.49633 23.1143 4.69989 20.9102 5.15093L5.97806 8.05943C4.31031 8.41689 3.1131 9.98419 3.12163 11.7988V81.187C3.12185 83.7677 4.34269 86.1738 6.36766 87.5857L12.704 91.9899L90.8176 75.7578L79.1058 68.5835Z" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
@@ -81,14 +81,14 @@
                     <path d="M12.7039 91.99L20.6244 29.5547C20.8247 27.9064 22.0003 26.5853 23.5329 26.2859L97.5174 11.7989C100.059 11.1965 102.336 13.5956 101.802 16.3139L90.8175 75.7857L12.7039 91.99Z" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <div class="w-[200px] h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
+            <div class="w-[130px] h-fit md:w-[200px] md:h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
             Angket Siswa
             </div>
         </div>
 
-        <div class="flex flex-col items-center">
-            <div class="w-[180px] h-[210px] p-6 border border-4 border-b-0 border-white rounded-t-lg bg-[#FFBDBE] flex justify-center items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="129" height="143" viewBox="0 0 129 143" fill="none">
+        <div class="flex flex-col items-center mb-3 md:mb-0">
+            <div class="w-[120px] md:w-[180px] h-[100px] md:h-[210px] p-6 border-4 border-b-0 border-white rounded-t-lg bg-[#FFBDBE] flex justify-center items-center">
+                <svg class="w-full" xmlns="http://www.w3.org/2000/svg" width="129" height="143" viewBox="0 0 129 143" fill="none">
                     <path d="M100.21 92.7882L87.9375 100.601C73.6594 109.776 55.3405 109.776 41.0624 100.601L28.7896 92.7882C26.0085 90.9732 24.3394 87.8703 24.3578 84.5495V67.5039H104.642V84.5495C104.661 87.8703 102.991 90.9732 100.21 92.7882Z" fill="#656769"/>
                     <path d="M104.642 67.4756H24.3579V80.6575L54.6422 98.3847C60.7262 101.966 68.2739 101.966 74.3582 98.3847L104.642 80.6575V67.4756Z" fill="#525252"/>
                     <path d="M100.21 92.7882L87.9375 100.601C73.6594 109.776 55.3405 109.776 41.0624 100.601L28.7896 92.7882C26.0085 90.9732 24.3394 87.8703 24.3578 84.5495V67.5039H104.642V84.5495C104.661 87.8703 102.991 90.9732 100.21 92.7882Z" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
@@ -102,7 +102,7 @@
                     <path d="M72.2841 51.6515C72.2841 53.8107 68.8182 55.5435 64.5001 55.5435C60.182 55.5435 56.7158 53.8107 56.7158 51.6515C56.7158 49.4923 60.182 47.7595 64.5001 47.7595C68.8182 47.7595 72.2841 49.4923 72.2841 51.6515Z" fill="#FFE500" stroke="#45413C" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <div class="w-[200px] h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
+            <div class="w-fit h-fit md:w-[200px] md:h-[50px] rounded-lg flex items-center justify-center px-3 py-2 text-sm text-center text-darkblue bg-white">
             Panduan Cerdas Guru
             </div>
         </div>
