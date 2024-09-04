@@ -104,6 +104,7 @@ def upload_module(request):
             # Add timestamp to avoid duplicated file name
             module_file.name = f"{module_file.name}_{int(timezone.now().timestamp())}"
             module_obj = Module.objects.create(user=request.user,subject=subject)
+            module_obj.name = module_file.name
             module_obj.module_file = module_file
             module_obj.save()
     except Exception as e:
@@ -256,3 +257,15 @@ def get_feedback(request, id):
 @require_GET
 def get_view_feedback_btn(request, id):
     return render(request, 'core/module/view-feedback-btn.html', {'module':{'id': id}})
+
+@login_required
+@require_POST
+def module_name(request, id):
+    try:
+        modul = Module.objects.get(id=id, user=request.user)
+    except Module.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    modul.name = request.POST.get('name')
+    modul.save()
+    return redirect('module_subject', subject=modul.subject.id)
