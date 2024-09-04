@@ -108,10 +108,10 @@
                                 </div>
                                 <span class="text-sm">Generate Feedback</span>
                             </button>
-                            <span hx-get="{% url 'check_module_components' module.id %}" hx-trigger="generateFeedback{{module.id|remove_dash}} from:body" hx-swap="none" hx-indicator="#generate-feedback-loader-{{module.id}}"></span>
-                            <span hx-get="{% url 'generate_module_assessment' module.id %}" hx-trigger="generateFeedback{{module.id|remove_dash}} from:body" hx-swap="none" hx-indicator="#generate-feedback-loader-{{module.id}}"></span>
-                            <span hx-get="{% url 'generate_suggestion' module.id %}" hx-trigger="generateFeedback{{module.id|remove_dash}} from:body" hx-swap="none" hx-indicator="#generate-feedback-loader-{{module.id}}"></span>
-                            <span hx-get="{% url 'get_view_feedback_btn' module.id %}" hx-trigger="getViewFeedbackBtn{{module.id|remove_dash}} from:body" hx-swap="outerHTML" hx-indicator="#generate-feedback-loader-{{module.id}}" hx-target="#generate-feedback-btn-{{module.id}}"></span>
+                            <span class="hidden" hx-get="{% url 'check_module_components' module.id %}" hx-trigger="generateFeedback{{module.id|remove_dash}} from:body" hx-swap="none" hx-indicator="#generate-feedback-loader-{{module.id}}"></span>
+                            <span class="hidden" hx-get="{% url 'generate_module_assessment' module.id %}" hx-trigger="generateFeedback{{module.id|remove_dash}} from:body" hx-swap="none" hx-indicator="#generate-feedback-loader-{{module.id}}"></span>
+                            <span class="hidden" hx-get="{% url 'generate_suggestion' module.id %}" hx-trigger="generateFeedback{{module.id|remove_dash}} from:body" hx-swap="none" hx-indicator="#generate-feedback-loader-{{module.id}}"></span>
+                            <span class="hidden" hx-get="{% url 'get_view_feedback_btn' module.id %}" hx-trigger="getViewFeedbackBtn{{module.id|remove_dash}} from:body" hx-swap="outerHTML" hx-indicator="#generate-feedback-loader-{{module.id}}" hx-target="#generate-feedback-btn-{{module.id}}"></span>
                             <script>
                                 var checkComponentsDone{{module.id|remove_dash}} = false
                                 var suitabilityAssessmentDone{{module.id|remove_dash}} = false
