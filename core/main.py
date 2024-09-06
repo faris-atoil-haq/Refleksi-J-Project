@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from core.models import AngketQuestion, ReflectionQuestion, Verification
+from core.models import AngketQuestion, ReflectionQuestion, Verification, Article
 from utils.mail import send_email
 
 
@@ -323,12 +323,13 @@ def signout(request):
 
 @login_required
 def manage_article(request, id=None):
+    user=request.user
     if request.method == 'GET':
-        reflection_questions = ReflectionQuestion.objects.all().order_by('order')
+        articles = Article.objects.filter(user=user).order_by('order')
         context = {
             'page_title': 'Admin',
             'page': 'admin',
-            'reflection_questions': reflection_questions,
+            'articles': articles,
         }
         return render(request, 'core/settings/article/manage-article-template.html', context)
     

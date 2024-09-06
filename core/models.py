@@ -28,6 +28,7 @@ class Article(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     cover_image = models.FileField(
         upload_to="refleksi-j-module", null=True, blank=True)
+    order = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
