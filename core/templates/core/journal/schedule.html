@@ -54,7 +54,7 @@
         <div class="flex">
                 
             <div class="relative max-w-sm flex items-center">
-                <input datepicker id="month-agenda" datepicker-format="MM yyyy" type="text" value="{{ now|datetime_as_timezone:'Asia/Jakarta'|date:'F' }} {{ now|datetime_as_timezone:'Asia/Jakarta'|date:'Y' }}" 
+                <input datepicker id="month-agenda" datepicker-format="MM yyyy" type="text" value="{% as_timezone now 'Asia/Jakarta' '%B %Y' %}" 
                     hx-get="{% url 'schedule_items' %}" hx-trigger="monthChanged" hx-target="#schedule-content"
                     name="month"
                     class="bg-white text-blue-700 font-medium text-sm rounded-md border border-blue-500 focus:ring-blue-500 focus:border-blue-500 w-[150px] me-3 px-3 py-1.5">
