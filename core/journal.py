@@ -33,15 +33,12 @@ def latest_reflection_journals(request):
     latest_journals = []
     for schedule in schedules:
         subject = schedule.subject
-        journals = Journal.objects.filter(
+        journal = Journal.objects.filter(
             subject=subject, 
-            agenda__start_time__date__lt=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date())
-        if journals:
-            latest_journals.append(journals.latest('created_at'))
+            agenda__start_time__date__lt=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()).latest('created_at')
+        if journal and journal not in latest_journals:
+            latest_journals.append(journal)
     
-    # For Testing Faris , comment it out to test on home for refleksi list
-    # latest_journals = Journal.objects.all()
-
     context = {
         'latest_journals': latest_journals
     }
