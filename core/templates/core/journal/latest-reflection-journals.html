@@ -6,7 +6,7 @@
         <div class="card-header flex justify-between flex-col md:flex-row mb-3">
             <h5 class="card-title font-medium">{{journal.agenda.subject.name}}</h5>
             <div class="text-sm">
-                {{journal.agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'j'}} {{journal.agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'F'}} {{journal.agenda.end_time|datetime_as_timezone:'Asia/Jakarta'|date:'Y'}}, 
+                {% as_timezone journal.agenda.start_time 'Asia/Jakarta' '%d %B %Y' %}
                 {% as_timezone journal.agenda.start_time 'Asia/Jakarta' '%H:%M' %} - {% as_timezone journal.agenda.end_time 'Asia/Jakarta' '%H:%M' %}
             </div>
         </div>
