@@ -118,6 +118,10 @@ def schedule_subject(request, id=None):
     print(start_time)
     end_time = timezone.datetime.strptime(f'{date} {end_time}+07:00', '%d %B %Y %H:%M%z').astimezone(pytz.UTC)
     print(end_time)
+    
+    if start_time >= end_time or start_time < timezone.now():
+        return redirect('schedule')
+    
     if repetition == 'no_repetition':
         main_agenda = TeacherAgenda.objects.create(
             user=request.user,
