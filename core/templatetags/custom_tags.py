@@ -105,12 +105,6 @@ def total_respondent(angket_session):
     return angket_session.responses.all().values('session').distinct().count()
 
 @register.filter
-def datetime_as_timezone(time_input, timezone):
-    timezone = pytz.timezone(timezone)
-    res = time_input.astimezone(timezone)
-    return res
-
-@register.filter
 def middle(a, b):
     return int((a + b) / 2)
 

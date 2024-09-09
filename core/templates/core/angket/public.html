@@ -4,7 +4,7 @@
 {% block content %}
 <div class="w-full flex flex-col items-center justify-center">
     <div class="font-medium text-gray-700 mb-6">
-        {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"l"|lower|day_in_bahasa }}, {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"j" }} {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"F"|lower|month_in_bahasa }} {{ now|datetime_as_timezone:"Asia/Jakarta"|date:"Y" }}
+        {% complete_date_in_bahasa now 'Asia/Jakarta' %}
     </div>
     <div class="w-full p-6 pb-8 pt-1 mb-6 bg-white border md:max-w-[900px] border-gray-200 rounded-lg shadow" id="question-card-{{order}}">
 

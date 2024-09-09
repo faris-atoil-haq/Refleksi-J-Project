@@ -59,9 +59,9 @@
                                     required
 
                                     {% if agenda %}
-                                        value="{{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'j'}} {{agenda.start_time|datetime_as_timezone:'Asia/Jakarta'|date:'F'}} {{agenda.end_time|datetime_as_timezone:'Asia/Jakarta'|date:'Y'}}"
+                                        value="{% as_timezone agenda.start_time 'Asia/Jakarta' '%d %B %Y' %}"
                                     {% else %}
-                                        value="{{today|date:'j'}} {{today|date:'F'}} {{today|date:'YYYY'}}" 
+                                        value="{% as_timezone now 'Asia/Jakarta' '%d %B %Y' %}" 
                                     {% endif %}
                                     >
                                 {% if agenda %}
@@ -82,7 +82,13 @@
                                         <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <input name="start_time" type="time" id="start-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="22:30" value="09:00" required />
+                                <input name="start_time" type="time" id="start-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="22:30" 
+                                    {% if agenda %}
+                                    value="{% as_timezone agenda.start_time 'Asia/Jakarta' '%H:%M' %}" 
+                                    {% else %}
+                                    value="09:00" 
+                                    {% endif %}
+                                    required />
                             </div>
                             <div class="items-center ps-1 pe-2 border-0 border-b-2 border-gray-300 hidden md:flex">-</div>
                             <div class="relative">
@@ -91,7 +97,13 @@
                                         <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <input name="end_time" type="time" id="end-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md text-center w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="23:00" value="10:00" required />
+                                <input name="end_time" type="time" id="end-time" class="hover:cursor-text hover:bg-gray-100 rounded-t-md text-center w-[100px] p-0 ps-1 py-1 text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" min="06:00" max="23:00" 
+                                    {% if agenda %}
+                                    value="{% as_timezone agenda.end_time 'Asia/Jakarta' '%H:%M' %}" 
+                                    {% else %}
+                                    value="10:00" 
+                                    {% endif %}
+                                    required />
                             </div>
                         </div>
                     </div>

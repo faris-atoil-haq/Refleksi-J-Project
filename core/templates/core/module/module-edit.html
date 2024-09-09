@@ -11,11 +11,15 @@
         </button> 
     </div>
         
-    <div id="subject-{{subject.id}}-input" class="hidden flex flex-col md:flex-row md:justify-between gap-3">
+    <div id="subject-{{subject.id}}-input" class="hidden flex flex-col md:flex-row md:justify-between gap-3 flex-wrap">
         <input type="hidden" name="subject_id" value="{{subject.id}}">
         <input class="input-sm grow mb-2 md:mb-0 text-sm md:text-base" type="text" name="name" value="{{subject.name}}">
         <div class="flex">
+            
+            {% if subject.teacheragenda_set.count == 0 %}
             <button class="btn btn-light-danger" hx-post="{% url 'module_subject' subject=subject.id %}" hx-target="#subject-{{subject.id}}-container" name="delete" value="delete" type="button">Hapus</button>
+            {% endif %}
+                
             <button class="btn btn-primary" hx-post="{% url 'module_subject' subject=subject.id %}" hx-include="#subject-{{subject.id}}-input"
                 hx-trigger="click" hx-target="#subject-{{subject.id}}-row" hx-swap="innerHTML" type="button">Simpan</button>
             <button class="btn btn-light border-0" type="button" onclick="toggleEditSubject('{{subject.id}}')">
@@ -24,6 +28,11 @@
                 </svg>
             </button>
         </div>
+        {% if subject.teacheragenda_set.count > 0 %}
+            <div class="w-full">
+                <span class="text-sm text-gray-500">Tidak dapat menghapus mata pelajaran karena terdapat {{subject.teacheragenda_set.count}} agenda yang menggunakan mata pelajaran ini.</span>
+            </div>
+        {% endif %}
     </div>
     
     <span class="text-sm md:text-base" id="total-{{subject.id}}">
