@@ -207,7 +207,7 @@ def schedule_subject(request, id=None):
         agenda.save()
         
         if apply_changes_to == 'this':
-            if start_time_delta.seconds/60 >= 1 and end_time_delta.seconds/60 >= 1:
+            if start_time_delta.seconds/60 >= 1 or end_time_delta.seconds/60 >= 1:
                 agenda.reference = None
                 agenda.save()
                 
