@@ -346,7 +346,7 @@ def order_article(request):
             article.save()
         except Article.DoesNotExist:
             return HttpResponse(status=404)
-    return render(request, 'core/settings/article/article-lists.html', {'articles': Article.objects.all().order_by('order')})
+    return render(request, 'core/settings/article/manage-article-lists.html', {'articles': Article.objects.all().order_by('order')})
 
 @login_required
 def manage_article(request, id=None):
@@ -382,7 +382,7 @@ def manage_article(request, id=None):
         'cover_image' : article.cover_image,
         'order': article.order
     }
-    return render(request, 'core/settings/article/article-card.html', context)
+    return render(request, 'core/settings/article/manage-article-card.html', context)
 
 @login_required
 def user_profile(request):

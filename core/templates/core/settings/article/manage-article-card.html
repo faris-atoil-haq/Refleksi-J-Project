@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="w-full p-6 pt-1 mb-6 bg-white border border-gray-200 rounded-lg shadow" id="article-card-{{order}}">
+<div class="w-full p-6 pt-1 mb-6 bg-white border border-gray-200 rounded-lg shadow" id="manage-article-card-{{order}}">
     <input type="hidden" name="id" value="{{id}}" />
     <div class="w-full py-1 cursor-grab grab-handler flex justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
@@ -30,7 +30,7 @@
         </div>
     </div>
     
-    <form class="mt-6" hx-swap="outerHTML" hx-target="#article-card-{{order}}" hx-post="{% url 'manage_article' id=id %}" enctype="multipart/form-data">
+    <form class="mt-6" hx-swap="outerHTML" hx-target="#manage-article-card-{{order}}" hx-post="{% url 'manage_article' id=id %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="relative z-0 w-full mb-5 group">
             <input type="text" name="article-title" id="article-title-{{order}}" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " 

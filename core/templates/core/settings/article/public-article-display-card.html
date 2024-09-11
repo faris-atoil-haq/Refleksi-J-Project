@@ -2,7 +2,7 @@
 
 <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <label for="article-open" class="">
-        <img class="rounded-t-lg max-h-40" src="{{cover_image.url}}" alt="" />
+        <img class="rounded-t-lg max-h-40" src="{% if cover_image %}{{cover_image.url}}{% endif %}" alt="" />
     </label>
     <div class="p-5">
         <label for="article-open" class="" >

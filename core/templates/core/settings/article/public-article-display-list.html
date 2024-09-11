@@ -1,0 +1,5 @@
+<div id="articles-container" class="py-2 md:flex md:gap-6 md:flex-wrap mt-5">
+    {% for article in articles %}
+        {% include "core/settings/article/public-article-display-card.html" with id=article.id title=article.title cover_image=article.cover_image content=article.content order=article.order %}
+    {% endfor %}
+</div>

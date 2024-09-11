@@ -12,7 +12,9 @@
         </div>
     </div>
     <div class="flex p-5">
+        {% if cover_image %}
         <img class="h-auto max-w-xl rounded-lg shadow-xl dark:shadow-gray-800 me-5" src="{{cover_image.url}}" alt="image description">
+        {% endif %}
         {{content|safe}}
     </div>
 </div>

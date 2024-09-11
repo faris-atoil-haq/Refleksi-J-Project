@@ -15,18 +15,13 @@ def main(request):
     return render(request, 'public.html', context)
 
 def load_articles(request):
-    if request.user.is_authenticated:
-        return redirect('home')
     context = {
-        'articles': Article.objects.all().order_by("-created_at"),
+        'articles': Article.objects.all().order_by("order"),
         'main_public': True,
     }
-    return render(request, 'core/settings/article/article-display-list.html', context)
+    return render(request, 'core/settings/article/public-article-display-list.html', context)
 
 def get_article(request,id):
-    if request.user.is_authenticated:
-        return redirect('home')
-    
     article = Article.objects.filter(id=id)
 
     if article:
@@ -38,7 +33,7 @@ def get_article(request,id):
         'id': article.id,
         'title' : article.title,
         'content' : article.content,
-        'cover_image' : article.cover_image,
+        'cover_image' : article.cover_image if article.cover_image else None,
         'main_public': True,
     }
-    return render(request, 'core/settings/article/article-display-page.html', context)
+    return render(request, 'core/settings/article/public-article-display-page.html', context)
