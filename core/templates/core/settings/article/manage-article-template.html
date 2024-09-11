@@ -12,19 +12,22 @@
         </div>
     </div>
     
-    <div class="sortable" hx-post="{% url 'order_reflection_question' %}" hx-trigger="end" hx-include="[name='id']">
-        {% comment %} {% include "core/settings/reflection/reflection-questions.html" %} {% endcomment %}
+    <div class="sortable" hx-post="{% url 'order_article' %}" hx-trigger="end" hx-include="[name='id']">
+        {% include "core/settings/article/article-lists.html" %}
     </div>
 
     
-    <div class="richtext-this"></div>
-    <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_reflection_question' %}"
+    <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_article' %}"
         hx-target=".sortable" hx-swap="beforeend">
         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
         </svg>
     </button>
+
+
+
     <script>
+        var markupStr = $('.richtext-this').summernote('code');
         htmx.onLoad(function(content) {
             var sortables = content.querySelectorAll(".sortable");
             for (var i = 0; i < sortables.length; i++) {
@@ -53,20 +56,6 @@
             }
         })
         
-    $('.richtext-this').summernote({
-        placeholder: 'Buat Artikel Anda disini',
-        tabsize: 2,
-        height: 120,
-        toolbar: [
-          ['style', ['style']],
-          ['font', ['bold', 'underline', 'clear']],
-          ['color', ['color']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['table', ['table']],
-          ['insert', ['link', 'picture', 'video']],
-          ['view', ['fullscreen', 'codeview', 'help']]
-        ]
-      });
     </script>
 
 

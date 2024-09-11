@@ -9,6 +9,7 @@ from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 
 from core.models import AngketQuestion, ReflectionQuestion, Verification, Article
 from utils.mail import send_email
@@ -321,11 +322,9 @@ def signout(request):
     logout(request)
     return redirect('public')
 
-@login_required
-def manage_article(request, id=None):
-    user=request.user
+def articles_template(request):
     if request.method == 'GET':
-        articles = Article.objects.filter(user=user).order_by('order')
+        articles = Article.objects.all().order_by('order')
         context = {
             'page_title': 'Admin',
             'page': 'admin',
@@ -333,28 +332,57 @@ def manage_article(request, id=None):
         }
         return render(request, 'core/settings/article/manage-article-template.html', context)
     
+
+@login_required
+def order_article(request):
+    ids = request.POST.getlist('id')
+    if not ids:
+        return HttpResponse(status=400)
+    
+    for order, article_id in enumerate(ids, start=1):
+        try:
+            article = Article.objects.get(id=article_id)
+            article.order = order
+            article.save()
+        except Article.DoesNotExist:
+            return HttpResponse(status=404)
+    return render(request, 'core/settings/article/article-lists.html', {'articles': Article.objects.all().order_by('order')})
+
+@login_required
+def manage_article(request, id=None):
     if id:
         try:
-            reflection_question = ReflectionQuestion.objects.get(id=id)
+            article = Article.objects.get(id=id)
         except:
             return HttpResponse(status=404)
         if request.POST.get('delete'):
-            current_order = reflection_question.order
-            ReflectionQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
-            reflection_question.delete()
-            return redirect('reflection_templates')
+            current_order = article.order
+            Article.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            article.delete()
+            return redirect('articles_template')
     else:
-        questions = ReflectionQuestion.objects.all()
-        reflection_question = ReflectionQuestion.objects.create(order=len(questions) + 1)
-    
-    reflection_question.question = request.POST.get('question', reflection_question.question)
-    reflection_question.save()
+        articles = Article.objects.all()
+        article = Article.objects.create(order=len(articles) + 1)
+    cover_image = request.FILES.get('article-cover',None)
+    if cover_image:
+        print("Cover detected")
+        print(cover_image)
+        cover_image.name = cover_image.name.replace('.'+cover_image.name.split('.')[-1], '')
+        # Add timestamp to avoid duplicated file name
+        cover_image.name = f"{cover_image.name}_{int(timezone.now().timestamp())}"
+        article.cover_image = cover_image
+
+    article.title = request.POST.get('article-title', article.title)
+    article.content = request.POST.get('article-content', article.content)
+    article.save()
     context = {
-        'id': reflection_question.id,
-        'order': reflection_question.order,
-        'question': reflection_question.question
+        'id': article.id,
+        'title' : article.title,
+        'content' : article.content,
+        'cover_image' : article.cover_image,
+        'order': article.order
     }
-    return render(request, 'core/settings/reflection/reflection-question-card.html', context)
+    return render(request, 'core/settings/article/article-card.html', context)
 
 @login_required
 def user_profile(request):

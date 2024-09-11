@@ -1,0 +1,19 @@
+{% block content %}
+<div id="articles-container" class="py-2 p-5 bg-white rounded-lg mt-5">
+    
+    <div class="flex items-center mt-2">
+        <div hx-swap="outerHTML" hx-trigger="click" hx-target="#articles-container" hx-get="{% url 'load_articles' %}" class="cursor-pointer me-5 py-1 px-2 rounded bg-white shadow flex">
+            <svg class="w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+            </svg> 
+        </div>
+        <div class="text-xl font-semibold">
+            {{title}}
+        </div>
+    </div>
+    <div class="flex p-5">
+        <img class="h-auto max-w-xl rounded-lg shadow-xl dark:shadow-gray-800 me-5" src="{{cover_image.url}}" alt="image description">
+        {{content|safe}}
+    </div>
+</div>
+{% endblock %}

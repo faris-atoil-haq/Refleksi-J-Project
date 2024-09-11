@@ -1,0 +1,3 @@
+{% for article in articles %}
+    {% include "core/settings/article/article-card.html" with id=article.id title=article.title cover_image=article.cover_image content=article.content order=article.order %}
+{% endfor %}
