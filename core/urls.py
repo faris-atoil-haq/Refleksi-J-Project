@@ -4,6 +4,8 @@ from core import angket, journal, main, module, public
 
 urlpatterns = [
     path('', public.main, name='public'),
+    path('load_articles/', public.load_articles, name='load_articles'),
+    path('article/<uuid:id>/', public.get_article, name='article_page'),
     
     path('confirm/', main.confirm, name='confirm'),
     path('reset_password/', main.reset_password, name='reset_password'),
@@ -55,6 +57,11 @@ urlpatterns = [
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
 
+    path('app/settings/article/', main.articles_template, name='articles_template'),
+    path('app/settings/article/create/', main.manage_article, name='create_article'),
+    path('app/settings/article/manage/<uuid:id>/', main.manage_article, name='manage_article'),
+    path('app/settings/refleksi/order/', main.order_article, name='order_article'),
+    
     path('app/settings/refleksi/', main.reflection_templates, name='reflection_templates'),
     path('app/settings/refleksi/create/', main.manage_reflection_question, name='create_reflection_question'),
     path('app/settings/refleksi/order/', main.order_reflection_question, name='order_reflection_question'),
