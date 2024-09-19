@@ -85,25 +85,32 @@ def order_reflection_question(request):
     return render(request, 'core/settings/reflection/reflection-questions.html', {'reflection_questions': ReflectionQuestion.objects.all().order_by('order')})
 
 @login_required
-def angket_templates(request):
-    angket_questions = AngketQuestion.objects.all().order_by('order')
+def angket_templates(request, angket_type=None):
+    target = 'student'
+    if angket_type == 'teacher':
+        target = angket_type
+    angket_questions = AngketQuestion.objects.filter(target=target).order_by('order')
     context = {
         'page_title': 'Admin',
         'page': 'admin',
         'angket_questions': angket_questions,
+        'target': target,
     }
     return render(request, 'core/settings/angket/manage-angket-template.html', context)
 
 @login_required
-def manage_angket_question(request, id=None):
+def manage_angket_question(request, angket_type=None, id=None):
+    target = 'student'
+    if angket_type == 'teacher':
+        target = angket_type
     if id:
         try:
-            angket_question = AngketQuestion.objects.get(id=id)
+            angket_question = AngketQuestion.objects.get(target=target, id=id)
         except:
             return HttpResponse(status=404)
         if request.POST.get('delete'):
             current_order = angket_question.order
-            AngketQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            AngketQuestion.objects.filter(target=target, order__gt=current_order).update(order=F('order') - 1)
             angket_question.delete()
             return redirect('angket_templates')
         
@@ -126,8 +133,8 @@ def manage_angket_question(request, id=None):
         angket_question.option_end_label = option_end_label 
         angket_question.save()
     else:
-        questions = AngketQuestion.objects.all()
-        angket_question = AngketQuestion.objects.create(order=len(questions) + 1)
+        questions = AngketQuestion.objects.filter(target=target,)
+        angket_question = AngketQuestion.objects.create(target=target, order=len(questions) + 1)
     
     context = {
         'id': angket_question.id,
@@ -137,23 +144,31 @@ def manage_angket_question(request, id=None):
         'rentang': angket_question.option_range,
         'label_min': angket_question.option_start_label,
         'label_max': angket_question.option_end_label,
+        'target': target,
     }
     return render(request, 'core/settings/angket/angket-question-card.html', context)
 
 @login_required
-def order_angket_question(request):
+def order_angket_question(request, angket_type=None):
+    target = 'student'
+    if angket_type == 'teacher':
+        target = angket_type
     ids = request.POST.getlist('id')
     if not ids:
         return HttpResponse(status=400)
     
     for order, question_id in enumerate(ids, start=1):
         try:
-            angket_question = AngketQuestion.objects.get(id=question_id)
+            angket_question = AngketQuestion.objects.get(target=target, id=question_id)
             angket_question.order = order
             angket_question.save()
         except AngketQuestion.DoesNotExist:
             return HttpResponse(status=404)
-    return render(request, 'core/settings/angket/angket-questions.html', {'angket_questions': AngketQuestion.objects.all().order_by('order')})
+    context = {
+        'angket_questions': AngketQuestion.objects.filter(target=target).order_by('order'), 
+        'target': target,
+    }
+    return render(request, 'core/settings/angket/angket-questions.html', context)
 
 def signin(request):
     if request.user.is_authenticated:

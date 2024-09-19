@@ -8,14 +8,16 @@
             </svg>
         </a>
         <div class="text-xl font-semibold">
-            Pertanyaan Angket
+            Pertanyaan Angket {% if target == 'student' %}Siswa {% else %}Guru{% endif %}
         </div>
     </div>
     
-    <div class="sortable" hx-post="{% url 'order_angket_question' %}" hx-trigger="end" hx-include="[name='id']">
+    <div class="sortable" 
+        hx-post="{% url 'order_angket_question' target %}" 
+        hx-trigger="end" hx-include="[name='id']">
         {% include "core/settings/angket/angket-questions.html" %}
     </div>
-    <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_angket_question' %}"
+    <button class="w-full flex justify-center p-3 mb-6 bg-blue-700 hover:bg-blue-800 border border-gray-200 rounded-lg shadow" type="button" hx-post="{% url 'create_angket_question' target %}"
         hx-target=".sortable" hx-swap="beforeend">
         <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
