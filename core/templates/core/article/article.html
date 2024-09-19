@@ -1,0 +1,6 @@
+{% extends 'core/_base.html' %}
+
+{% block content %}
+    <div hx-get="{% url 'load_articles' %}" hx-swap="innerHTML" hx-target="this" hx-trigger="load">
+    </div>
+{% endblock %}

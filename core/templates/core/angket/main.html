@@ -11,10 +11,15 @@
         }
     </style>
     <div class="mb-8 md:mb-14 w-full">
-        <form class="mb-5" method="POST" action="{% url 'generate_angket' %}" id="module-upload-form" enctype="multipart/form-data" >
+        <form class="mb-5 flex gap-5" method="POST" action="{% url 'generate_angket' %}" id="module-upload-form" enctype="multipart/form-data" >
             {% csrf_token %}
-            <button class="btn btn-primary flex items-center" type="submit">
-                Generate Angket <svg class="w-5 h-5 text-white ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <button class="btn btn-primary flex items-center" type="submit" name="target" value="student">
+                Generate Angket Siswa <svg class="w-5 h-5 text-white ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+                </svg>
+            </button>
+            <button class="btn btn-primary flex items-center" type="submit" name="target" value="teacher">
+                Generate Angket Guru <svg class="w-5 h-5 text-white ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
                 </svg>
             </button>
@@ -29,7 +34,16 @@
                         onclick="this.dispatchEvent(new Event('loadAngketResult{{angket.id|remove_dash}}'))"
                         hx-get="{% url 'angket_form' angket.id %}" hx-target="#content-angket-form">
                         <div>{{angket.name}}</div>
-                        <div class="mt-1 text-xs text-left font-normal" data-tooltip-target="tooltip-{{angket.id}}" >Dibuat {% as_timezone angket.created_at 'Asia/Jakarta' %}</div>
+                        <div class="flex gap-4 items-center">
+                            <div class="mt-1">
+                                {% if angket.target == 'student' %}
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Siswa</span>
+                                {% else %}
+                                    <span class="bg-gray-200 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Guru</span>
+                                {% endif %}
+                            </div>
+                            <div class="mt-1 text-xs text-left font-normal" data-tooltip-target="tooltip-{{angket.id}}" >Dibuat {% as_timezone angket.created_at 'Asia/Jakarta' %}</div>
+                        </div>
                     </button>
                     <div id="tooltip-angket-{{angket.id}}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                         Total responden: {{angket|total_respondent}}

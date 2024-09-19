@@ -42,7 +42,12 @@ def main(request):
 @login_required
 @require_POST
 def generate_angket(request):
+    target = request.POST.get('target')
+    if not target in ['student', 'teacher']:
+        return redirect('angket')
+    
     angket_session = AngketSession.objects.create(user=request.user)
+    angket_session.target = target
     angket_session.name = str(angket_session.id)
     angket_session.link = settings.PARENT_HOST + '/angket/' + str(angket_session.id) + '/'
     angket_session.save()
@@ -117,13 +122,13 @@ def public_angket(request, id):
     if page:
         try:
             question_number = page
-            angket_question = AngketQuestion.objects.get(order=page)
+            angket_question = AngketQuestion.objects.get(target=angket_session.target, order=page)
             print(f'{angket_question.order=}')
         except:
             return HttpResponse(status=404)
     else:
         question_number = 1
-        angket_question = AngketQuestion.objects.all().order_by('order').first()
+        angket_question = AngketQuestion.objects.filter(target=angket_session.target).order_by('order').first()
     
     try:
         ar = AngketResponse.objects.get(
@@ -135,7 +140,7 @@ def public_angket(request, id):
         print(ar.__dict__)
     except AngketResponse.DoesNotExist:
         ar = None
-    total_questions = AngketQuestion.objects.count()
+    total_questions = AngketQuestion.objects.filter(target=angket_session.target).count()
     
     context = {
         'no_sidebar': True,
@@ -166,7 +171,7 @@ def respond_angket(request, id):
     question_id = request.POST.get('question_id')
     print(request.POST)
     try:
-        angket_question = AngketQuestion.objects.get(id=question_id)
+        angket_question = AngketQuestion.objects.get(target=angket_session.target, id=question_id)
     except AngketQuestion.DoesNotExist:
         print('AngketQuestion does not exist')
         return HttpResponse(status=404)
@@ -186,7 +191,7 @@ def respond_angket(request, id):
         "option_end_label": angket_question.option_end_label,
         }
     ar.save()
-    if angket_question == AngketQuestion.objects.all().order_by('order').last():
+    if angket_question == AngketQuestion.objects.filter(target=angket_session.target).order_by('order').last():
         return redirect('done_angket')
     return redirect(reverse('public_angket', args=[angket_session.id]) + f'?page={angket_question.order+1}')
 

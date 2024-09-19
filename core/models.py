@@ -26,6 +26,10 @@ class Verification(models.Model):
 class Article(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255, blank=True, null=True)
+    cover_image = models.FileField(
+        upload_to="refleksi-j-module", null=True, blank=True)
+    content = models.TextField(blank=True, null=True)
+    order = models.IntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(default=timezone.now)
     
@@ -134,8 +138,14 @@ class ModuleAssessment(models.Model):
     def __str__(self):
         return f'{self.id} {self.category} {self.module}'
     
+ANGKET_TARGET = [
+    ('student', 'Student'),
+    ('teacher', 'Teacher'),
+]
+
 class AngketQuestion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    target = models.CharField(max_length=25, blank=True, null=True, choices=ANGKET_TARGET, default='student')
     question = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     order = models.IntegerField(null=True, blank=True)
@@ -151,6 +161,7 @@ class AngketQuestion(models.Model):
 
 class AngketSession(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    target = models.CharField(max_length=25, blank=True, null=True, choices=ANGKET_TARGET, default='student')
     name = models.CharField(max_length=255, blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     link = models.TextField(blank=True, null=True)

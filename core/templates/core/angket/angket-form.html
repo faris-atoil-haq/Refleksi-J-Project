@@ -16,6 +16,13 @@
     </script>
 
     <div class="me-3 mb-3 flex ps-1">
+        {% if angket.target == 'student' %}
+            <span class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Siswa</span>
+        {% else %}
+            <span class="bg-gray-200 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">Guru</span>
+        {% endif %}
+    </div>
+    <div class="me-3 mb-3 flex ps-1">
         <label class="inline-flex items-center cursor-pointer">
             <div class="ms-1 me-3 text-sm font-medium text-gray-600">Terima respon</div>
             <input type="checkbox" name="accept_response" class="sr-only peer" hx-post="{% url 'toggle_accept_response' id=angket.id %}" hx-trigger="input" hx-swap="none"

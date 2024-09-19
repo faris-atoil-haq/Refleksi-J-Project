@@ -1,0 +1,88 @@
+{% load static %}
+
+<div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="flex justify-center w-full overflow-hidden">
+        <img class="max-h-40 object-fit" src="{% if cover_image %}{{cover_image.url}}{% endif %}" alt="" />
+    </div>
+    <div class="p-5">
+        <label for="article-open" class="" >
+            <h5 class="mb-2 text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{title}}</h5>
+        </label>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{content|safe|truncatechars:100}}</p>
+    </div>
+    <div class="p-5">
+        <div id="article-open" hx-swap="outerHTML" hx-get="{% url 'article_page' id=id %}" hx-target="#articles-container" hx-trigger="click" class="cursor-pointer inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+            Selengkapnya
+            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+        </div>
+    </div>
+</div>
+        <script>
+            document.querySelector('#article-title-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+            });
+            document.querySelector('#submit-{% firstof order "1" %}').addEventListener('click', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('flex');
+            });
+            document.querySelector('#cancel-{% firstof order "1" %}').addEventListener('click', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('flex');
+                document.querySelector('#article-{% firstof order "1" %}').value = document.querySelector('#article-defined-{% firstof order "1" %}').value;
+            });
+
+            // summernote.change
+            $('#article-content-{% firstof order "1" %}').on('summernote.change', function(we, contents, $editable) {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+                document.querySelector('#article-content-textarea-{% firstof order "1" %}').value = $('#article-content-{% firstof order "1" %}').summernote('code'); ;
+            });
+            // inputfile.change
+            document.querySelector('#file-input-{% firstof order "1" %}').addEventListener('input', function() {
+                document.querySelector('#action-{% firstof order "1" %}').classList.remove('hidden');
+                document.querySelector('#action-{% firstof order "1" %}').classList.add('flex');
+                document.querySelector('#article-content-textarea-{% firstof order "1" %}').value = $('#article-content-{% firstof order "1" %}').summernote('code'); ;
+            });
+
+            $( document ).ready(function (){
+                const Dropdown = window.Dropdown
+                new Dropdown(document.getElementById('manage-article-menu-{{order}}'), document.getElementById('manage-article-{{order}}'));
+            
+                $('#article-content-{% firstof order "1" %}').summernote({
+                    placeholder: 'Buat Artikel Anda disini',
+                    tabsize: 2,
+                    height: 120,
+                    toolbar: [
+                        [ 'style', [ 'style' ] ],
+                        [ 'font', [ 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear'] ],
+                        [ 'fontname', [ 'fontname' ] ],
+                        [ 'fontsize', [ 'fontsize' ] ],
+                        [ 'color', [ 'color' ] ],
+                        [ 'para', [ 'ol', 'ul', 'paragraph', 'height' ] ],
+                        [ 'table', [ 'table' ] ],
+                        [ 'insert', [ 'link'] ],
+                        [ 'view', [ 'undo', 'redo', 'fullscreen', 'codeview', 'help' ] ]
+                    ]
+                });
+            });
+            function show_file_name(elm){
+                var previewFile = elm.parentElement.parentElement.querySelector('#image-cover')
+                var file = elm.files[0];
+
+                
+                if (file) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        previewFile.src = e.target.result;
+                    };
+                    var file = elm.files[0];
+
+                    reader.readAsDataURL(file);
+                    previewFile.parentElement.parentElement.classList.remove('hidden');
+                }
+            }
+        </script>

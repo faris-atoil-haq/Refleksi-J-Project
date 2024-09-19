@@ -9,8 +9,10 @@ from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 
-from core.models import AngketQuestion, ReflectionQuestion, Verification
+from core.models import (AngketQuestion, Article, ReflectionQuestion,
+                         Verification)
 from utils.mail import send_email
 
 
@@ -83,25 +85,32 @@ def order_reflection_question(request):
     return render(request, 'core/settings/reflection/reflection-questions.html', {'reflection_questions': ReflectionQuestion.objects.all().order_by('order')})
 
 @login_required
-def angket_templates(request):
-    angket_questions = AngketQuestion.objects.all().order_by('order')
+def angket_templates(request, angket_type=None):
+    target = 'student'
+    if angket_type == 'teacher':
+        target = angket_type
+    angket_questions = AngketQuestion.objects.filter(target=target).order_by('order')
     context = {
         'page_title': 'Admin',
         'page': 'admin',
         'angket_questions': angket_questions,
+        'target': target,
     }
     return render(request, 'core/settings/angket/manage-angket-template.html', context)
 
 @login_required
-def manage_angket_question(request, id=None):
+def manage_angket_question(request, angket_type=None, id=None):
+    target = 'student'
+    if angket_type == 'teacher':
+        target = angket_type
     if id:
         try:
-            angket_question = AngketQuestion.objects.get(id=id)
+            angket_question = AngketQuestion.objects.get(target=target, id=id)
         except:
             return HttpResponse(status=404)
         if request.POST.get('delete'):
             current_order = angket_question.order
-            AngketQuestion.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            AngketQuestion.objects.filter(target=target, order__gt=current_order).update(order=F('order') - 1)
             angket_question.delete()
             return redirect('angket_templates')
         
@@ -124,8 +133,8 @@ def manage_angket_question(request, id=None):
         angket_question.option_end_label = option_end_label 
         angket_question.save()
     else:
-        questions = AngketQuestion.objects.all()
-        angket_question = AngketQuestion.objects.create(order=len(questions) + 1)
+        questions = AngketQuestion.objects.filter(target=target,)
+        angket_question = AngketQuestion.objects.create(target=target, order=len(questions) + 1)
     
     context = {
         'id': angket_question.id,
@@ -135,23 +144,31 @@ def manage_angket_question(request, id=None):
         'rentang': angket_question.option_range,
         'label_min': angket_question.option_start_label,
         'label_max': angket_question.option_end_label,
+        'target': target,
     }
     return render(request, 'core/settings/angket/angket-question-card.html', context)
 
 @login_required
-def order_angket_question(request):
+def order_angket_question(request, angket_type=None):
+    target = 'student'
+    if angket_type == 'teacher':
+        target = angket_type
     ids = request.POST.getlist('id')
     if not ids:
         return HttpResponse(status=400)
     
     for order, question_id in enumerate(ids, start=1):
         try:
-            angket_question = AngketQuestion.objects.get(id=question_id)
+            angket_question = AngketQuestion.objects.get(target=target, id=question_id)
             angket_question.order = order
             angket_question.save()
         except AngketQuestion.DoesNotExist:
             return HttpResponse(status=404)
-    return render(request, 'core/settings/angket/angket-questions.html', {'angket_questions': AngketQuestion.objects.all().order_by('order')})
+    context = {
+        'angket_questions': AngketQuestion.objects.filter(target=target).order_by('order'), 
+        'target': target,
+    }
+    return render(request, 'core/settings/angket/angket-questions.html', context)
 
 def signin(request):
     if request.user.is_authenticated:
@@ -321,6 +338,68 @@ def signout(request):
     logout(request)
     return redirect('public')
 
+def articles_template(request):
+    if request.method == 'GET':
+        articles = Article.objects.all().order_by('order')
+        context = {
+            'page_title': 'Admin',
+            'page': 'admin',
+            'articles': articles,
+        }
+        return render(request, 'core/settings/article/manage-article-template.html', context)
+    
+
+@login_required
+def order_article(request):
+    ids = request.POST.getlist('id')
+    if not ids:
+        return HttpResponse(status=400)
+    
+    for order, article_id in enumerate(ids, start=1):
+        try:
+            article = Article.objects.get(id=article_id)
+            article.order = order
+            article.save()
+        except Article.DoesNotExist:
+            return HttpResponse(status=404)
+    return render(request, 'core/settings/article/manage-article-lists.html', {'articles': Article.objects.all().order_by('order')})
+
+@login_required
+def manage_article(request, id=None):
+    if id:
+        try:
+            article = Article.objects.get(id=id)
+        except:
+            return HttpResponse(status=404)
+        if request.POST.get('delete'):
+            current_order = article.order
+            Article.objects.filter(order__gt=current_order).update(order=F('order') - 1)
+            article.delete()
+            return redirect('articles_template')
+    else:
+        articles = Article.objects.all()
+        article = Article.objects.create(order=len(articles) + 1)
+    cover_image = request.FILES.get('article-cover',None)
+    if cover_image:
+        print("Cover detected")
+        print(cover_image)
+        cover_image.name = cover_image.name.replace('.'+cover_image.name.split('.')[-1], '')
+        # Add timestamp to avoid duplicated file name
+        cover_image.name = f"{cover_image.name}_{int(timezone.now().timestamp())}"
+        article.cover_image = cover_image
+
+    article.title = request.POST.get('article-title', article.title)
+    article.content = request.POST.get('article-content', article.content)
+    article.save()
+    context = {
+        'id': article.id,
+        'title' : article.title,
+        'content' : article.content,
+        'cover_image' : article.cover_image,
+        'order': article.order
+    }
+    return render(request, 'core/settings/article/manage-article-card.html', context)
+
 @login_required
 def user_profile(request):
     if request.POST:
@@ -364,3 +443,11 @@ def user_profile(request):
         'page': 'user_profile',
     }
     return render(request, 'core/settings/update-profile.html', context)
+
+@login_required
+def article(request):
+    context = {
+        'page_title': 'Pusat Artikel',
+        'page': 'article',
+    }
+    return render(request, 'core/article/article.html', context)
