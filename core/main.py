@@ -11,7 +11,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 
-from core.models import AngketQuestion, ReflectionQuestion, Verification, Article
+from core.models import (AngketQuestion, Article, ReflectionQuestion,
+                         Verification)
 from utils.mail import send_email
 
 
@@ -427,3 +428,11 @@ def user_profile(request):
         'page': 'user_profile',
     }
     return render(request, 'core/settings/update-profile.html', context)
+
+@login_required
+def article(request):
+    context = {
+        'page_title': 'Pusat Artikel',
+        'page': 'article',
+    }
+    return render(request, 'core/article/article.html', context)

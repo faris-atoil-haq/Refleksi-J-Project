@@ -54,6 +54,8 @@ urlpatterns = [
     
     path('app/profile/', main.user_profile, name='user_profile'),
     
+    path('app/article/', main.article, name='article'),
+    
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
 
