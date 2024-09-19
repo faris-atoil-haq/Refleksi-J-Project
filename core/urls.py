@@ -54,6 +54,8 @@ urlpatterns = [
     
     path('app/profile/', main.user_profile, name='user_profile'),
     
+    path('app/article/', main.article, name='article'),
+    
     # Application Settings
     path('app/settings/', main.app_settings, name='app_settings'),
 
@@ -68,7 +70,11 @@ urlpatterns = [
     path('app/settings/refleksi/<uuid:id>/', main.manage_reflection_question, name='manage_reflection_question'),
     
     path('app/settings/angket/', main.angket_templates, name='angket_templates'),
+    path('app/settings/angket/<str:angket_type>/', main.angket_templates, name='angket_templates'),
     path('app/settings/angket/create/', main.manage_angket_question, name='create_angket_question'),
+    path('app/settings/angket/<str:angket_type>/create/', main.manage_angket_question, name='create_angket_question'),
     path('app/settings/angket/order/', main.order_angket_question, name='order_angket_question'),
+    path('app/settings/angket/<str:angket_type>/order/', main.order_angket_question, name='order_angket_question'),
     path('app/settings/angket/<uuid:id>/', main.manage_angket_question, name='manage_angket_question'),
+    path('app/settings/angket/<str:angket_type>/<uuid:id>/', main.manage_angket_question, name='manage_angket_question'),
 ]

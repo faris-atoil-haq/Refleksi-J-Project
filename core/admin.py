@@ -52,7 +52,7 @@ class ModuleAssessmentAdmin(admin.ModelAdmin):
 admin.site.register(ModuleAssessment, ModuleAssessmentAdmin)
 
 class AngketQuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'question', 'description', 'order', 'option_range', 'option_step', 'option_start_label', 'option_end_label', 'updated_at', 'created_at']
+    list_display = ['id', 'target', 'question', 'description', 'order', 'option_range', 'option_step', 'option_start_label', 'option_end_label', 'updated_at', 'created_at']
     search_fields = ['id', 'question']
     date_hierarchy='created_at'
 admin.site.register(AngketQuestion, AngketQuestionAdmin)
