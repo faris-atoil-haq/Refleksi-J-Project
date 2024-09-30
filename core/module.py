@@ -225,6 +225,10 @@ def get_feedback(request, id):
             module_assessment = None
         else:
             return HttpResponse(status=404)
+    except ModuleAssessment.MultipleObjectsReturned:
+        new_ma = ModuleAssessment.objects.filter(module=module, category='komponen_wajib', response_json__isnull=False).order_by('-created_at').first()
+        ModuleAssessment.objects.filter(module=module, category='komponen_wajib', response_json__isnull=False).exclude(id=new_ma.id).delete()
+        module_assessment = new_ma
     if module_assessment:
         feedbacks.append(module_assessment)
     
