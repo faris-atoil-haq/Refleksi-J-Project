@@ -33,9 +33,12 @@ def latest_reflection_journals(request):
     latest_journals = []
     for schedule in schedules:
         subject = schedule.subject
-        journal = Journal.objects.filter(
-            subject=subject, 
-            agenda__start_time__date__lt=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()).latest('created_at')
+        try:
+            journal = Journal.objects.filter(
+                subject=subject, 
+                agenda__start_time__date__lt=timezone.localtime(timezone.now(), timezone=pytz.timezone('Asia/Jakarta')).date()).latest('created_at')
+        except Journal.DoesNotExist:
+            journal = None
         if journal and journal not in latest_journals:
             latest_journals.append(journal)
     
