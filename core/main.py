@@ -221,6 +221,10 @@ def signup(request):
                 first_name=nama,
                 password=password
             )
+        except User.MultipleObjectsReturned:
+            first_user = User.objects.filter(email=email).order_by('-created_at').first()
+            User.objects.filter(email=email).exclude(id=first_user.id).delete()
+            user = first_user
         verification = Verification.objects.filter(user=user).first()
         confirm_signup_link = settings.PARENT_HOST + reverse('confirm')
         if settings.PROD or settings.STAGING:
