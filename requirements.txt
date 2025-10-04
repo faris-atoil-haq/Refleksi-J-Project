@@ -67,5 +67,6 @@ traitlets==5.14.3
 tzdata==2025.2
 uritemplate==4.2.0
 urllib3==2.5.0
+vercel-blob==0.1.0
 wcwidth==0.2.14
 whitenoise==6.6.0

@@ -165,7 +165,7 @@ STATICFILES_FINDERS = [
 ]
 
 IS_VERCEL = env.bool('IS_VERCEL', default=False)
-
+BLOB_READ_WRITE_TOKEN=env('BLOB_READ_WRITE_TOKEN', default='')
 # ALLOWED_HOSTS configuration
 if IS_VERCEL:
     # For Vercel: Allow all Vercel domains
@@ -174,7 +174,7 @@ if IS_VERCEL:
         '.now.sh',
         'localhost',
         '127.0.0.1',
-        'event-management-assessment.vercel.app'
+        'refleksi-j-project.vercel.app/'
     ]
     # Add specific Vercel URLs from environment
     vercel_url = os.environ.get('VERCEL_URL')
@@ -184,9 +184,24 @@ if IS_VERCEL:
     # Static files for Vercel
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    
+    # Use Vercel Blob for file storage
+    
+else:
+    # Local development settings
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    
+STORAGES = {
+    "default": {
+        "BACKEND": "config.vercel_storage.VercelBlobStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
-MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'config.storage_backend.PublicMediaStorage'
+DEFAULT_FILE_STORAGE = 'config.vercel_storage.VercelBlobStorage'
 
 # private media settings
 PRIVATE_MEDIA_LOCATION = 'private'
@@ -203,3 +218,13 @@ LOCKDOWN_ENABLED = env.bool('LOCKDOWN', default=False)
 LOCKDOWN_PASSWORDS = tuple(env.list('LOCKDOWN_PASSWORDS', default=['letmein']))
 
 CHATPDF_API_KEY = env('CHATPDF_API_KEY', default='')
+
+# Email Configuration
+EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
+SERVER_EMAIL = DEFAULT_FROM_EMAIL

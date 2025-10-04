@@ -203,6 +203,7 @@ def generate_suggestion(request, id):
     response['HX-Trigger'] = json.dumps({'suggestionDone':''})
     return response
 
+
 @login_required
 @require_GET
 def get_feedback(request, id):

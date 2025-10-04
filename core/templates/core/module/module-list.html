@@ -84,7 +84,7 @@
                 <div class="w-full flex md:items-center py-2 justify-between md:gap-16 md:pe-6 border-b border-gray-200 flex-wrap">
                     <div class="my-1 flex" id="module-{{module.id}}-name">
                         <div>
-                            <a class="w-[40%] me-2 text-gray-800 hover:text-blue-800 font-medium" href="{{module.module_file.url}}" >{{module.name|truncatechars:35}}</a>
+                            <a class="w-[40%] me-2 text-gray-800 hover:text-blue-800 font-medium" target="_blank" href="{{module.module_file.url}}" >{{module.name|truncatechars:35}}.pdf</a>
                             <div class="block md:hidden w-[30%] text-gray-500 text-nowrap">
                                 {% as_timezone module.created_at 'Asia/Jakarta' %}
                             </div>
