@@ -16,6 +16,7 @@ from pathlib import Path
 import environ
 
 env = environ.Env()
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +46,7 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,15 +101,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Database
 DATABASES = {
-    'default': {
-        'ENGINE': env('DB_ENGINE'),
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASS'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
-    }
+    "default": dj_database_url.config(
+        default=env('DATABASE_URL')
+    )
 }
 
 
@@ -141,37 +139,22 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AWS_LOCATION = ''
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+STATIC_URL = '/static/'
 MEDIA_LOCATION = 'media'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-
-AWS_QUERYSTRING_AUTH = False
-AWS_DEFAULT_ACL = 'public-read'
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')
-AWS_S3_ENDPOINT_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_REGION_NAME}.digitaloceanspaces.com/refleksi-j'
-AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-AWS_LOCATION = 'static'
+# WhiteNoise configuration (since you have it installed)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 if not STAGING and not PROD:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-#     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-    STATIC_URL = '/static/'
-#     MEDIA_URL = '/media/'
-    
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-#     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    STATIC_ROOT = BASE_DIR / 'staticfiles'  # Where collectstatic puts files
 else:
-    STATIC_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_LOCATION}/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    
 COMPRESS_ROOT = BASE_DIR / 'static'
 COMPRESS_ENABLED = True
 
@@ -181,18 +164,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 
-# else:
-
-import boto3
-
-session = boto3.session.Session()
-S3_CLIENT = session.client('s3',
-    endpoint_url=AWS_S3_ENDPOINT_URL, # Find your endpoint in the control panel, under Settings. Prepend "https://".
-    region_name=AWS_S3_REGION_NAME, # Use the region in your endpoint.
-    aws_access_key_id=AWS_ACCESS_KEY_ID, # Access key pair. You can create access key pairs using the control panel or API.
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY # Secret access key defined through an environment variable.
-) 
-MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{MEDIA_LOCATION}/'
+MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'config.storage_backend.PublicMediaStorage'
 
 # private media settings
@@ -206,38 +178,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH=True
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-SENTRY_KEY = env('SENTRY_KEY', default='')
-
 LOCKDOWN_ENABLED = env.bool('LOCKDOWN', default=False)
 LOCKDOWN_PASSWORDS = tuple(env.list('LOCKDOWN_PASSWORDS', default=['letmein']))
 
 CHATPDF_API_KEY = env('CHATPDF_API_KEY', default='')
-
-
-# Debug
-if PROD:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-
-    sentry_sdk.init(
-        dsn=SENTRY_KEY,
-        integrations=[
-            DjangoIntegration(),
-        ],
-
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=0.1,
-
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True
-    )

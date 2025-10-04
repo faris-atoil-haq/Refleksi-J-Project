@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_GET, require_POST
 
-from config.settings import AWS_LOCATION, AWS_STORAGE_BUCKET_NAME, S3_CLIENT
 from core.models import Module, ModuleAssessment, Subject
 from utils.chatpdf import ChatPDF
 
