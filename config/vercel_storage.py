@@ -23,7 +23,7 @@ class VercelBlobStorage(Storage):
         """Save file to Vercel Blob Storage"""
         try:
             # Generate unique filename
-            file_extension = os.path.splitext(name)[1]
+            file_extension = "pdf"
             unique_name = f"uploads/{uuid.uuid4()}{file_extension}"
 
             # Read content
@@ -34,7 +34,7 @@ class VercelBlobStorage(Storage):
                 file_content = content
 
             # First, get upload URL from Vercel Blob
-            upload_url = f"{self.base_url}/put"
+            upload_url = f"{self.base_url}/module"
 
             params = {
                 'filename': unique_name
