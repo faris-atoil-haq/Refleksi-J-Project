@@ -1,8 +1,9 @@
+{% load static %}
 <nav class="border-gray-200 z-10 absolute top-0 left-0 w-full">
     <div class="w-full flex justify-between px-3 md:px-24 md:pt-4">
         <div class="p-4">
             <a href="{% url 'public' %}" class="flex items-center">
-                <img src="https://pesaneen.sgp1.cdn.digitaloceanspaces.com/refleksi-j/pesaneen/static/MyReflectJournal%20Logo.png" class="rounded-md h-6 me-3 sm:h-7" alt="Logo" />
+                <img src="{% static 'src/Logo.png' %}" class="rounded-md h-6 me-3 sm:h-7" alt="Logo" />
                 <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">MyReflect Journal</span>
             </a>
         </div>
