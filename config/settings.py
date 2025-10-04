@@ -164,6 +164,27 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 
+IS_VERCEL = env.bool('IS_VERCEL', default=False)
+
+# ALLOWED_HOSTS configuration
+if IS_VERCEL:
+    # For Vercel: Allow all Vercel domains
+    ALLOWED_HOSTS = [
+        '.vercel.app',
+        '.now.sh',
+        'localhost',
+        '127.0.0.1',
+        'event-management-assessment.vercel.app'
+    ]
+    # Add specific Vercel URLs from environment
+    vercel_url = os.environ.get('VERCEL_URL')
+    if vercel_url:
+        ALLOWED_HOSTS.append(vercel_url)
+
+    # Static files for Vercel
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'config.storage_backend.PublicMediaStorage'
 
