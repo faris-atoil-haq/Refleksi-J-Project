@@ -237,14 +237,15 @@ def signup(request):
             verification.instansi = instansi
             verification.code = verif_code
             verification.save()
-            
-            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}?code={verif_code}&email={email}')
+
+            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n<a target="_blank" href="{confirm_signup_link}?code={verif_code}&email={email}">Verifikasi</a>')
         elif not verification.verified:
-            send_email('Verifikasi Akun',email,f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n{confirm_signup_link}?code={verification.code}&email={email}')
+            send_email('Verifikasi Akun', email,
+                       f'Selamat datang!\n\nKlik link verifikasi berikut untuk menggunakan akun Anda: \n<a target="_blank" href="{confirm_signup_link}?code={verification.code}&email={email}">Verifikasi</a>')
         else:
-            send_email('Akun tersedia',email,f'Halo,\n\nAnda telah memiliki akun di platform kami. Silakan login dengan email dan kata sandi Anda.\nJika Anda lupa kata sandi, silahkan melakukan reset kata sandi.')
-            return render(request, 'core/confirm.html',{'verified':True,'option':'signup'})
-        
+            send_email('Akun tersedia', email,
+                       f'Halo,\n\nAnda telah memiliki akun di platform kami. Silakan login dengan email dan kata sandi Anda.\nJika Anda lupa kata sandi, silahkan melakukan reset kata sandi.')
+            return render(request, 'core/confirm.html', {'verified': True, 'option': 'signup'})
 
         return render(request, 'core/confirm.html')
     email = request.GET.get('email', None)
@@ -281,7 +282,7 @@ def reset_password_email(request):
                 else:
                     reset_password_link = 'http://' + reset_password_link
                 print("Reset Password Link: ",reset_password_link)
-                send_email('Reset Password', email, f'Klik link berikut untuk mereset kata sandi Anda: \n{reset_password_link}')
+                send_email('Reset Password', email, f'Klik link berikut untuk mereset kata sandi Anda: \n<a href="{reset_password_link}">Reset Password</a>')
             else:
                 link_verifikasi = settings.PARENT_HOST+reverse('confirm')+f'?email={email}&code={verif.code}'
                 if settings.PROD or settings.STAGING:
@@ -289,7 +290,7 @@ def reset_password_email(request):
                 else:
                     link_verifikasi = 'http://' + link_verifikasi
                 print("Email belum terverifikasi. Link: ",link_verifikasi)
-                send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami melihat bahwa Anda belum menyelesaikan verifikasi email. Klik tautan berikut untuk melakukan verifikasi: \n{link_verifikasi}')
+                send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami melihat bahwa Anda belum menyelesaikan verifikasi email. Klik tautan berikut untuk melakukan verifikasi: \n<a href="{link_verifikasi}">Link Verifikasi</a>')
         else:
             signup_link = settings.PARENT_HOST+reverse('signup')+f'?email={email}'
             if settings.PROD or settings.STAGING:
@@ -297,7 +298,7 @@ def reset_password_email(request):
             else:
                 signup_link = 'http://' + signup_link
             print("Email belum terdaftar. Link: ",signup_link)
-            send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami tidak menemukan email Anda. Daftarkan email Anda di sini: \n{signup_link}')
+            send_email('Reset Password',email,f'Halo,\nAnda ingin melakukan pengaturan kata sandi Anda, namun kami tidak menemukan email Anda. Daftarkan email Anda di sini: \n<a href="{signup_link}">Daftar</a>')
         return redirect(reverse('confirm')+'?email='+email)
     return render(request, 'core/reset_password_email.html')
 
