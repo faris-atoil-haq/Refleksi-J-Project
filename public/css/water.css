@@ -1,0 +1,676 @@
+*,*:after,*:before{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+body{
+    font-family: arial;
+    font-size:16px;
+    margin: 0;
+    background: #002638;
+    color: #fff;
+}
+
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+.water_wave{
+    width: 500px;
+    height: 500px;
+    background: #35b3e7;
+    border-radius: 20%;
+    box-shadow: inset 0 0 20px 0 rgba(0,0,0,0.8),
+    0 0 20px 0 rgba(0,0,0,0.3)
+    ;
+    position: relative;
+    overflow: hidden;
+}
+
+.water_wave:after,
+.water_wave:before{
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 300%;
+    top: -50%;
+    left: 50%;
+    background: #fff;
+}
+.water_wave:after{
+    border-radius: 45%;
+    animation: water_wave 9s linear infinite;
+}
+.water_wave:before{
+    border-radius: 35%;
+    background: rgba(255,255,255,.3);
+    animation: water_wave 9s linear infinite;
+}
+
+
+@keyframes water_wave{
+    0%{
+        transform: translate(-50%,-50%) rotate(0deg);
+        top: -30%
+    }
+    50%{
+        top: -50%
+    }
+    100%{
+        transform: translate(-50%,-50%) rotate(360deg);
+        top: -30%
+    }
+}
+
+
+
+
+
+
+/*
+ * LAYOUT
+ */
+
+body {
+  background-color: #e9f5fe;
+  color: #3b46d3;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+main {
+  width: 100%;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.desc {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  margin-bottom: 0;
+  text-align: center;
+}
+
+/*
+ * FONT SIZE
+ */
+
+h1,
+.desc p {
+  font-size: 3.5em;
+}
+
+.desc h2 {
+  font-size: 1.5em;
+}
+
+.desc span {
+  font-size: 0.5em;
+}
+
+.desc * {
+  margin: 0;
+}
+
+/*
+ * MAKE CIRCLE
+ */
+
+.circle-container {
+  position: relative;
+  width: 500px;
+  height: 300px;
+  margin: 2em;
+}
+
+@media (max-width: 768px) {
+  .circle-container {
+    width: 500px;
+    height: 300px;
+  }
+}
+
+.circle-container > * {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 100%;
+  height: 100%;
+  border: 10px solid white;
+}
+
+.circle {
+  background: white;
+}
+
+/*
+ * MAKE WAVE
+ */
+
+.wave {
+  background: url(/assets/images/wave.svg)
+    repeat-x;
+  opacity: 0.8;
+}
+
+
+.wave-below {
+  background-color: #3b46d3;
+}
+
+/*
+ * SET WAVE POSITION
+ */
+
+.wave._0 {
+  background-position: 0% 130%;
+}
+.wave-below._0 {
+  clip-path: polygon(0% 110%, 0% 120%, 110% 120%, 110% 110%);
+}
+
+.wave._1 {
+  background-position: 0% 117%;
+}
+.wave-below._1 {
+  clip-path: polygon(0% 110%, 0% 107%, 110% 107%, 110% 110%);
+}
+
+.wave._5 {
+  background-position: 0% 100%;
+}
+.wave-below._5 {
+  clip-path: polygon(0% 110%, 0% 90%, 110% 90%, 110% 110%);
+}
+
+.wave._10 {
+  background-position: 0% 93%;
+}
+.wave-below._10 {
+  clip-path: polygon(0% 110%, 0% 83%, 110% 83%, 110% 110%);
+}
+.wave._15 {
+  background-position: 0% 88%;
+}
+.wave-below._15 {
+  clip-path: polygon(0% 110%, 0% 78%, 110% 78%, 110% 110%);
+}
+
+.wave._20 {
+  background-position: 0% 83%;
+}
+.wave-below._20 {
+  clip-path: polygon(0% 110%, 0% 73%, 110% 73%, 110% 110%);
+}
+
+.wave._25 {
+  background-position: 0% 78%;
+}
+.wave-below._25 {
+  clip-path: polygon(0% 110%, 0% 68%, 110% 68%, 110% 110%);
+}
+
+.wave._30 {
+  background-position: 0% 73%;
+}
+.wave-below._30 {
+  clip-path: polygon(0% 110%, 0% 63%, 110% 63%, 110% 110%);
+}
+
+.wave._35 {
+  background-position: 0% 68%;
+}
+.wave-below._35 {
+  clip-path: polygon(0% 110%, 0% 58%, 110% 58%, 110% 110%);
+}
+
+.wave._40 {
+  background-position: 0% 63%;
+}
+.wave-below._40 {
+  clip-path: polygon(0% 110%, 0% 53%, 110% 53%, 110% 110%);
+}
+
+.wave._45 {
+  background-position: 0% 58%;
+}
+.wave-below._45 {
+  clip-path: polygon(0% 110%, 0% 48%, 110% 48%, 110% 110%);
+}
+
+.wave._50 {
+  background-position: 0% 57%;
+}
+.wave-below._50 {
+  clip-path: polygon(0% 110%, 0% 58%, 110% 58%, 110% 110%);
+}
+
+.wave._55 {
+  background-position: 0% 52%;
+}
+.wave-below._55 {
+  clip-path: polygon(0% 110%, 0% 53%, 110% 53%, 110% 110%);
+}
+
+.wave._60 {
+  background-position: 0% 48%;
+}
+.wave-below._60 {
+  clip-path: polygon(0% 110%, 0% 49%, 110% 49%, 110% 110%);
+}
+.wave._65 {
+  background-position: 0% 43%;
+}
+.wave-below._65 {
+  clip-path: polygon(0% 110%, 0% 44%, 110% 44%, 110% 110%);
+}
+
+.wave._70 {
+  background-position: 0% 38%;
+}
+.wave-below._70 {
+  clip-path: polygon(0% 110%, 0% 39%, 110% 39%, 110% 110%);
+}
+
+.wave._75 {
+  background-position: 0% 33%;
+}
+.wave-below._75 {
+  clip-path: polygon(0% 110%, 0% 34%, 110% 34%, 110% 110%);
+}
+
+.wave._80 {
+  background-position: 0% 28%;
+}
+.wave-below._80 {
+  clip-path: polygon(0% 110%, 0% 29%, 110% 29%, 110% 110%);
+}
+
+.wave._85 {
+  background-position: 0% 23%;
+}
+.wave-below._85 {
+  clip-path: polygon(0% 110%, 0% 24%, 110% 24%, 110% 110%);
+}
+
+.wave._90 {
+  background-position: 0% 18%;
+}
+.wave-below._90 {
+  clip-path: polygon(0% 110%, 0% 19%, 110% 19%, 110% 110%);
+}
+
+.wave._95 {
+  background-position: 0% 13%;
+}
+.wave-below._95 {
+  clip-path: polygon(0% 110%, 0% 14%, 110% 14%, 110% 110%);
+}
+.wave._100 {
+  background-position: 0% 5%;
+}
+.wave-below._100 {
+  clip-path: polygon(0% 110%, 0% 15%, 110% 15%, 110% 110%);
+}
+
+/*
+ * DEFINE FILLING ANIMATION
+ */
+
+@keyframes fill-wave {
+  from {
+    background-position: -1200px 120%;
+  }
+}
+
+@keyframes fill-below {
+  from {
+    clip-path: polygon(0% 110%, 0% 110%, 110% 110%, 110% 110%);
+  }
+}
+
+/*
+ * DEFINE WAVE ANIMATION
+ */
+
+@keyframes wave-0 {
+  to {
+    background-position: 1200px 120%;
+  }
+}
+
+@keyframes wave-1 {
+  to {
+    background-position: 1200px 117%;
+  }
+}
+@keyframes wave-5 {
+  to {
+    background-position: 1200px 100%;
+  }
+}
+@keyframes wave-10 {
+  to {
+    background-position: 1200px 93%;
+  }
+}
+
+@keyframes wave-15 {
+  to {
+    background-position: 1200px 88%;
+  }
+}
+@keyframes wave-20 {
+  to {
+    background-position: 1200px 83%;
+  }
+}
+
+@keyframes wave-25 {
+  to {
+    background-position: 1200px 78%;
+  }
+}
+@keyframes wave-30 {
+  to {
+    background-position: 1200px 73%;
+  }
+}
+
+@keyframes wave-35 {
+  to {
+    background-position: 1200px 68%;
+  }
+}
+@keyframes wave-40 {
+  to {
+    background-position: 1200px 63%;
+  }
+}
+
+@keyframes wave-45 {
+  to {
+    background-position: 1200px 60%;
+  }
+}
+
+@keyframes wave-50 {
+  to {
+    background-position: 1200px 57%;
+  }
+}
+@keyframes wave-55 {
+  to {
+    background-position: 1200px 52%;
+  }
+}
+@keyframes wave-60 {
+  to {
+    background-position: 1200px 48%;
+  }
+}
+
+@keyframes wave-65 {
+  to {
+    background-position: 1200px 43%;
+  }
+}
+@keyframes wave-70 {
+  to {
+    background-position: 1200px 38%;
+  }
+}
+
+@keyframes wave-75 {
+  to {
+    background-position: 1200px 33%;
+  }
+}
+@keyframes wave-80 {
+  to {
+    background-position: 1200px 28%;
+  }
+}
+
+@keyframes wave-85 {
+  to {
+    background-position: 1200px 23%;
+  }
+}
+@keyframes wave-90 {
+  to {
+    background-position: 1200px 18%;
+  }
+}
+
+@keyframes wave-95 {
+  to {
+    background-position: 1200px 13%;
+  }
+}
+@keyframes wave-100 {
+  to {
+    background-position: 1200px 5%;
+  }
+}
+
+/*
+ * GIVE FILLING & WAVE ANIMATION
+ */
+
+:root {
+  --ease-in: cubic-bezier(0.58, 0.42, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.42, 0.58);
+}
+
+.wave {
+  animation-name: fill-wave, wave-0;
+  animation-duration: 5s, 7s;
+  animation-delay: 0s, 5s;
+  animation-fill-mode: forwards, none;
+  animation-iteration-count: 1, infinite;
+  animation-timing-function: var(--ease-in), var(--ease-out);
+}
+.wave._1 {
+  animation-name: fill-wave, wave-1;
+}
+.wave._5 {
+  animation-name: fill-wave, wave-5;
+}
+.wave._10 {
+  animation-name: fill-wave, wave-10;
+}
+.wave._15 {
+  animation-name: fill-wave, wave-15;
+}
+.wave._20 {
+  animation-name: fill-wave, wave-20;
+}
+.wave._25 {
+  animation-name: fill-wave, wave-25;
+}
+.wave._30 {
+  animation-name: fill-wave, wave-30;
+}
+.wave._35 {
+  animation-name: fill-wave, wave-35;
+}
+.wave._40 {
+  animation-name: fill-wave, wave-40;
+}
+.wave._45 {
+  animation-name: fill-wave, wave-45;
+}
+.wave._50 {
+  animation-name: fill-wave, wave-50;
+}
+.wave._55 {
+  animation-name: fill-wave, wave-55;
+}
+.wave._60 {
+  animation-name: fill-wave, wave-60;
+}
+.wave._65 {
+  animation-name: fill-wave, wave-65;
+}
+.wave._70 {
+  animation-name: fill-wave, wave-70;
+}
+.wave._75 {
+  animation-name: fill-wave, wave-75;
+}
+.wave._80 {
+  animation-name: fill-wave, wave-80;
+}
+.wave._85 {
+  animation-name: fill-wave, wave-85;
+}
+.wave._90 {
+  animation-name: fill-wave, wave-90;
+}
+.wave._95 {
+  animation-name: fill-wave, wave-95;
+}
+.wave._100 {
+  animation-name: fill-wave, wave-100;
+}
+
+.wave:nth-child(2) {
+  animation-duration: 5s, 11s;
+}
+
+.wave:nth-child(3) {
+  animation-duration: 5s, 13s;
+}
+
+.wave-below {
+  animation: 5s var(--ease-in) forwards fill-below;
+}
+.wave-below._1 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._5 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._10 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._15 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._20 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._25 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._30 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._35 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._40 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._45 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._50 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._55 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._60 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._65 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._70 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._75 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._80 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._85 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._90 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._95 {
+  animation: 7s -2s var(--ease-in) forwards fill-below;
+}
+.wave-below._100 {
+  animation: 6s -1s var(--ease-in) forwards fill-below;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * DEFINE TEXT ANIMATION
+ */
+@keyframes rise-up {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+
+  70% {
+    transform: translateY(-10px);
+  }
+}
+
+.desc * {
+  animation: 1s 6s both rise-up;
+}
+
+
+.desc._1 {
+  color: black;
+}
+
+.desc._50 p {
+  color: white;
+}
+
+.desc._100 {
+  color: white;
+}
